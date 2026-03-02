@@ -77,7 +77,7 @@ export class ConfigStore implements vscode.Disposable {
       return;
     }
 
-    const nextModels = models.map(model => this.withModelDefaults(model));
+    const nextModels = this.sortModels(models.map(model => this.withModelDefaults(model)));
     const nextModelsSignature = JSON.stringify(nextModels);
     let changed = false;
 
@@ -99,7 +99,8 @@ export class ConfigStore implements vscode.Disposable {
             .map(model => this.withModelDefaults(model))
         : [];
 
-      if (JSON.stringify(currentModels) === nextModelsSignature) {
+      const normalizedCurrentModels = this.sortModels(currentModels);
+      if (JSON.stringify(normalizedCurrentModels) === nextModelsSignature) {
         return rawVendor;
       }
 
@@ -215,6 +216,26 @@ export class ConfigStore implements vscode.Disposable {
       }
     }
     return undefined;
+  }
+
+  private sortModels(models: VendorModelConfig[]): VendorModelConfig[] {
+    return [...models].sort((left, right) => {
+      const leftKey = left.name.toLowerCase();
+      const rightKey = right.name.toLowerCase();
+      if (leftKey < rightKey) {
+        return -1;
+      }
+      if (leftKey > rightKey) {
+        return 1;
+      }
+      if (left.name < right.name) {
+        return -1;
+      }
+      if (left.name > right.name) {
+        return 1;
+      }
+      return 0;
+    });
   }
 
   dispose(): void {

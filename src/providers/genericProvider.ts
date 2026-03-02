@@ -259,19 +259,21 @@ export class GenericAIProvider extends BaseAIProvider {
         continue;
       }
 
-      // When useModelsEndpoint is enabled, /models is the source of truth.
-      // settings.json is updated from discovery, not the other way around.
+      // When useModelsEndpoint is enabled, discovered model names are the source of truth.
+      // Runtime/token/capability overrides from settings are preserved per model.
       const discoveredVendorModels = this.toVendorModelConfigs(discovered.models);
-      const resolvedModels = this.buildConfiguredModelsFromVendorModels(vendor, discoveredVendorModels);
-      const discoveredSignature = this.buildVendorDiscoverySignature({ ...vendor, models: discoveredVendorModels }, apiKey);
+      const mergedVendorModels = this.mergeConfiguredModelOverrides(vendor.models, discoveredVendorModels);
+      const resolvedModels = this.buildConfiguredModelsFromVendorModels(vendor, mergedVendorModels);
+      const discoveredSignature = this.buildVendorDiscoverySignature({ ...vendor, models: mergedVendorModels }, apiKey);
       logger.info('Using /models discovery results for vendor', {
         vendor: vendor.name,
         discoveredCount: discovered.models.length,
-        normalizedCount: discoveredVendorModels.length
+        normalizedCount: discoveredVendorModels.length,
+        mergedCount: mergedVendorModels.length
       });
 
       try {
-        await this.configStore.updateVendorModels(vendor.name, discoveredVendorModels);
+        await this.configStore.updateVendorModels(vendor.name, mergedVendorModels);
       } catch (error) {
         logger.warn(`Failed to update models config for ${vendor.name}.`, error);
       }
@@ -473,6 +475,38 @@ export class GenericAIProvider extends BaseAIProvider {
         vision: model.capabilities?.imageInput ?? DEFAULT_MODEL_VISION
       }
     };
+  }
+
+  private mergeConfiguredModelOverrides(
+    currentModels: VendorModelConfig[],
+    discoveredModels: VendorModelConfig[]
+  ): VendorModelConfig[] {
+    const configuredByName = new Map<string, VendorModelConfig>();
+    for (const model of currentModels) {
+      const key = model.name.trim().toLowerCase();
+      if (!key || configuredByName.has(key)) {
+        continue;
+      }
+      configuredByName.set(key, model);
+    }
+
+    return discoveredModels.map(discovered => {
+      const configured = configuredByName.get(discovered.name.trim().toLowerCase());
+      if (!configured) {
+        return discovered;
+      }
+
+      return {
+        name: discovered.name,
+        description: configured.description ?? discovered.description,
+        maxInputTokens: configured.maxInputTokens ?? discovered.maxInputTokens,
+        maxOutputTokens: configured.maxOutputTokens ?? discovered.maxOutputTokens,
+        capabilities: {
+          tools: configured.capabilities?.tools ?? discovered.capabilities?.tools,
+          vision: configured.capabilities?.vision ?? discovered.capabilities?.vision
+        }
+      };
+    });
   }
 
   private readPositiveTokenInteger(value: number | undefined): number | undefined {

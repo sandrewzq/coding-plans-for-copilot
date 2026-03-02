@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.12] - 2026-03-02
+- Maintenance updates
+
 ## [0.4.11] - 2026-02-28
 - feat(core): 添加统一日志系统并增强模型刷新机制
 
