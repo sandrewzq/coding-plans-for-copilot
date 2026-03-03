@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.13] - 2026-03-03
+- feat(commit-message): 增强模型选择缓存与日志
+
 ## [0.4.12] - 2026-03-02
 - Maintenance updates
 

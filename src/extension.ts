@@ -4,7 +4,11 @@ import { LMChatProviderAdapter } from './providers/lmChatProviderAdapter';
 import { ConfigStore } from './config/configStore';
 import { initI18n, getMessage } from './i18n/i18n';
 import { getCompactErrorMessage } from './providers/baseProvider';
-import { generateCommitMessage, selectCommitMessageModel } from './commitMessageGenerator';
+import {
+  generateCommitMessage,
+  invalidateCommitMessageModelSelectionCache,
+  selectCommitMessageModel
+} from './commitMessageGenerator';
 import { logger } from './logging/outputChannelLogger';
 
 let providers: Map<string, GenericAIProvider> = new Map();
@@ -186,6 +190,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     vscode.commands.registerCommand('coding-plans.selectCommitMessageModel', selectCommitMessageModel)
   );
+  if (typeof vscode.lm?.onDidChangeChatModels === 'function') {
+    context.subscriptions.push(
+      vscode.lm.onDidChangeChatModels(() => {
+        invalidateCommitMessageModelSelectionCache('vscode.lm.onDidChangeChatModels');
+      })
+    );
+  }
 
   const configStore = new ConfigStore(context);
   context.subscriptions.push(configStore);

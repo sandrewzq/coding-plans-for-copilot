@@ -44,7 +44,9 @@ const RECENT_COMMIT_STYLE_MAX_ENTRY_LENGTH = 500;
 const RECENT_COMMIT_STYLE_MAX_TOTAL_LENGTH = 5000;
 const COMMIT_LOG_ENTRY_SEPARATOR = '\u001e';
 const SELECT_CHAT_MODELS_TIMEOUT_MS = 10000;
+const SELECT_CHAT_MODELS_CACHE_TTL_MS = 60000;
 const REQUEST_CANCELLED_ERROR_CODE = 'coding-plans.requestCancelled';
+const COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX = '[coding-plans][commit-message-model-selection]';
 
 const CODING_PLANS_VENDOR = 'coding-plans';
 const COMMIT_MESSAGE_TASK_BLOCK = [
@@ -129,6 +131,15 @@ type ModelSelectionResult =
   | { kind: 'selected'; model: vscode.LanguageModelChat }
   | { kind: 'cancelled' }
   | { kind: 'noModels' };
+
+type ChatModelsSelectionCacheState = {
+  models: vscode.LanguageModelChat[];
+  fetchedAt: number;
+  selectorKey: string;
+  inFlight?: Promise<vscode.LanguageModelChat[]>;
+};
+
+let chatModelsSelectionCache: ChatModelsSelectionCacheState | undefined;
 
 const LANGUAGE_ENFORCEMENT_RULES: Record<CommitMessageLanguage, LanguageEnforcementRule> = {
   'zh-cn': {
@@ -750,6 +761,78 @@ function normalizeValue(value: string | undefined): string {
   return (value || '').trim().toLowerCase();
 }
 
+function normalizeSelectorValue(value: string | undefined): string | undefined {
+  const trimmed = (value || '').trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function normalizeChatModelsSelector(
+  selector?: vscode.LanguageModelChatSelector
+): vscode.LanguageModelChatSelector | undefined {
+  if (!selector) {
+    return undefined;
+  }
+  const normalized: vscode.LanguageModelChatSelector = {};
+  const vendor = normalizeSelectorValue(selector.vendor);
+  const family = normalizeSelectorValue(selector.family);
+  const version = normalizeSelectorValue(selector.version);
+  const id = normalizeSelectorValue(selector.id);
+  if (vendor) {
+    normalized.vendor = vendor;
+  }
+  if (family) {
+    normalized.family = family;
+  }
+  if (version) {
+    normalized.version = version;
+  }
+  if (id) {
+    normalized.id = id;
+  }
+  return Object.keys(normalized).length > 0 ? normalized : undefined;
+}
+
+function toSelectorCacheKey(selector?: vscode.LanguageModelChatSelector): string {
+  if (!selector) {
+    return '__all__';
+  }
+  return JSON.stringify({
+    vendor: selector.vendor || '',
+    family: selector.family || '',
+    version: selector.version || '',
+    id: selector.id || ''
+  });
+}
+
+function toSelectorLogPayload(selector?: vscode.LanguageModelChatSelector): {
+  vendor?: string;
+  family?: string;
+  version?: string;
+  id?: string;
+} {
+  if (!selector) {
+    return {};
+  }
+  return {
+    vendor: selector.vendor,
+    family: selector.family,
+    version: selector.version,
+    id: selector.id
+  };
+}
+
+export function invalidateCommitMessageModelSelectionCache(reason: string): void {
+  const previous = chatModelsSelectionCache;
+  chatModelsSelectionCache = undefined;
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} cache-invalidated`, {
+    reason,
+    hadCache: !!previous,
+    selectorKey: previous?.selectorKey,
+    modelCount: previous?.models.length,
+    ageMs: previous ? Date.now() - previous.fetchedAt : undefined
+  });
+}
+
 function getCodingPlansVendorName(model: vscode.LanguageModelChat): string | undefined {
   if (model.vendor !== CODING_PLANS_VENDOR) {
     return undefined;
@@ -832,6 +915,36 @@ function getModelGroupKey(model: vscode.LanguageModelChat): string {
   return model.vendor;
 }
 
+function toModelLogPayload(model: vscode.LanguageModelChat): {
+  vendor: string;
+  family: string;
+  name: string;
+  id: string;
+} {
+  return {
+    vendor: model.vendor,
+    family: model.family,
+    name: model.name,
+    id: model.id
+  };
+}
+
+function summarizeModelGroupsForLog(models: readonly vscode.LanguageModelChat[]): Array<{ group: string; count: number }> {
+  const grouped = new Map<string, number>();
+  for (const model of models) {
+    const key = getModelGroupKey(model);
+    grouped.set(key, (grouped.get(key) || 0) + 1);
+  }
+  return Array.from(grouped.entries())
+    .map(([group, count]) => ({ group, count }))
+    .sort((a, b) => {
+      if (a.count !== b.count) {
+        return b.count - a.count;
+      }
+      return a.group.localeCompare(b.group);
+    });
+}
+
 function toGlobalModelQuickPickItem(model: vscode.LanguageModelChat): {
   label: string;
   description?: string;
@@ -866,6 +979,10 @@ async function pickVendor(models: vscode.LanguageModelChat[]): Promise<string | 
   }
 
   const vendors = Array.from(vendorMap.values());
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} opening vendor picker`, {
+    vendorCount: vendors.length,
+    vendors: vendors.map(item => ({ key: item.key, displayName: item.displayName, count: item.count }))
+  });
   const picked = await vscode.window.showQuickPick(
     vendors.map(item => ({
       label: item.displayName,
@@ -878,7 +995,10 @@ async function pickVendor(models: vscode.LanguageModelChat[]): Promise<string | 
       placeHolder: getMessage('commitMessageSelectVendor')
     }
   );
-
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} vendor picker resolved`, {
+    cancelled: !picked,
+    pickedVendor: picked?.vendor
+  });
   return picked?.vendor;
 }
 
@@ -907,10 +1027,19 @@ async function saveModelSelection(model: vscode.LanguageModelChat): Promise<void
     idToSave = model.id.substring(slashIndex + 1);
   }
 
+  const startedAt = Date.now();
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} saving model selection`, {
+    selectedModel: toModelLogPayload(model),
+    settingVendor: vendorToSave,
+    settingId: idToSave
+  });
   await Promise.all([
     config.update(COMMIT_MESSAGE_MODEL_VENDOR_SETTING_KEY, vendorToSave, vscode.ConfigurationTarget.Global),
     config.update(COMMIT_MESSAGE_MODEL_ID_SETTING_KEY, idToSave, vscode.ConfigurationTarget.Global)
   ]);
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model selection saved`, {
+    elapsedMs: Date.now() - startedAt
+  });
 }
 
 async function selectModel(
@@ -918,11 +1047,41 @@ async function selectModel(
   forcePrompt = false,
   token?: vscode.CancellationToken
 ): Promise<ModelSelectionResult> {
+  const startedAt = Date.now();
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectModel start`, {
+    allowPrompt,
+    forcePrompt,
+    hasCancellationToken: !!token
+  });
+  const finishSelection = (result: ModelSelectionResult, reason: string): ModelSelectionResult => {
+    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectModel resolved`, {
+      reason,
+      kind: result.kind,
+      elapsedMs: Date.now() - startedAt,
+      model: result.kind === 'selected' ? toModelLogPayload(result.model) : undefined
+    });
+    return result;
+  };
+
   throwIfCancelled(token);
-  const allModels = await selectChatModelsWithTimeout(token);
+  const allModels = await selectChatModelsWithTimeout(token, { vendor: CODING_PLANS_VENDOR });
   throwIfCancelled(token);
+  let filteredPlaceholderCount = 0;
+  let filteredCopilotCount = 0;
   const models = allModels
-    .filter(model => !isPlaceholderModelId(model.id) && !isCopilotVendor(model.vendor))
+    .filter(model => {
+      const placeholder = isPlaceholderModelId(model.id);
+      if (placeholder) {
+        filteredPlaceholderCount += 1;
+        return false;
+      }
+      const copilot = isCopilotVendor(model.vendor);
+      if (copilot) {
+        filteredCopilotCount += 1;
+        return false;
+      }
+      return true;
+    })
     .sort((a, b) => {
       const ka = modelSortKey(a);
       const kb = modelSortKey(b);
@@ -932,12 +1091,23 @@ async function selectModel(
       }
       return 0;
     });
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} models prepared`, {
+    allModelCount: allModels.length,
+    keptModelCount: models.length,
+    filteredPlaceholderCount,
+    filteredCopilotCount,
+    modelGroups: summarizeModelGroupsForLog(models)
+  });
 
   if (models.length === 0) {
-    return { kind: 'noModels' };
+    return finishSelection({ kind: 'noModels' }, 'no-usable-models');
   }
 
   const selector = readConfiguredModelSelector();
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} configured selector loaded`, {
+    configuredVendor: selector.vendor,
+    configuredId: selector.id
+  });
 
   if (!forcePrompt) {
     if (selector.vendor && selector.id) {
@@ -949,8 +1119,12 @@ async function selectModel(
         || (m.vendor === vendor && m.id === id)
       );
       if (match) {
-        return { kind: 'selected', model: match };
+        return finishSelection({ kind: 'selected', model: match }, 'configured-vendor-id-match');
       }
+      logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} configured model not found`, {
+        configuredVendor: vendor,
+        configuredId: id
+      });
       if (allowPrompt) {
         void vscode.window.showWarningMessage(getMessage('commitMessageConfiguredModelNotFound'));
       }
@@ -961,8 +1135,11 @@ async function selectModel(
         || (m.vendor === vendor)
       );
       if (match) {
-        return { kind: 'selected', model: match };
+        return finishSelection({ kind: 'selected', model: match }, 'configured-vendor-match');
       }
+      logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} configured vendor not found`, {
+        configuredVendor: selector.vendor
+      });
       if (allowPrompt) {
         void vscode.window.showWarningMessage(getMessage('commitMessageConfiguredVendorNotFound', selector.vendor));
       }
@@ -970,16 +1147,20 @@ async function selectModel(
   }
 
   if (!allowPrompt) {
-    return { kind: 'selected', model: models[0] };
+    return finishSelection({ kind: 'selected', model: models[0] }, 'prompt-disabled-default-first-model');
   }
 
   if (!selector.vendor) {
     const pickedVendor = await pickVendor(models);
     if (!pickedVendor) {
-      return { kind: 'cancelled' };
+      return finishSelection({ kind: 'cancelled' }, 'vendor-picker-cancelled');
     }
 
     const vendorModels = models.filter(model => getModelGroupKey(model) === pickedVendor);
+    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} opening model picker for vendor`, {
+      vendor: pickedVendor,
+      modelCount: vendorModels.length
+    });
     const pickedModel = await vscode.window.showQuickPick(
       vendorModels.map(model => toVendorScopedModelQuickPickItem(model)),
       {
@@ -989,18 +1170,21 @@ async function selectModel(
     );
 
     if (!pickedModel) {
-      return { kind: 'cancelled' };
+      return finishSelection({ kind: 'cancelled' }, 'vendor-model-picker-cancelled');
     }
 
     await saveModelSelection(pickedModel.model);
-    return { kind: 'selected', model: pickedModel.model };
+    return finishSelection({ kind: 'selected', model: pickedModel.model }, 'vendor-model-picked');
   }
 
   if (models.length === 1) {
     await saveModelSelection(models[0]);
-    return { kind: 'selected', model: models[0] };
+    return finishSelection({ kind: 'selected', model: models[0] }, 'single-model-auto-selected');
   }
 
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} opening global model picker`, {
+    modelCount: models.length
+  });
   const picked = await vscode.window.showQuickPick(
     models.map(model => toGlobalModelQuickPickItem(model)),
     {
@@ -1010,40 +1194,209 @@ async function selectModel(
   );
 
   if (!picked) {
-    return { kind: 'cancelled' };
+    return finishSelection({ kind: 'cancelled' }, 'global-model-picker-cancelled');
   }
 
   await saveModelSelection(picked.model);
-  return { kind: 'selected', model: picked.model };
+  return finishSelection({ kind: 'selected', model: picked.model }, 'global-model-picked');
 }
 
-async function selectChatModelsWithTimeout(token?: vscode.CancellationToken): Promise<vscode.LanguageModelChat[]> {
+async function selectChatModelsWithTimeout(
+  token?: vscode.CancellationToken,
+  selector?: vscode.LanguageModelChatSelector
+): Promise<vscode.LanguageModelChat[]> {
   if (!vscode.lm || typeof vscode.lm.selectChatModels !== 'function') {
     throw new Error(getMessage('commitMessageModelSelectionUnavailable'));
   }
 
+  const normalizedSelector = normalizeChatModelsSelector(selector);
+  const selectorKey = toSelectorCacheKey(normalizedSelector);
+  const selectorLog = toSelectorLogPayload(normalizedSelector);
+  const now = Date.now();
+  const cache = chatModelsSelectionCache;
+  const hasMatchingCache = !!cache && cache.selectorKey === selectorKey;
+
+  let staleModels: vscode.LanguageModelChat[] | undefined;
+  let staleAgeMs: number | undefined;
+  if (hasMatchingCache && cache) {
+    const ageMs = now - cache.fetchedAt;
+    if (ageMs <= SELECT_CHAT_MODELS_CACHE_TTL_MS) {
+      logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} cache-hit`, {
+        selector: selectorLog,
+        modelCount: cache.models.length,
+        ageMs,
+        ttlMs: SELECT_CHAT_MODELS_CACHE_TTL_MS,
+        elapsedMs: Date.now() - now
+      });
+      return cache.models;
+    }
+    if (cache.fetchedAt > 0) {
+      staleModels = cache.models;
+      staleAgeMs = ageMs;
+      logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} cache-stale`, {
+        selector: selectorLog,
+        modelCount: cache.models.length,
+        ageMs,
+        ttlMs: SELECT_CHAT_MODELS_CACHE_TTL_MS
+      });
+    }
+    if (cache.inFlight) {
+      try {
+        return await cache.inFlight;
+      } catch (error: unknown) {
+        if (staleModels) {
+          logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} stale-cache-served`, {
+            selector: selectorLog,
+            modelCount: staleModels.length,
+            staleAgeMs,
+            reason: 'inflight-refresh-failed',
+            error: formatErrorDetail(error)
+          });
+          return staleModels;
+        }
+        throw error;
+      }
+    }
+  } else {
+    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} cache-miss`, {
+      selector: selectorLog,
+      hasExistingCache: !!cache,
+      existingSelectorKey: cache?.selectorKey,
+      existingModelCount: cache?.models.length
+    });
+  }
+
+  const refreshStartedAt = Date.now();
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} cache-refresh-start`, {
+    selector: selectorLog,
+    hasStaleCache: !!staleModels,
+    staleAgeMs
+  });
+  const refreshPromise = selectChatModelsOnceWithTimeout(token, normalizedSelector);
+  chatModelsSelectionCache = {
+    models: staleModels || [],
+    fetchedAt: staleModels ? now - (staleAgeMs || 0) : 0,
+    selectorKey,
+    inFlight: refreshPromise
+  };
+
+  try {
+    const refreshedModels = await refreshPromise;
+    chatModelsSelectionCache = {
+      models: refreshedModels,
+      fetchedAt: Date.now(),
+      selectorKey
+    };
+    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} cache-refresh-resolved`, {
+      selector: selectorLog,
+      modelCount: refreshedModels.length,
+      elapsedMs: Date.now() - refreshStartedAt
+    });
+    return refreshedModels;
+  } catch (error: unknown) {
+    logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} cache-refresh-failed`, {
+      selector: selectorLog,
+      elapsedMs: Date.now() - refreshStartedAt,
+      cancelled: isRequestCancelledError(error),
+      error: formatErrorDetail(error)
+    });
+    if (staleModels) {
+      chatModelsSelectionCache = {
+        models: staleModels,
+        fetchedAt: now - (staleAgeMs || 0),
+        selectorKey
+      };
+      logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} stale-cache-served`, {
+        selector: selectorLog,
+        modelCount: staleModels.length,
+        staleAgeMs,
+        reason: 'refresh-failed',
+        error: formatErrorDetail(error)
+      });
+      return staleModels;
+    }
+    if (chatModelsSelectionCache?.inFlight === refreshPromise && chatModelsSelectionCache.selectorKey === selectorKey) {
+      chatModelsSelectionCache = undefined;
+    }
+    throw error;
+  } finally {
+    if (chatModelsSelectionCache?.inFlight === refreshPromise && chatModelsSelectionCache.selectorKey === selectorKey) {
+      chatModelsSelectionCache = {
+        models: chatModelsSelectionCache.models,
+        fetchedAt: chatModelsSelectionCache.fetchedAt,
+        selectorKey
+      };
+    }
+  }
+}
+
+async function selectChatModelsOnceWithTimeout(
+  token?: vscode.CancellationToken,
+  selector?: vscode.LanguageModelChatSelector
+): Promise<vscode.LanguageModelChat[]> {
+  if (!vscode.lm || typeof vscode.lm.selectChatModels !== 'function') {
+    throw new Error(getMessage('commitMessageModelSelectionUnavailable'));
+  }
+
+  const startedAt = Date.now();
+  const selectorLog = toSelectorLogPayload(selector);
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels start`, {
+    timeoutMs: SELECT_CHAT_MODELS_TIMEOUT_MS,
+    hasCancellationToken: !!token,
+    selector: selectorLog
+  });
   let timeoutHandle: NodeJS.Timeout | undefined;
   let cancellationDisposable: vscode.Disposable | undefined;
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutHandle = setTimeout(() => {
+      logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels timeout`, {
+        timeoutMs: SELECT_CHAT_MODELS_TIMEOUT_MS,
+        elapsedMs: Date.now() - startedAt,
+        selector: selectorLog
+      });
       reject(new Error(getMessage('commitMessageModelSelectionTimeout')));
     }, SELECT_CHAT_MODELS_TIMEOUT_MS);
   });
   const cancellationPromise = token ? new Promise<never>((_, reject) => {
     if (token.isCancellationRequested) {
+      logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels cancelled before request`, {
+        elapsedMs: Date.now() - startedAt,
+        selector: selectorLog
+      });
       reject(createRequestCancelledError());
       return;
     }
     cancellationDisposable = token.onCancellationRequested(() => {
+      logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels cancelled during request`, {
+        elapsedMs: Date.now() - startedAt,
+        selector: selectorLog
+      });
       reject(createRequestCancelledError());
     });
   }) : undefined;
+  const selectModelsPromise = vscode.lm.selectChatModels(selector).then(models => {
+    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels resolved`, {
+      elapsedMs: Date.now() - startedAt,
+      modelCount: models.length,
+      selector: selectorLog,
+      modelGroups: summarizeModelGroupsForLog(models)
+    });
+    return models;
+  });
 
   try {
     const pending = cancellationPromise
-      ? [vscode.lm.selectChatModels(), timeoutPromise, cancellationPromise]
-      : [vscode.lm.selectChatModels(), timeoutPromise];
+      ? [selectModelsPromise, timeoutPromise, cancellationPromise]
+      : [selectModelsPromise, timeoutPromise];
     return await Promise.race(pending);
+  } catch (error: unknown) {
+    logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels failed`, {
+      elapsedMs: Date.now() - startedAt,
+      cancelled: isRequestCancelledError(error),
+      selector: selectorLog,
+      error: formatErrorDetail(error)
+    });
+    throw error;
   } finally {
     if (timeoutHandle) {
       clearTimeout(timeoutHandle);
@@ -1275,24 +1628,43 @@ function getCommitMessagePreview(message: string): string {
 }
 
 export async function selectCommitMessageModel(): Promise<void> {
+  const startedAt = Date.now();
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command start`);
   try {
     const selection = await selectModel(true, true);
     if (selection.kind === 'cancelled') {
+      logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command cancelled`, {
+        elapsedMs: Date.now() - startedAt
+      });
       vscode.window.showInformationMessage(getMessage('requestCancelled'));
       return;
     }
     if (selection.kind === 'noModels') {
+      logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command found no models`, {
+        elapsedMs: Date.now() - startedAt
+      });
       vscode.window.showWarningMessage(getMessage('commitMessageNoModel'));
       return;
     }
+    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command selected model`, {
+      elapsedMs: Date.now() - startedAt,
+      model: toModelLogPayload(selection.model)
+    });
     vscode.window.showInformationMessage(
       getMessage('commitMessageModelSaved', `${selection.model.vendor} · ${selection.model.name}`)
     );
   } catch (error: unknown) {
     if (isRequestCancelledError(error)) {
+      logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command cancelled by exception`, {
+        elapsedMs: Date.now() - startedAt
+      });
       vscode.window.showInformationMessage(getMessage('requestCancelled'));
       return;
     }
+    logger.error(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command failed`, {
+      elapsedMs: Date.now() - startedAt,
+      error: formatErrorDetail(error)
+    });
     logger.error('Failed to select commit message model.', error);
     const detail = formatErrorDetail(error);
     vscode.window.showErrorMessage(getMessage('commitMessageModelSelectionFailed', detail));
