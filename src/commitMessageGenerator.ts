@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { execFile } from 'node:child_process';
+import * as path from 'node:path';
 import { getMessage } from './i18n/i18n';
 import { getCompactErrorMessage } from './providers/baseProvider';
 import { logger } from './logging/outputChannelLogger';
@@ -76,6 +77,7 @@ interface GitExtension {
 
 interface GitAPI {
   repositories: GitRepository[];
+  getRepository?(uri: vscode.Uri): GitRepository | null;
 }
 
 interface GitRepository {
@@ -716,13 +718,144 @@ function validateCommitMessage(
   return issues;
 }
 
-async function getGitRepository(): Promise<GitRepository | undefined> {
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function isGitRepository(value: unknown): value is GitRepository {
+  if (!isRecord(value)) {
+    return false;
+  }
+  return typeof value.diff === 'function'
+    && isRecord(value.inputBox)
+    && typeof value.inputBox.value === 'string';
+}
+
+function normalizeFsPath(fsPath: string): string {
+  const normalized = path.normalize(fsPath);
+  return process.platform === 'win32' ? normalized.toLowerCase() : normalized;
+}
+
+function areFsPathsEqual(left: string, right: string): boolean {
+  return normalizeFsPath(left) === normalizeFsPath(right);
+}
+
+function isPathEqualOrWithin(pathToCheck: string, rootPath: string): boolean {
+  const normalizedPathToCheck = normalizeFsPath(pathToCheck);
+  const normalizedRootPath = normalizeFsPath(rootPath);
+  const relative = path.relative(normalizedRootPath, normalizedPathToCheck);
+  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+}
+
+function findRepositoryByRootPath(repositories: GitRepository[], rootPath: string): GitRepository | undefined {
+  return repositories.find(repo => {
+    const candidateRootPath = repo.rootUri?.fsPath;
+    return typeof candidateRootPath === 'string' && areFsPathsEqual(candidateRootPath, rootPath);
+  });
+}
+
+function getUriFromCommandContext(
+  value: unknown,
+  depth = 0,
+  visited: WeakSet<object> = new WeakSet<object>()
+): vscode.Uri | undefined {
+  if (value instanceof vscode.Uri) {
+    return value;
+  }
+  if (!isRecord(value) || depth > 3) {
+    return undefined;
+  }
+
+  const objectValue = value as object;
+  if (visited.has(objectValue)) {
+    return undefined;
+  }
+  visited.add(objectValue);
+
+  const directKeys = ['rootUri', 'uri', 'resourceUri', 'originalUri'] as const;
+  for (const key of directKeys) {
+    const candidate = value[key];
+    if (candidate instanceof vscode.Uri) {
+      return candidate;
+    }
+  }
+
+  const nestedKeys = ['sourceControl', 'resourceGroup', 'resourceState', 'repository', 'input'] as const;
+  for (const key of nestedKeys) {
+    const nestedUri = getUriFromCommandContext(value[key], depth + 1, visited);
+    if (nestedUri) {
+      return nestedUri;
+    }
+  }
+
+  return undefined;
+}
+
+function findRepositoryByUri(gitApi: GitAPI, uri: vscode.Uri): GitRepository | undefined {
+  const repositoryFromApi = gitApi.getRepository?.(uri);
+  if (repositoryFromApi) {
+    return repositoryFromApi;
+  }
+  if (uri.scheme !== 'file') {
+    return undefined;
+  }
+
+  return gitApi.repositories.find(repo => {
+    const repoRootPath = repo.rootUri?.fsPath;
+    return typeof repoRootPath === 'string' && isPathEqualOrWithin(uri.fsPath, repoRootPath);
+  });
+}
+
+function resolveRepositoryFromCommandContext(gitApi: GitAPI, commandContext: unknown): GitRepository | undefined {
+  if (isGitRepository(commandContext)) {
+    if (gitApi.repositories.includes(commandContext)) {
+      return commandContext;
+    }
+
+    const rootPath = commandContext.rootUri?.fsPath;
+    if (typeof rootPath === 'string') {
+      const matched = findRepositoryByRootPath(gitApi.repositories, rootPath);
+      if (matched) {
+        return matched;
+      }
+    }
+  }
+
+  const contextUri = getUriFromCommandContext(commandContext);
+  if (contextUri) {
+    const matched = findRepositoryByUri(gitApi, contextUri);
+    if (matched) {
+      return matched;
+    }
+  }
+
+  return undefined;
+}
+
+async function getGitRepository(commandContext?: unknown): Promise<GitRepository | undefined> {
   const ext = vscode.extensions.getExtension<GitExtension>('vscode.git');
   if (!ext) {
     return undefined;
   }
 
   const gitApi = ext.isActive ? ext.exports.getAPI(1) : (await ext.activate()).getAPI(1);
+  const repositoryFromCommand = resolveRepositoryFromCommandContext(gitApi, commandContext);
+  if (repositoryFromCommand) {
+    return repositoryFromCommand;
+  }
+
+  const activeEditorUri = vscode.window.activeTextEditor?.document.uri;
+  if (activeEditorUri) {
+    const repositoryFromEditor = findRepositoryByUri(gitApi, activeEditorUri);
+    if (repositoryFromEditor) {
+      return repositoryFromEditor;
+    }
+  }
+
+  if (gitApi.repositories.length === 1) {
+    return gitApi.repositories[0];
+  }
+
   return gitApi.repositories[0];
 }
 
@@ -1671,7 +1804,7 @@ export async function selectCommitMessageModel(): Promise<void> {
   }
 }
 
-export async function generateCommitMessage(): Promise<void> {
+export async function generateCommitMessage(commandContext?: unknown): Promise<void> {
   try {
     await vscode.window.withProgress(
       {
@@ -1689,7 +1822,7 @@ export async function generateCommitMessage(): Promise<void> {
         await Promise.resolve();
         throwIfCancelled(token);
 
-        const repo = await getGitRepository();
+        const repo = await getGitRepository(commandContext);
         throwIfCancelled(token);
         if (!repo) {
           vscode.window.showWarningMessage(getMessage('commitMessageNoGitRepo'));
