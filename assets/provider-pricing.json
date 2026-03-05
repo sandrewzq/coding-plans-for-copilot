@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-05T05:22:29.475Z",
+  "generatedAt": "2026-03-05T05:37:51.191Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -314,7 +314,7 @@
           "originalPrice": 40,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "新客首月 7.9",
           "serviceDetails": [
             "能力: 支持 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus、MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等模型",
             "场景: 面向处理轻量级工作负载的个人开发者",
@@ -328,7 +328,7 @@
           "originalPrice": 200,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "新客首月 7.9",
           "serviceDetails": [
             "权益: 享受 Lite 套餐的全部能力与权益",
             "额度: 用量是 Lite 版的 5 倍",
@@ -530,9 +530,46 @@
           ]
         }
       ]
+    },
+    {
+      "provider": "infini-ai",
+      "sourceUrls": [
+        "https://cloud.infini-ai.com/platform/ai",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.4e3581aa.js",
+        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
+      ],
+      "plans": [
+        {
+          "name": "Infini Coding Lite",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "1,000次/5小时、6,000次/7天、12,000次/1个月",
+            "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新"
+          ]
+        },
+        {
+          "name": "Infini Coding Pro",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "5,000次/5小时、30,000次/7天、60,000次/1个月",
+            "5倍Lite套餐用量",
+            "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新"
+          ]
+        }
+      ]
     }
   ],
-  "failures": [
-    "infini-ai: Infini page does not expose standard monthly coding plan prices"
-  ]
+  "failures": []
 }
