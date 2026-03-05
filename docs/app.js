@@ -121,8 +121,20 @@ function formatOfferPriceText(rawValue, fallbackSymbol = "$") {
   }
   const amount = numberMatch[1];
   const symbol = detectCurrencySymbol(rawText, fallbackSymbol);
-  const hasMonthlyUnit = /\/\s*月|每月|月/.test(rawText);
-  return `${symbol}${amount}${hasMonthlyUnit ? "/月" : "/月"}`;
+  const unitMatch = rawText.match(/\/\s*(月|季|年|month|quarter|year)/i) ||
+    rawText.match(/(每月|每季|每年)/);
+  let unitLabel = "";
+  if (unitMatch) {
+    const unitToken = unitMatch[1] || unitMatch[0];
+    if (/月|month/i.test(unitToken)) {
+      unitLabel = "/月";
+    } else if (/季|quarter/i.test(unitToken)) {
+      unitLabel = "/季";
+    } else if (/年|year/i.test(unitToken)) {
+      unitLabel = "/年";
+    }
+  }
+  return `${symbol}${amount}${unitLabel}`;
 }
 
 function getPlanOffer(provider, plan) {
@@ -353,8 +365,13 @@ async function loadData() {
   reloadButtonEl.disabled = true;
   reloadButtonEl.textContent = "加载中...";
   renderSkeletonProviders();
+  const controller = new AbortController();
+  const timeoutHandle = setTimeout(() => controller.abort(), 8_000);
   try {
-    const response = await fetch(DATA_PATH, { cache: "no-store" });
+    const response = await fetch(DATA_PATH, {
+      cache: "no-store",
+      signal: controller.signal,
+    });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
@@ -363,13 +380,19 @@ async function loadData() {
     renderProviders(data);
     renderFailures(data);
   } catch (error) {
+    const isTimeout = error?.name === "AbortError";
     providerGridEl.replaceChildren();
     providerGridEl.append(createElement("article", "empty", "加载失败，请稍后重试。"));
     generatedAtEl.textContent = "--";
     providerCountEl.textContent = "0";
     planCountEl.textContent = "0";
-    setError(`无法读取 ${DATA_PATH}：${error.message}`);
+    setError(
+      isTimeout
+        ? `加载超时（8 秒）：${DATA_PATH}`
+        : `无法读取 ${DATA_PATH}：${error.message}`,
+    );
   } finally {
+    clearTimeout(timeoutHandle);
     reloadButtonEl.disabled = false;
     reloadButtonEl.textContent = "重新加载";
   }

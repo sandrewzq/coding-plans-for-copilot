@@ -7,7 +7,7 @@ const http = require("node:http");
 const path = require("node:path");
 
 const DOCS_DIR = path.resolve(__dirname, "..", "docs");
-const PRICING_JSON = path.resolve(__dirname, "..", "assets", "provider-pricing.json");
+const PRICING_JSON = path.resolve(__dirname, "..", "docs", "provider-pricing.json");
 const PORT = Number.parseInt(process.env.PORT || "4173", 10);
 const HOST = process.env.HOST || "127.0.0.1";
 
