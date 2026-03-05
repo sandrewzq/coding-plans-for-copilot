@@ -326,10 +326,33 @@ function renderFailures(data) {
   setError(`抓取存在 ${failures.length} 个失败项：${failures.join("；")}`);
 }
 
+function renderSkeletonProviders() {
+  providerGridEl.replaceChildren();
+  for (let i = 0; i < 3; i++) {
+    const card = createElement("article", "provider-card");
+    const head = createElement("header", "provider-head");
+    const title = createElement("h2", "provider-title skeleton", "Loading Provider API");
+    head.append(title);
+
+    const planList = createElement("ul", "plan-list");
+    for (let j = 0; j < 2; j++) {
+      const item = createElement("li", "plan-item");
+      const name = createElement("h3", "plan-name skeleton", "Awesome Plan Title Here");
+      const priceRow = createElement("p", "price-row");
+      priceRow.append(createElement("span", "price-now skeleton", "¥999.00/月"));
+      item.append(name, priceRow);
+      planList.append(item);
+    }
+    card.append(head, planList);
+    providerGridEl.append(card);
+  }
+}
+
 async function loadData() {
   setError("");
   reloadButtonEl.disabled = true;
   reloadButtonEl.textContent = "加载中...";
+  renderSkeletonProviders();
   try {
     const response = await fetch(DATA_PATH, { cache: "no-store" });
     if (!response.ok) {
