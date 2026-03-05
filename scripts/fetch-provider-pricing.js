@@ -7,8 +7,8 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 
 const OUTPUT_FILE = path.resolve(__dirname, "..", "assets", "provider-pricing.json");
-const REQUEST_TIMEOUT_MS = 15_000;
-const TASK_TIMEOUT_MS = 15_000;
+const REQUEST_TIMEOUT_MS = 30_000;
+const TASK_TIMEOUT_MS = 30_000;
 
 const PROVIDER_IDS = {
   ZHIPU: "zhipu-ai",
@@ -185,16 +185,16 @@ function normalizePlanCurrencySymbols(plan) {
     notes:
       typeof plan.notes === "string" && plan.notes.trim()
         ? plan.notes
-            .split(/([；;])/)
-            .map((part) => {
-              if (part === "；" || part === ";") {
-                return part;
-              }
-              return normalizeMoneyTextByCurrency(part, fallbackCurrency) || compactInlineText(part);
-            })
-            .join("")
-            .replace(/\s+/g, " ")
-            .trim()
+          .split(/([；;])/)
+          .map((part) => {
+            if (part === "；" || part === ";") {
+              return part;
+            }
+            return normalizeMoneyTextByCurrency(part, fallbackCurrency) || compactInlineText(part);
+          })
+          .join("")
+          .replace(/\s+/g, " ")
+          .trim()
         : plan.notes || null,
   };
 }
@@ -1401,15 +1401,15 @@ async function parseAliyunCodingPlans() {
       null;
     const discountedCents = Number(
       moduleResult?.price?.discountedUnitPrice ??
-        moduleResult?.price?.discountedPrice ??
-        articleItem?.price?.discountedUnitPrice ??
-        articleItem?.price?.discountedPrice,
+      moduleResult?.price?.discountedPrice ??
+      articleItem?.price?.discountedUnitPrice ??
+      articleItem?.price?.discountedPrice,
     );
     const listCents = Number(
       moduleResult?.price?.unitPrice ??
-        moduleResult?.depreciateInfo?.listPrice ??
-        articleItem?.price?.unitPrice ??
-        articleItem?.depreciateInfo?.listPrice,
+      moduleResult?.depreciateInfo?.listPrice ??
+      articleItem?.price?.unitPrice ??
+      articleItem?.depreciateInfo?.listPrice,
     );
     const currentAmount = centToYuan(discountedCents);
     const originalAmount = centToYuan(listCents);
