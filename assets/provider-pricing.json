@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-03-05T07:25:51.332Z",
+  "generatedAt": "2026-03-05T09:05:11.607Z",
   "providers": [
     {
       "provider": "zhipu-ai",
       "sourceUrls": [
         "https://bigmodel.cn/glm-coding",
-        "https://bigmodel.cn/js/app.80715d1b.js",
-        "https://bigmodel.cn/js/chunk-0d4f69d1.69f45323.js",
+        "https://bigmodel.cn/js/app.7e3b39ba.js",
+        "https://bigmodel.cn/js/chunk-0d4f69d1.465ec58a.js",
         "https://docs.bigmodel.cn/cn/coding-plan/overview"
       ],
-      "fetchedAt": "2026-03-05T07:25:44.694Z",
+      "fetchedAt": "2026-03-05T09:05:02.250Z",
       "plans": [
         {
           "name": "GLM Coding Lite (月)",
@@ -58,7 +58,7 @@
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods"
       ],
-      "fetchedAt": "2026-03-05T07:25:43.851Z",
+      "fetchedAt": "2026-03-05T09:05:01.247Z",
       "plans": [
         {
           "name": "Andante (月)",
@@ -116,7 +116,7 @@
         "https://platform.minimaxi.com/docs/guides/pricing-coding-plan",
         "https://platform.minimaxi.com/subscribe/coding-plan"
       ],
-      "fetchedAt": "2026-03-05T07:25:41.598Z",
+      "fetchedAt": "2026-03-05T09:04:59.325Z",
       "plans": [
         {
           "name": "Plus-极速版",
@@ -216,7 +216,7 @@
         "https://www.volcengine.com/activity/codingplan",
         "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.169/index.js"
       ],
-      "fetchedAt": "2026-03-05T07:25:45.113Z",
+      "fetchedAt": "2026-03-05T09:05:01.901Z",
       "plans": [
         {
           "name": "Coding Plan Lite 月套餐",
@@ -253,7 +253,7 @@
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan"
       ],
-      "fetchedAt": "2026-03-05T07:25:44.318Z",
+      "fetchedAt": "2026-03-05T09:05:03.144Z",
       "plans": [
         {
           "name": "Coding Plan Lite",
@@ -290,7 +290,7 @@
       "sourceUrls": [
         "https://cloud.baidu.com/product/codingplan.html"
       ],
-      "fetchedAt": "2026-03-05T07:25:43.017Z",
+      "fetchedAt": "2026-03-05T09:05:00.183Z",
       "plans": [
         {
           "name": "Coding Plan Lite",
@@ -331,7 +331,7 @@
         "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
         "https://console.streamlake.com/api/common/describe-product-detail"
       ],
-      "fetchedAt": "2026-03-05T07:25:43.642Z",
+      "fetchedAt": "2026-03-05T09:05:01.824Z",
       "plans": [
         {
           "name": "KAT Coding Mini",
@@ -401,7 +401,7 @@
         "https://code.x-aio.com/",
         "https://code.x-aio.com/assets/index-kY5B5WUy.js"
       ],
-      "fetchedAt": "2026-03-05T07:25:42.536Z",
+      "fetchedAt": "2026-03-05T09:05:00.545Z",
       "plans": [
         {
           "name": "Lite（入门版）",
@@ -465,7 +465,7 @@
       "sourceUrls": [
         "https://www.compshare.cn/docs/modelverse/package_plan/package"
       ],
-      "fetchedAt": "2026-03-05T07:25:42.521Z",
+      "fetchedAt": "2026-03-05T09:05:00.634Z",
       "plans": [
         {
           "name": "包月畅享包",
@@ -491,7 +491,7 @@
         "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.d94bcdaa.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
-      "fetchedAt": "2026-03-05T07:25:51.331Z",
+      "fetchedAt": "2026-03-05T09:05:11.606Z",
       "plans": [
         {
           "name": "Infini Coding Lite",
@@ -524,7 +524,7 @@
       "sourceUrls": [
         "https://code.mthreads.com/"
       ],
-      "fetchedAt": "2026-03-05T07:25:39.500Z",
+      "fetchedAt": "2026-03-05T09:04:57.135Z",
       "plans": [
         {
           "name": "Lite Plan",
@@ -578,7 +578,7 @@
       "sourceUrls": [
         "https://zenmux.ai/pricing/subscription"
       ],
-      "fetchedAt": "2026-03-05T07:25:39.501Z",
+      "fetchedAt": "2026-03-05T09:04:57.136Z",
       "plans": [
         {
           "name": "Pro",
