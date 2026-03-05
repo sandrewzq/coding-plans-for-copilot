@@ -33,7 +33,6 @@ const PROVIDER_BUY_URLS = {
 const reloadButtonEl = document.querySelector("#reloadButton");
 const providerGridEl = document.querySelector("#providerGrid");
 const errorBannerEl = document.querySelector("#errorBanner");
-const generatedAtEl = document.querySelector("#generatedAt");
 const providerCountEl = document.querySelector("#providerCount");
 const planCountEl = document.querySelector("#planCount");
 
@@ -336,13 +335,11 @@ async function loadData() {
       throw new Error(`HTTP ${response.status}`);
     }
     const data = await response.json();
-    generatedAtEl.textContent = formatDate(data.generatedAt);
     renderProviders(data);
     renderFailures(data);
   } catch (error) {
     providerGridEl.replaceChildren();
     providerGridEl.append(createElement("article", "empty", "加载失败，请稍后重试。"));
-    generatedAtEl.textContent = "--";
     providerCountEl.textContent = "0";
     planCountEl.textContent = "0";
     setError(`无法读取 ${DATA_PATH}：${error.message}`);
