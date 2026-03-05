@@ -5,7 +5,7 @@ const PROVIDER_LABELS = {
   "kimi-ai": "Kimi",
   "volcengine-ai": "火山引擎",
   "minimax-ai": "MiniMax",
-  "aliyun-ai": "阿里云通义千问",
+  "aliyun-ai": "阿里云百炼",
   "baidu-qianfan-ai": "百度智能云千帆",
   "kwaikat-ai": "快手 KwaiKAT",
   "x-aio": "X-AIO",
@@ -47,6 +47,7 @@ const PROVIDER_ORDER = [
 
 const reloadButtonEl = document.querySelector("#reloadButton");
 const providerGridEl = document.querySelector("#providerGrid");
+const providerNavEl = document.querySelector("#providerNav");
 const errorBannerEl = document.querySelector("#errorBanner");
 const generatedAtEl = document.querySelector("#generatedAt");
 const providerCountEl = document.querySelector("#providerCount");
@@ -260,6 +261,9 @@ function renderProviders(data) {
     });
 
   providerGridEl.replaceChildren();
+  if (providerNavEl) {
+    providerNavEl.replaceChildren();
+  }
 
   if (visibleProviders.length === 0) {
     providerGridEl.append(createElement("article", "empty", "暂无可展示的标准月费数据。"));
@@ -272,9 +276,13 @@ function renderProviders(data) {
   for (const provider of visibleProviders) {
     totalPlans += provider.plans.length;
 
+    const providerName = PROVIDER_LABELS[provider.provider] || provider.provider;
+    const providerId = `provider-${String(provider.provider || "").replace(/[^a-z0-9-]/gi, "-")}`;
+
     const card = createElement("article", "provider-card");
+    card.id = providerId;
     const head = createElement("header", "provider-head");
-    const title = createElement("h2", "provider-title", PROVIDER_LABELS[provider.provider] || provider.provider);
+    const title = createElement("h2", "provider-title", providerName);
     head.append(title);
 
     const providerBuyUrl = getProviderPurchaseUrl(provider);
@@ -361,6 +369,14 @@ function renderProviders(data) {
     }
 
     providerGridEl.append(card);
+
+    if (providerNavEl) {
+      const item = createElement("li", "sidebar-item");
+      const link = createElement("a", "sidebar-link", providerName);
+      link.href = `#${providerId}`;
+      item.append(link);
+      providerNavEl.append(item);
+    }
   }
 
   providerCountEl.textContent = String(visibleProviders.length);

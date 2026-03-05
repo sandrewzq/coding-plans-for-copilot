@@ -121,9 +121,30 @@ async function parseAliyunCodingPlans() {
     const proFlashMatch =
       cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,1500}?官网折扣价[^¥￥0-9]*[¥￥]200(?:[^0-9]|$)/i) ||
       cleanHtml.match(/Pro(?:高级)?套餐[^0-9]{0,500}?([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月/i);
+
+    const entryScriptMatch = html.match(/cloud-assets\.alicdn\.com\/lowcode\/entry\/prod\/[^\"'\s]+\.js/i);
+    const entryScriptUrl = entryScriptMatch
+      ? `https://${entryScriptMatch[0]}`
+      : null;
+    let entryFirstMonthPrices = [];
+    if (entryScriptUrl) {
+      try {
+        const entryText = await fetchText(entryScriptUrl);
+        const entryPlain = decodeHtml(entryText).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+        entryFirstMonthPrices = [...entryPlain.matchAll(/首月\s*([0-9]+(?:\.[0-9]+)?)\s*元/g)]
+          .map((match) => Number(match[1]))
+          .filter((value) => Number.isFinite(value));
+      } catch {
+        entryFirstMonthPrices = [];
+      }
+    }
+
+    const fallbackLite = entryFirstMonthPrices.find((value) => value > 0 && value <= 20) || null;
+    const fallbackPro = entryFirstMonthPrices.find((value) => value > 20 && value <= 80) || null;
+
     const flashPriceByTier = new Map([
-      ["Lite", liteFlashMatch ? Number(liteFlashMatch[1]) : null],
-      ["Pro", proFlashMatch ? Number(proFlashMatch[1]) : null],
+      ["Lite", liteFlashMatch ? Number(liteFlashMatch[1]) : fallbackLite],
+      ["Pro", proFlashMatch ? Number(proFlashMatch[1]) : fallbackPro],
     ]);
 
     const plans = [];
@@ -172,7 +193,12 @@ async function parseAliyunCodingPlans() {
         normalizeText(moduleResult?.depreciateInfo?.finalActivity?.activityName || articleItem?.name || "") || null;
       const flashSaleAmount = flashPriceByTier.get(planDef.tier) ?? null;
       const finalCurrentAmount = flashSaleAmount || currentAmount;
-      const finalOriginalAmount = flashSaleAmount ? currentAmount : originalAmount;
+      const originalCandidate = Number.isFinite(originalAmount) ? originalAmount : currentAmount;
+      const tierFallbackOriginal = planDef.tier === "Pro" ? 200 : planDef.tier === "Lite" ? 40 : null;
+      const fallbackOriginal = Number.isFinite(tierFallbackOriginal)
+        ? Math.max(tierFallbackOriginal, originalCandidate)
+        : Math.max(currentAmount, originalCandidate);
+      const finalOriginalAmount = flashSaleAmount ? fallbackOriginal : originalAmount;
 
       plans.push(
         asPlan({

@@ -24,33 +24,46 @@
 <body>
   <div class="backdrop"></div>
   <main class="page">
-    <header class="hero">
-      <p class="eyebrow">GitHub Pages · 自动抓取</p>
-      <h1>编码套餐看板</h1>
-      <p class="subtitle">仅展示各供应商公开页面可解析到的标准月费与备注信息。</p>
-      <div class="hero-actions">
-        <a class="hero-link" href="https://github.com/sandrewzq/coding-plans-for-copilot" target="_blank"
-          rel="noopener noreferrer">
-          查看本工程（GitHub）
-        </a>
-      </div>
-      <div class="stats" id="stats">
-        <span>生成时间：<strong id="generatedAt">加载中</strong></span>
-        <span>提供商：<strong id="providerCount">0</strong></span>
-        <span>套餐数：<strong id="planCount">0</strong></span>
-      </div>
-    </header>
+    <div class="page-layout">
+      <aside class="sidebar" aria-label="供应商导航">
+        <div class="sidebar-card">
+          <h2>供应商</h2>
+          <nav class="sidebar-nav">
+            <ul id="providerNav" class="sidebar-list"></ul>
+          </nav>
+        </div>
+      </aside>
 
-    <section class="toolbar">
-      <p>筛选规则：展示月费与季费套餐（不含年费与首月特惠价）。</p>
-      <div class="toolbar-actions">
-        <button id="themeToggle" class="btn-secondary" type="button">🌙 暗色模式</button>
-        <button id="reloadButton" class="btn-primary" type="button">重新加载</button>
-      </div>
-    </section>
+      <div class="page-content">
+        <header class="hero">
+          <p class="eyebrow">GitHub Pages · 自动抓取</p>
+          <h1>编码套餐看板</h1>
+          <p class="subtitle">仅展示各供应商公开页面可解析到的标准月费与备注信息。</p>
+          <div class="hero-actions">
+            <a class="hero-link" href="https://github.com/sandrewzq/coding-plans-for-copilot" target="_blank"
+              rel="noopener noreferrer">
+              查看本工程（GitHub）
+            </a>
+          </div>
+          <div class="stats" id="stats">
+            <span>生成时间：<strong id="generatedAt">加载中</strong></span>
+            <span>提供商：<strong id="providerCount">0</strong></span>
+            <span>套餐数：<strong id="planCount">0</strong></span>
+          </div>
+        </header>
 
-    <section id="errorBanner" class="error hidden" role="status" aria-live="polite"></section>
-    <section id="providerGrid" class="provider-grid" aria-live="polite"></section>
+        <section class="toolbar">
+          <p>筛选规则：展示月费与季费套餐（不含年费与首月特惠价）。</p>
+          <div class="toolbar-actions">
+            <button id="themeToggle" class="btn-secondary" type="button">🌙 暗色模式</button>
+            <button id="reloadButton" class="btn-primary" type="button">重新加载</button>
+          </div>
+        </section>
+
+        <section id="errorBanner" class="error hidden" role="status" aria-live="polite"></section>
+        <section id="providerGrid" class="provider-grid" aria-live="polite"></section>
+      </div>
+    </div>
   </main>
 </body>
 
