@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-03-05T02:59:15.055Z",
+  "generatedAt": "2026-03-05T05:07:27.368Z",
   "providers": [
     {
       "provider": "zhipu-ai",
       "sourceUrls": [
         "https://bigmodel.cn/glm-coding",
-        "https://bigmodel.cn/js/app.6d2b0e42.js",
+        "https://bigmodel.cn/js/app.80715d1b.js",
         "https://bigmodel.cn/js/chunk-0d4f69d1.69f45323.js",
         "https://docs.bigmodel.cn/cn/coding-plan/overview"
       ],
@@ -497,7 +497,7 @@
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/761364c7aeaaf2d07d6257615d1c1ffc.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/5eed7ab225bc191a22b757b828d76cac.js",
         "https://t.aliyun.com/abs/promotion/queryPrice"
       ],
       "plans": [
