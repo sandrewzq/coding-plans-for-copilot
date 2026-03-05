@@ -1421,7 +1421,7 @@ async function parseAliyunCodingPlans() {
   // The DOM structure might break up the price with spans (e.g. <span>￥</span><span>39.90</span>),
   // and uses fullwidth ￥ (U+FFE5) for the flash price but narrow ¥ (U+00A5) for the regular price.
   // Stripping all tags and spaces makes the regex extremely robust.
-  const cleanHtml = stripTags(html).replace(/\s+/g, "");
+  const cleanHtml = html.replace(/<[^>]+>/g, "").replace(/\s+/g, "");
   const liteFlashMatch =
     cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,500}?官网折扣价[^¥￥0-9]*[¥￥]40(?:[^0-9]|$)/i) ||
     cleanHtml.match(/首月(?:新购)?低至[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
