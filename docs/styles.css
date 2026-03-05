@@ -808,3 +808,61 @@ h1 {
   height: 20px;
   cursor: pointer;
 }
+
+/* Price trend styles */
+.price-trend {
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trend-no-data {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.trend-stable {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.trend-badge {
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.trend-up {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.trend-down {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+[data-theme="dark"] .trend-up {
+  background: rgba(198, 40, 40, 0.2);
+  color: #ef5350;
+}
+
+[data-theme="dark"] .trend-down {
+  background: rgba(46, 125, 50, 0.2);
+  color: #66bb6a;
+}
+
+.trend-tooltip {
+  color: var(--muted);
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.price-trend:hover .trend-tooltip {
+  opacity: 1;
+}

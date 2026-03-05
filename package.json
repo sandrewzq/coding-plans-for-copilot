@@ -6,6 +6,7 @@
     "scripts": {
         "pricing:fetch": "node ./scripts/fetch-provider-pricing.js",
         "pricing:serve": "node ./scripts/serve-pricing-page.js",
+        "pricing:history": "node ./scripts/price-history.js",
         "lint": "eslint scripts/ docs/app.js",
         "lint:fix": "eslint scripts/ docs/app.js --fix"
     },

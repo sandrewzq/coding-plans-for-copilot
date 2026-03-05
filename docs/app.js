@@ -1,4 +1,5 @@
 const DATA_PATH = "./provider-pricing.json";
+const HISTORY_PATH = "./price-history.json";
 
 const PROVIDER_LABELS = {
   "zhipu-ai": "智谱 z.ai",
@@ -421,6 +422,13 @@ function renderProviders(data) {
       compareWrapper.append(compareCheckbox);
       item.append(compareWrapper);
 
+      // Add price trend indicator
+      const trend = getPlanPriceTrend(provider.provider, plan.name);
+      if (trend.length > 0) {
+        const trendEl = renderPriceTrend(trend);
+        item.append(trendEl);
+      }
+
       const offerInfo = getPlanOffer(provider, plan);
       if (offerInfo) {
         const offerCard = createElement("div", "offer-card");
@@ -516,11 +524,98 @@ function renderSkeletonProviders() {
   }
 }
 
+// Store price history data
+let priceHistoryData = null;
+
+/**
+ * Loads price history data
+ * @returns {Promise<Object|null>} Price history data
+ */
+async function loadPriceHistory() {
+  try {
+    const response = await fetch(HISTORY_PATH, { cache: "no-store" });
+    if (!response.ok) return null;
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Gets price trend for a specific plan
+ * @param {string} providerId - Provider ID
+ * @param {string} planName - Plan name
+ * @returns {Array} Price trend data
+ */
+function getPlanPriceTrend(providerId, planName) {
+  if (!priceHistoryData || !priceHistoryData.history) return [];
+
+  const trend = [];
+  for (const snapshot of priceHistoryData.history) {
+    for (const provider of snapshot.providers || []) {
+      if (provider.provider !== providerId) continue;
+      for (const plan of provider.plans || []) {
+        if (plan.name === planName) {
+          trend.push({
+            timestamp: snapshot.timestamp,
+            currentPrice: plan.currentPrice,
+            currentPriceText: plan.currentPriceText,
+          });
+        }
+      }
+    }
+  }
+  return trend;
+}
+
+/**
+ * Renders a mini price trend chart
+ * @param {Array} trend - Price trend data
+ * @returns {HTMLElement} Trend element
+ */
+function renderPriceTrend(trend) {
+  const container = createElement("div", "price-trend");
+
+  if (trend.length < 2) {
+    container.innerHTML = '<span class="trend-no-data">暂无历史数据</span>';
+    return container;
+  }
+
+  const firstPrice = trend[0].currentPrice;
+  const lastPrice = trend[trend.length - 1].currentPrice;
+  const hasChanged = firstPrice !== lastPrice;
+
+  if (!hasChanged) {
+    container.innerHTML = '<span class="trend-stable">价格稳定</span>';
+    return container;
+  }
+
+  const change = lastPrice - firstPrice;
+  const changePercent = firstPrice > 0 ? ((change / firstPrice) * 100).toFixed(1) : 0;
+  const isIncrease = change > 0;
+
+  const trendBadge = createElement(
+    "span",
+    `trend-badge ${isIncrease ? "trend-up" : "trend-down"}`,
+    `${isIncrease ? "↑" : "↓"} ${Math.abs(changePercent)}%`
+  );
+
+  const trendTooltip = createElement("span", "trend-tooltip");
+  trendTooltip.textContent = `历史价格: ${trend.map((t) => t.currentPriceText || t.currentPrice).join(" → ")}`;
+
+  container.append(trendBadge, trendTooltip);
+  return container;
+}
+
 async function loadData() {
   setError("");
   reloadButtonEl.disabled = true;
   reloadButtonEl.textContent = "加载中...";
   renderSkeletonProviders();
+
+  // Load price history in parallel
+  priceHistoryData = await loadPriceHistory();
+
   const controller = new AbortController();
   const timeoutHandle = setTimeout(() => controller.abort(), 8_000);
   try {

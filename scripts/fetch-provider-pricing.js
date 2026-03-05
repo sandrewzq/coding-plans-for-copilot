@@ -13,6 +13,7 @@ const {
   normalizeProviderCurrencySymbols,
 } = require("./utils");
 const { validatePricingData } = require("./schema-validator");
+const { updateHistory } = require("./price-history");
 
 const OUTPUT_FILE = path.resolve(__dirname, "..", "docs", "provider-pricing.json");
 const TASK_TIMEOUT_MS = 30_000;
@@ -138,6 +139,16 @@ async function main() {
   console.log(`[pricing] plans -> ${summary}`);
   if (failures.length > 0) {
     console.log(`[pricing] failures -> ${failures.length}`);
+  }
+
+  // Update price history
+  try {
+    const changes = updateHistory(output);
+    if (changes.length > 0) {
+      console.log(`[pricing] price changes detected: ${changes.length}`);
+    }
+  } catch (error) {
+    console.warn(`[pricing] Failed to update price history: ${error.message}`);
   }
 }
 
