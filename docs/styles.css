@@ -1,12 +1,12 @@
 :root {
-  --bg: #F0F4F2;
-  --bg-ink: #334155;
-  --card: rgba(255, 255, 255, 0.8);
+  --bg: #F8FAFC;
+  --bg-ink: #1E293B;
+  --card: rgba(255, 255, 255, 0.85);
   --line: rgba(203, 213, 225, 0.6);
-  --primary: #059669;
-  --primary-hover: #047857;
-  --accent: #6366f1;
-  --muted: #64748b;
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --accent: #38BDF8;
+  --muted: #64748B;
   --danger-bg: #fdf2f8;
   --danger-text: #be185d;
   --radius-xl: 24px;
@@ -24,9 +24,9 @@ body {
   margin: 0;
   color: var(--bg-ink);
   background-color: var(--bg);
-  background-image: radial-gradient(at 0% 0%, hsla(160, 40%, 94%, 1) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(210, 40%, 94%, 1) 0, transparent 50%),
-    radial-gradient(at 50% 100%, hsla(40, 40%, 94%, 1) 0, transparent 50%);
+  background-image: radial-gradient(at 0% 0%, hsla(220, 100%, 96%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(250, 100%, 96%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 100%, hsla(200, 100%, 96%, 1) 0, transparent 50%);
   background-attachment: fixed;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -159,16 +159,20 @@ h1 {
   font-size: 0.95rem;
   border-radius: 999px;
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.65rem 1.4rem;
   background: var(--primary);
   color: #fff;
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.2s;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
 }
 
 .toolbar button:hover {
   background: var(--primary-hover);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+  transform: translateY(-1px);
 }
 
 .error {
@@ -367,16 +371,18 @@ h1 {
   justify-content: center;
   text-decoration: none;
   border-radius: 999px;
-  padding: 0.4rem 1rem;
-  font-size: 0.9rem;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.88rem;
   font-weight: 600;
+  letter-spacing: 0.03em;
   color: var(--primary);
-  background: #eff6ff;
-  transition: background-color 0.2s;
+  background: #EEF2FF;
+  transition: all 0.2s ease;
 }
 
 .buy-link:hover {
-  background: #dbeafe;
+  background: #E0E7FF;
+  transform: translateY(-1px);
 }
 
 .provider-meta {
