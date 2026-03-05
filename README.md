@@ -66,6 +66,13 @@ npm run pricing:serve
 >    - 修改厂商信息时，同步更新名称、链接等所有关联内容
 >
 > 2. **列表更新**：只需维护以下表格，AI 会自动同步更新到 `app.js` 的 `PROVIDER_ORDER`、`PROVIDER_LABELS`、`PROVIDER_BUY_URLS` 以及数据抓取脚本等所有相关代码
+>
+> 3. **自动同步**：运行 `npm run pricing:sync` 命令，脚本会自动：
+>    - 更新 `docs/app.js` 中的厂商配置
+>    - 更新 `scripts/utils/index.js` 中的 `PROVIDER_IDS`
+>    - 更新 `scripts/fetch-provider-pricing.js` 中的任务列表和导入语句
+>    - 为新厂商自动创建解析器文件模板（位于 `scripts/providers/`）
+>    - 开发者只需完善新解析器中的 TODO 部分即可
 
 | 厂商 | 链接 |
 |------|------|
@@ -88,6 +95,11 @@ npm run pricing:serve
 
 ## 贡献指引
 
-- 在 `scripts/providers/` 中新增解析器
-- 在 `scripts/fetch-provider-pricing.js` 中注册新的抓取任务
-- 在上方「厂商列表」中添加新厂商信息
+**添加新厂商步骤：**
+
+1. 在上方「厂商列表」表格中添加新厂商信息（名称和链接）
+2. 运行 `npm run pricing:sync` 自动同步配置
+3. 脚本会自动创建解析器文件模板在 `scripts/providers/` 目录
+4. 打开新创建的解析器文件，根据页面结构完善 TODO 部分的解析逻辑
+5. 运行 `npm run pricing:fetch` 测试新厂商的数据抓取
+6. 提交代码并推送

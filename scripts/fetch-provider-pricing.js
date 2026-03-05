@@ -61,18 +61,18 @@ async function main() {
   const providers = [];
   const failures = [];
   const tasks = [
-    { provider: PROVIDER_IDS.ALIYUN, fn: parseAliyunCodingPlans },
-    { provider: PROVIDER_IDS.BAIDU, fn: parseBaiduCodingPlans },
-    { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans },
-    { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
+    { provider: PROVIDER_IDS.ZHIPU, fn: parseZhipuCodingPlans },
     { provider: PROVIDER_IDS.KIMI, fn: parseKimiCodingPlans },
-    { provider: PROVIDER_IDS.KWAIKAT, fn: parseKwaikatCodingPlans },
     { provider: PROVIDER_IDS.MINIMAX, fn: parseMinimaxCodingPlans },
-    { provider: PROVIDER_IDS.MTHREADS, fn: parseMthreadsCodingPlans },
+    { provider: PROVIDER_IDS.ALIYUN, fn: parseAliyunCodingPlans },
     { provider: PROVIDER_IDS.VOLCENGINE, fn: parseVolcengineCodingPlans },
+    { provider: PROVIDER_IDS.KWAIKAT, fn: parseKwaikatCodingPlans },
+    { provider: PROVIDER_IDS.BAIDU, fn: parseBaiduCodingPlans },
+    { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
+    { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans },
+    { provider: PROVIDER_IDS.MTHREADS, fn: parseMthreadsCodingPlans },
     { provider: PROVIDER_IDS.XAIO, fn: parseXAioCodingPlans },
     { provider: PROVIDER_IDS.ZENMUX, fn: parseZenmuxCodingPlans },
-    { provider: PROVIDER_IDS.ZHIPU, fn: parseZhipuCodingPlans },
   ];
 
   const results = await Promise.allSettled(tasks.map((task) => runTaskWithTimeout(task.fn)));

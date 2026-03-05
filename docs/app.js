@@ -2,32 +2,32 @@ const DATA_PATH = "./provider-pricing.json";
 const HISTORY_PATH = "./price-history.json";
 
 const PROVIDER_LABELS = {
-  "zhipu-ai": "智谱 z.ai",
+  "zhipu-ai": "智谱",
   "kimi-ai": "Kimi",
-  "volcengine-ai": "火山引擎",
   "minimax-ai": "MiniMax",
   "aliyun-ai": "阿里云百炼",
-  "baidu-qianfan-ai": "百度智能云千帆",
+  "volcengine-ai": "火山引擎",
   "kwaikat-ai": "快手 KwaiKAT",
-  "x-aio": "X-AIO",
-  "compshare-ai": "优云智算",
+  "baidu-qianfan-ai": "百度智能云千帆",
   "infini-ai": "无问芯穹",
+  "compshare-ai": "优云智算",
   "mthreads-ai": "摩尔线程",
+  "x-aio": "X-AIO",
   "zenmux-ai": "Zenmux",
 };
 
 const PROVIDER_BUY_URLS = {
-  "zhipu-ai": "https://www.bigmodel.cn/glm-coding?ic=BZRLCDAC1G",
+  "zhipu-ai": "https://www.bigmodel.cn/glm-coding",
   "kimi-ai": "https://www.kimi.com/code/zh",
-  "volcengine-ai": "https://www.volcengine.com/activity/codingplan",
   "minimax-ai": "https://platform.minimaxi.com/subscribe/coding-plan",
   "aliyun-ai": "https://www.aliyun.com/benefit/scene/codingplan",
-  "baidu-qianfan-ai": "https://cloud.baidu.com/product/codingplan.html",
+  "volcengine-ai": "https://www.volcengine.com/activity/codingplan",
   "kwaikat-ai": "https://www.streamlake.com/marketing/coding-plan",
-  "x-aio": "https://code.x-aio.com/",
-  "compshare-ai": "https://www.compshare.cn/docs/modelverse/package_plan/package",
+  "baidu-qianfan-ai": "https://cloud.baidu.com/product/codingplan.html",
   "infini-ai": "https://cloud.infini-ai.com/platform/ai",
+  "compshare-ai": "https://www.compshare.cn/docs/modelverse/package_plan/package",
   "mthreads-ai": "https://code.mthreads.com/",
+  "x-aio": "https://code.x-aio.com/",
   "zenmux-ai": "https://zenmux.ai/pricing/subscription",
 };
 

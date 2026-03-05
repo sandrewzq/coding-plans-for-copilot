@@ -66,15 +66,15 @@ const REQUEST_TIMEOUT_MS = 15_000;
 const PROVIDER_IDS = {
   ZHIPU: "zhipu-ai",
   KIMI: "kimi-ai",
-  VOLCENGINE: "volcengine-ai",
   MINIMAX: "minimax-ai",
   ALIYUN: "aliyun-ai",
-  BAIDU: "baidu-qianfan-ai",
+  VOLCENGINE: "volcengine-ai",
   KWAIKAT: "kwaikat-ai",
-  XAIO: "x-aio",
-  COMPSHARE: "compshare-ai",
+  BAIDU: "baidu-qianfan-ai",
   INFINI: "infini-ai",
+  COMPSHARE: "compshare-ai",
   MTHREADS: "mthreads-ai",
+  XAIO: "x-aio",
   ZENMUX: "zenmux-ai",
 };
 
