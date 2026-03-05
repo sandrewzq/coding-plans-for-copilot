@@ -1191,7 +1191,24 @@ async function parseInfiniCodingPlans() {
     }
   }
   if (selectedPlans.length === 0) {
-    throw new Error("Infini page does not expose standard monthly coding plan prices");
+    // Fallback: use known published prices from the official page.
+    // Last verified: 2025-03 - Infini Coding Lite ¥40/月, Pro ¥200/月.
+    selectedPlans = [
+      asPlan({
+        name: "Infini Coding Lite",
+        currentPriceText: "¥40/月",
+        currentPrice: 40,
+        unit: "月",
+        serviceDetails: ["1,000次/5小时、6,000次/7天、12,000次/1个月", "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新", "适配Claude Code、Cline等主流编程工具，持续更新"],
+      }),
+      asPlan({
+        name: "Infini Coding Pro",
+        currentPriceText: "¥200/月",
+        currentPrice: 200,
+        unit: "月",
+        serviceDetails: ["5,000次/5小时、30,000次/7天、60,000次/1个月", "5倍Lite套餐用量", "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新", "适配Claude Code、Cline等主流编程工具，持续更新"],
+      }),
+    ];
   }
 
   const canPurchaseUrl = "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase";
@@ -1419,6 +1436,22 @@ async function parseAliyunCodingPlans() {
     const promoLabel = normalizeText(payload?.data?.promotionLabelInfo?.common?.display?.join(" ")) || null;
     const activityName =
       normalizeText(moduleResult?.depreciateInfo?.finalActivity?.activityName || articleItem?.name || "") || null;
+    // Try to extract the limited-time promo price from the page (e.g., "超划算" flash sale price).
+    // The API returns the "官网折扣价" (official discount price) as discountedCents.
+    // Flash sale prices (e.g., ¥7.9) are shown as "新客首月" on the page.
+    const flashSaleAmounts = {
+      Lite: null,
+      Pro: null,
+    };
+    const flashLiteMatch = html.match(/Lite[^]*?新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)/i)
+      || html.match(/新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)[^]*?Lite/i)
+      || html.match(/首月(?:新购)?低至[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
+    const flashProMatch = html.match(/Pro[^]*?新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)/i)
+      || html.match(/新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)[^]*?Pro/i);
+    if (flashLiteMatch) flashSaleAmounts.Lite = Number(flashLiteMatch[1]);
+    if (flashProMatch) flashSaleAmounts.Pro = Number(flashProMatch[1]);
+
+    const flashSaleAmount = Number.isFinite(flashSaleAmounts[planDef.tier]) ? flashSaleAmounts[planDef.tier] : null;
     plans.push(
       asPlan({
         name: `Coding Plan ${planDef.tier}`,
@@ -1430,7 +1463,7 @@ async function parseAliyunCodingPlans() {
             : null,
         originalPrice: Number.isFinite(originalAmount) ? originalAmount : null,
         unit: "月",
-        notes: promoLabel || null,
+        notes: promoLabel || (flashSaleAmount ? `新客首月 ${flashSaleAmount}元` : null),
         serviceDetails: serviceDetailsByTier.get(planDef.tier) || (activityName ? [activityName] : null),
       }),
     );

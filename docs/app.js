@@ -14,11 +14,11 @@ const PROVIDER_LABELS = {
 };
 
 const PROVIDER_BUY_URLS = {
-  "zhipu-ai": "https://bigmodel.cn/glm-coding",
+  "zhipu-ai": "https://www.bigmodel.cn/glm-coding?ic=BZRLCDAC1G",
   "kimi-ai": "https://www.kimi.com/code/zh",
   "volcengine-ai": "https://www.volcengine.com/activity/codingplan",
   "minimax-ai": "https://platform.minimaxi.com/subscribe/coding-plan",
-  "aliyun-ai": "https://common-buy.aliyun.com/?commodityCode=sfm_codingplan_public_cn#/buy",
+  "aliyun-ai": "https://www.aliyun.com/benefit/scene/codingplan",
   "baidu-qianfan-ai": "https://cloud.baidu.com/product/codingplan.html",
   "kwaikat-ai": "https://www.streamlake.com/marketing/coding-plan",
   "x-aio": "https://code.x-aio.com/",
