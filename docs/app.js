@@ -356,4 +356,27 @@ reloadButtonEl.addEventListener("click", () => {
   loadData();
 });
 
+// Theme handling
+const themeToggleEl = document.querySelector("#themeToggle");
+const currentTheme = localStorage.getItem("theme") ||
+  (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+
+if (currentTheme === "dark") {
+  document.documentElement.setAttribute("data-theme", "dark");
+  themeToggleEl.textContent = "☀️ 亮色模式";
+}
+
+themeToggleEl.addEventListener("click", () => {
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  if (isDark) {
+    document.documentElement.removeAttribute("data-theme");
+    localStorage.setItem("theme", "light");
+    themeToggleEl.textContent = "🌙 暗色模式";
+  } else {
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+    themeToggleEl.textContent = "☀️ 亮色模式";
+  }
+});
+
 loadData();

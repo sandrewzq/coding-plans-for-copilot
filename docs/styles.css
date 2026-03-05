@@ -16,6 +16,49 @@
   --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
 }
 
+[data-theme="dark"] {
+  --bg: #0F172A;
+  --bg-ink: #F1F5F9;
+  --card: rgba(30, 41, 59, 0.7);
+  --line: rgba(71, 85, 105, 0.6);
+  --primary: #6366F1;
+  --primary-hover: #818CF8;
+  --muted: #94A3B8;
+  --danger-bg: rgba(159, 18, 57, 0.2);
+  --danger-text: #FCA5A5;
+}
+
+[data-theme="dark"] body {
+  background-image: radial-gradient(at 0% 0%, hsla(240, 40%, 15%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(260, 40%, 15%, 1) 0, transparent 50%),
+    radial-gradient(at 50% 100%, hsla(220, 60%, 15%, 1) 0, transparent 50%);
+}
+
+[data-theme="dark"] .backdrop {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+[data-theme="dark"] .plan-services,
+[data-theme="dark"] .unit-tag,
+[data-theme="dark"] .buy-link {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .offer-card {
+  background: rgba(159, 18, 57, 0.15);
+  border-color: rgba(244, 63, 94, 0.3);
+}
+
+[data-theme="dark"] .price-discount {
+  background: rgba(225, 29, 72, 0.2);
+  color: #FDA4AF;
+}
+
+[data-theme="dark"] h1 {
+  color: #F8FAFC;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -154,25 +197,57 @@ h1 {
   font-weight: 500;
 }
 
-.toolbar button {
+.toolbar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.btn-primary,
+.btn-secondary {
   width: 100%;
   font-size: 0.95rem;
   border-radius: 999px;
   border: none;
   padding: 0.65rem 1.4rem;
-  background: var(--primary);
-  color: #fff;
   cursor: pointer;
   font-weight: 600;
   letter-spacing: 0.05em;
   transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
   box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
 }
 
-.toolbar button:hover {
+.btn-primary:hover {
   background: var(--primary-hover);
   box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
   transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.4);
+  color: var(--bg-ink);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .error {
@@ -455,9 +530,17 @@ h1 {
     align-items: center;
   }
 
-  .toolbar button {
+  .toolbar-actions {
+    flex-direction: row;
     width: auto;
-    min-width: 140px;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: auto;
+    min-width: 120px;
   }
 
   .plan-list {
