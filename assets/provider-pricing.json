@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-05T05:17:03.151Z",
+  "generatedAt": "2026-03-05T05:20:51.553Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -533,6 +533,6 @@
     }
   ],
   "failures": [
-    "infini-ai: Task timed out after 60000ms"
+    "infini-ai: Infini page does not expose standard monthly coding plan prices"
   ]
 }
