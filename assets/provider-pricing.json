@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-05T05:37:51.191Z",
+  "generatedAt": "2026-03-05T05:44:38.374Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -9,6 +9,7 @@
         "https://bigmodel.cn/js/chunk-0d4f69d1.69f45323.js",
         "https://docs.bigmodel.cn/cn/coding-plan/overview"
       ],
+      "fetchedAt": "2026-03-05T05:44:28.572Z",
       "plans": [
         {
           "name": "GLM Coding Lite (月)",
@@ -58,6 +59,7 @@
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
         "https://statics.moonshot.cn/kimi-web-seo/assets/common-Blzvp8Vi.js"
       ],
+      "fetchedAt": "2026-03-05T05:44:26.838Z",
       "plans": [
         {
           "name": "Adagio (月)",
@@ -169,6 +171,7 @@
         "https://platform.minimaxi.com/docs/guides/pricing-coding-plan",
         "https://platform.minimaxi.com/subscribe/coding-plan"
       ],
+      "fetchedAt": "2026-03-05T05:44:24.021Z",
       "plans": [
         {
           "name": "Plus-极速版",
@@ -268,6 +271,7 @@
         "https://www.volcengine.com/activity/codingplan",
         "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.169/index.js"
       ],
+      "fetchedAt": "2026-03-05T05:44:27.429Z",
       "plans": [
         {
           "name": "Coding Plan Lite 月套餐",
@@ -306,6 +310,7 @@
         "https://cloud-assets.alicdn.com/lowcode/entry/prod/5eed7ab225bc191a22b757b828d76cac.js",
         "https://t.aliyun.com/abs/promotion/queryPrice"
       ],
+      "fetchedAt": "2026-03-05T05:44:28.655Z",
       "plans": [
         {
           "name": "Coding Plan Lite",
@@ -342,6 +347,7 @@
       "sourceUrls": [
         "https://cloud.baidu.com/product/codingplan.html"
       ],
+      "fetchedAt": "2026-03-05T05:44:26.505Z",
       "plans": [
         {
           "name": "Coding Plan Lite",
@@ -382,6 +388,7 @@
         "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
         "https://console.streamlake.com/api/common/describe-product-detail"
       ],
+      "fetchedAt": "2026-03-05T05:44:27.368Z",
       "plans": [
         {
           "name": "KAT Coding Mini",
@@ -451,6 +458,7 @@
         "https://code.x-aio.com/",
         "https://code.x-aio.com/assets/index-kY5B5WUy.js"
       ],
+      "fetchedAt": "2026-03-05T05:44:25.487Z",
       "plans": [
         {
           "name": "Lite（入门版）",
@@ -514,6 +522,7 @@
       "sourceUrls": [
         "https://www.compshare.cn/docs/modelverse/package_plan/package"
       ],
+      "fetchedAt": "2026-03-05T05:44:25.955Z",
       "plans": [
         {
           "name": "包月畅享包",
@@ -536,8 +545,10 @@
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
         "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.4e3581aa.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.d94bcdaa.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
+      "fetchedAt": "2026-03-05T05:44:38.374Z",
       "plans": [
         {
           "name": "Infini Coding Lite",
@@ -548,9 +559,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "1,000次/5小时、6,000次/7天、12,000次/1个月",
-            "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
-            "适配Claude Code、Cline等主流编程工具，持续更新"
+            "1,000次/5小时、6,000次/7天、12,000次/1个月"
           ]
         },
         {
@@ -562,10 +571,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "5,000次/5小时、30,000次/7天、60,000次/1个月",
-            "5倍Lite套餐用量",
-            "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
-            "适配Claude Code、Cline等主流编程工具，持续更新"
+            "5,000次/5小时、30,000次/7天、60,000次/1个月"
           ]
         }
       ]
