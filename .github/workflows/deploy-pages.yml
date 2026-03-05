@@ -7,6 +7,8 @@ on:
     paths:
       - "docs/**"
       - ".github/workflows/deploy-pages.yml"
+      - "scripts/providers/**"
+      - "scripts/sync-providers.js"
   workflow_run:
     workflows:
       - Update Provider Pricing
