@@ -50,7 +50,7 @@ jobs:
             - 工作流运行：${runUrl}
             - 时间（UTC）：${new Date().toISOString()}
 
-            @jqknono 请检查页面结构并更新解析逻辑。`;
+            @sandrewzq 请检查页面结构并更新解析逻辑。`;
 
             const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,

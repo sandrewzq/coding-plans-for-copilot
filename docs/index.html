@@ -1,71 +1,47 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>编码套餐看板</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./styles.css" />
-    <script defer src="./app.js"></script>
-  </head>
-  <body>
-    <div class="backdrop"></div>
-    <main class="page">
-      <header class="hero">
-        <p class="eyebrow">GitHub Pages · 自动抓取</p>
-        <h1>编码套餐看板</h1>
-        <p class="subtitle">仅展示各供应商公开页面可解析到的标准月费与备注信息。</p>
-        <div class="hero-actions">
-          <a
-            class="hero-link"
-            href="https://github.com/jqknono/chinese-llm-for-copilot"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            查看本工程（GitHub）
-          </a>
-        </div>
-        <div class="stats" id="stats">
-          <span>生成时间：<strong id="generatedAt">加载中</strong></span>
-          <span>提供商：<strong id="providerCount">0</strong></span>
-          <span>套餐数：<strong id="planCount">0</strong></span>
-        </div>
-      </header>
 
-      <section class="plugin-intro">
-        <h2>插件简介与推荐</h2>
-        <p>
-          Coding Plans for Copilot 是一个 VS Code 扩展，帮助你把不同厂商的编码套餐接入 Copilot Chat，统一在编辑器中切换供应商与模型。
-        </p>
-        <ul class="recommend-list">
-          <li>推荐给希望在 VS Code 内统一管理多家编码套餐的开发者。</li>
-          <li>推荐给需要低成本试用不同模型、快速对比体验的团队。</li>
-          <li>推荐优先从 VS Code 插件市场安装，更新与维护更方便。</li>
-        </ul>
-        <div class="plugin-actions">
-          <a
-            class="plugin-link"
-            href="https://marketplace.visualstudio.com/items?itemName=techfetch-dev.coding-plans-for-copilot"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            打开 VS Code 商店插件页
-          </a>
-        </div>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>编码套餐看板</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./app.js"></script>
+</head>
 
-      <section class="toolbar">
-        <p>筛选规则：仅标准月费（不含年费、季费与首月特惠价）。</p>
-        <button id="reloadButton" type="button">重新加载</button>
-      </section>
+<body>
+  <div class="backdrop"></div>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">GitHub Pages · 自动抓取</p>
+      <h1>编码套餐看板</h1>
+      <p class="subtitle">仅展示各供应商公开页面可解析到的标准月费与备注信息。</p>
+      <div class="hero-actions">
+        <a class="hero-link" href="https://github.com/sandrewzq/coding-plans-for-copilot" target="_blank"
+          rel="noopener noreferrer">
+          查看本工程（GitHub）
+        </a>
+      </div>
+      <div class="stats" id="stats">
+        <span>生成时间：<strong id="generatedAt">加载中</strong></span>
+        <span>提供商：<strong id="providerCount">0</strong></span>
+        <span>套餐数：<strong id="planCount">0</strong></span>
+      </div>
+    </header>
 
-      <section id="errorBanner" class="error hidden" role="status" aria-live="polite"></section>
-      <section id="providerGrid" class="provider-grid" aria-live="polite"></section>
-    </main>
-  </body>
+    <section class="toolbar">
+      <p>筛选规则：仅标准月费（不含年费、季费与首月特惠价）。</p>
+      <button id="reloadButton" type="button">重新加载</button>
+    </section>
+
+    <section id="errorBanner" class="error hidden" role="status" aria-live="polite"></section>
+    <section id="providerGrid" class="provider-grid" aria-live="polite"></section>
+  </main>
+</body>
+
 </html>
