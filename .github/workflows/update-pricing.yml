@@ -3,6 +3,9 @@ name: Update Provider Pricing
 on:
   schedule:
     - cron: "0 2 * * *"
+  push:
+    paths:
+      - "scripts/**"
   workflow_dispatch:
 
 jobs:

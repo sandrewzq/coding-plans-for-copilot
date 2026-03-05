@@ -7,8 +7,8 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 
 const OUTPUT_FILE = path.resolve(__dirname, "..", "assets", "provider-pricing.json");
-const REQUEST_TIMEOUT_MS = 30_000;
-const TASK_TIMEOUT_MS = 30_000;
+const REQUEST_TIMEOUT_MS = 60_000;
+const TASK_TIMEOUT_MS = 60_000;
 
 const PROVIDER_IDS = {
   ZHIPU: "zhipu-ai",
