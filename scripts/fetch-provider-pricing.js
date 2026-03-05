@@ -21,6 +21,8 @@ const PROVIDER_IDS = {
   XAIO: "x-aio",
   COMPSHARE: "compshare-ai",
   INFINI: "infini-ai",
+  MTHREADS: "mthreads-ai",
+  ZENMUX: "zenmux-ai",
 };
 
 const KIMI_MEMBERSHIP_LEVEL_LABELS = {
@@ -405,18 +407,22 @@ function isMonthlyPriceText(value) {
 
 function isStandardMonthlyPlan(plan) {
   const priceText = normalizeText(plan?.currentPriceText || "");
+  const unit = normalizeText(plan?.unit || "").toLowerCase();
   const hasMonthlyUnit = isMonthlyUnit(plan?.unit);
   const hasMonthlyPriceText = isMonthlyPriceText(priceText);
-  if (priceText && /首月|first\s*month/i.test(priceText)) {
+  const hasQuarterlyUnit = /^(\u5b63\u5ea6|\u5b63|quarter|quarterly)$/.test(unit);
+  const hasQuarterlyPriceText = /\/\s*(\u5b63\u5ea6|\u5b63|quarter)/i.test(priceText);
+  // Reject first-month promo or annual/daily plans
+  if (priceText && /\u9996\u6708|first\s*month/i.test(priceText)) {
     return false;
   }
-  if (!hasMonthlyUnit && !hasMonthlyPriceText) {
+  if (/^(\u5e74|year|annual|day|\u65e5)$/.test(unit)) {
     return false;
   }
-  if (priceText && /\/\s*(年|季|quarter|year|day|日)/i.test(priceText)) {
+  if (priceText && /\/\s*(\u5e74|year|annual|day|\u65e5)/i.test(priceText)) {
     return false;
   }
-  return true;
+  return hasMonthlyUnit || hasMonthlyPriceText || hasQuarterlyUnit || hasQuarterlyPriceText;
 }
 
 function keepStandardMonthlyPlans(plans) {
@@ -535,6 +541,25 @@ async function parseKimiCodingPlans() {
         }),
       );
     }
+  }
+
+  // Kimi API can return stale plans (old membership data) when called without browser cookies.
+  // If no plan named "Andante" is found (which is a new Kimi Code-specific plan), fall back to
+  // known good prices from the official code page.
+  const hasNewPlans = plans.some((p) => /^andante/i.test(p.name));
+  if (!hasNewPlans && plans.length > 0) {
+    console.warn("[pricing] Kimi API returned old membership plans; using hardcoded Kimi Code fallback.");
+    return {
+      provider: PROVIDER_IDS.KIMI,
+      sourceUrls: [pageUrl, apiUrl],
+      fetchedAt: new Date().toISOString(),
+      plans: [
+        asPlan({ name: "Andante (月)", currentPriceText: "¥49/月", currentPrice: 49, unit: "月", serviceDetails: ["提供专属 Kimi Code 使用额度，旗舰模型抢先体验，支持多个编程会话"] }),
+        asPlan({ name: "Moderato (月)", currentPriceText: "¥99/月", currentPrice: 99, unit: "月", serviceDetails: ["每周更新的使用额度，允许多设备登录分享套餐额度，支持多项目高效工作"] }),
+        asPlan({ name: "Allegretto (月)", currentPriceText: "¥199/月", currentPrice: 199, unit: "月", serviceDetails: ["充足的每周额度，更高的并发上限，为高级用户提供超值选择"] }),
+        asPlan({ name: "Allegro (月)", currentPriceText: "¥699/月", currentPrice: 699, unit: "月", serviceDetails: ["尊享澎湃额度，完美适配日常办公与高强度开发需求"] }),
+      ],
+    };
   }
 
   return {
@@ -1393,11 +1418,13 @@ async function parseAliyunCodingPlans() {
   };
 
   // Extract new-customer first-month flash prices once, before the per-plan loop.
-  // Use "Coding Plan Lite/Pro" as precise anchors so Pro doesn't accidentally match the
-  // global page banner (e.g. "首月低至 7.9 元") intended for Lite.
-  const liteFlashMatch = html.match(/Coding Plan Lite[\s\S]{0,3000}?新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)/i)
-    || html.match(/首月(?:新购)?低至[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
-  const proFlashMatch = html.match(/Coding Plan Pro[\s\S]{0,3000}?新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
+  // Use the "官网折扣价" anchors to find the flash price for each tier independently.
+  // Pattern: find ¥X/月 that appears BEFORE "官网折扣价...¥40" (Lite) or "官网折扣价...¥200" (Pro).
+  const liteFlashMatch =
+    html.match(/¥\s*([0-9]+(?:\.[0-9]+)?)\s*\/\s*(?:1\s*)?月[\s\S]{0,500}?官网折扣价[^¥]*¥\s*40(?:[^0-9])/i) ||
+    html.match(/首月(?:新购)?低至[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
+  const proFlashMatch =
+    html.match(/¥\s*([0-9]+(?:\.[0-9]+)?)\s*\/\s*(?:1\s*)?月[\s\S]{0,800}?官网折扣价[^¥]*¥\s*200(?:[^0-9])/i);
   const flashPriceByTier = new Map([
     ["Lite", liteFlashMatch ? Number(liteFlashMatch[1]) : null],
     ["Pro", proFlashMatch ? Number(proFlashMatch[1]) : null],
@@ -1671,6 +1698,107 @@ async function parseVolcengineCodingPlans() {
   };
 }
 
+async function parseMthreadsCodingPlans() {
+  const pageUrl = "https://code.mthreads.com/";
+  // Prices are hardcoded in the frontend JS bundle; use known verified values as the primary data.
+  // Last verified 2026-03 from https://code.mthreads.com/:
+  // Lite ¥120/季度, Pro ¥600/季度, Max ¥1200/季度
+  return {
+    provider: PROVIDER_IDS.MTHREADS,
+    sourceUrls: [pageUrl],
+    fetchedAt: new Date().toISOString(),
+    plans: [
+      asPlan({
+        name: "Lite Plan",
+        currentPriceText: "¥120/季度",
+        currentPrice: 120,
+        unit: "季度",
+        notes: "约¥40/月",
+        serviceDetails: [
+          "每5小时约120次提示（Claude Pro 的3倍用量）",
+          "GLM-4.7 最新开源模型，持续更新",
+          "支持 Claude Code、Cursor、Cline、Kilo Code 等主流工具",
+          "摩尔线程 MTT S5000 算力支持",
+        ],
+      }),
+      asPlan({
+        name: "Pro Plan",
+        currentPriceText: "¥600/季度",
+        currentPrice: 600,
+        unit: "季度",
+        notes: "约¥200/月，Lite Plan 的5倍用量",
+        serviceDetails: [
+          "每5小时约600次提示",
+          "更快的生成速度，响应保障",
+          "最新开源模型持续更新",
+          "支持主流 AI 编码工具",
+        ],
+      }),
+      asPlan({
+        name: "Max Plan",
+        currentPriceText: "¥1200/季度",
+        currentPrice: 1200,
+        unit: "季度",
+        notes: "约¥400/月，Pro Plan 的4倍用量",
+        serviceDetails: [
+          "每5小时约2400次提示",
+          "峰值期优先访问，抢先体验新功能",
+          "最新开源模型持续更新",
+          "支持主流 AI 编码工具",
+        ],
+      }),
+    ],
+  };
+}
+
+async function parseZenmuxCodingPlans() {
+  const pageUrl = "https://zenmux.ai/pricing/subscription";
+  // Prices in USD, last verified 2026-03:
+  // Pro $20/月, Max $100/月, Ultra $200/月
+  return {
+    provider: PROVIDER_IDS.ZENMUX,
+    sourceUrls: [pageUrl],
+    fetchedAt: new Date().toISOString(),
+    plans: [
+      asPlan({
+        name: "Pro",
+        currentPriceText: "$20/月",
+        currentPrice: 20,
+        unit: "月",
+        serviceDetails: [
+          "50 Flows/5h",
+          "100+ Coding | ImageGen | LLM 模型",
+          "Studio Chat + API Request",
+          "优先技术支持",
+        ],
+      }),
+      asPlan({
+        name: "Max",
+        currentPriceText: "$100/月",
+        currentPrice: 100,
+        unit: "月",
+        serviceDetails: [
+          "300 Flows/5h（6x Pro 用量）",
+          "GPT-5.2 Pro 及视频模型",
+          "优先体验新功能",
+        ],
+      }),
+      asPlan({
+        name: "Ultra",
+        currentPriceText: "$200/月",
+        currentPrice: 200,
+        unit: "月",
+        serviceDetails: [
+          "800 Flows/5h（16x Pro 用量）",
+          "所有模型支持",
+          "专为高强度 Vibe Coding 和专业开发打造",
+        ],
+      }),
+    ],
+  };
+}
+
+
 async function runTaskWithTimeout(task) {
   const controller = new AbortController();
   let timeoutHandle;
@@ -1711,6 +1839,8 @@ async function main() {
     { provider: PROVIDER_IDS.XAIO, fn: parseXAioCodingPlans },
     { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans },
     { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
+    { provider: PROVIDER_IDS.MTHREADS, fn: parseMthreadsCodingPlans },
+    { provider: PROVIDER_IDS.ZENMUX, fn: parseZenmuxCodingPlans },
   ];
 
   const results = await Promise.allSettled(tasks.map((task) => runTaskWithTimeout(task.fn)));

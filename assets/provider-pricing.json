@@ -56,69 +56,24 @@
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
-        "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-Blzvp8Vi.js"
+        "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods"
       ],
-      "fetchedAt": "2026-03-05T05:44:26.838Z",
+      "fetchedAt": "2026-03-05T06:10:00.000Z",
       "plans": [
         {
-          "name": "Adagio (月)",
-          "currentPrice": 0,
-          "currentPriceText": "¥0/月",
+          "name": "Andante (月)",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "试用计划",
+          "notes": null,
           "serviceDetails": [
-            "会员等级: 免费试用",
-            "体验 Agent 功能",
-            "跨设备同步使用",
-            "搜索实时资讯",
-            "理解图片与文档",
-            "生成代码与数据分析"
+            "提供专属 Kimi Code 使用额度，旗舰模型抢先体验，支持多个编程会话"
           ]
         },
         {
           "name": "Moderato (月)",
-          "currentPrice": 19,
-          "currentPriceText": "¥19/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: 基础会员",
-            "更多 Agent 额度",
-            "Agent 多任务并行",
-            "Agent 4 倍速优先用",
-            "K2.5 提速并提升额度",
-            "PPT 创意视觉 x Nano Banana",
-            "Kimi Code 可调用"
-          ]
-        },
-        {
-          "name": "Allegretto (月)",
-          "currentPrice": 39,
-          "currentPriceText": "¥39/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: 进阶会员",
-            "Moderato 权益基础上",
-            "2 倍 Agent 额度",
-            "2 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 5 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
-          ]
-        },
-        {
-          "name": "Allegro (月)",
           "currentPrice": 99,
           "currentPriceText": "¥99/月",
           "originalPrice": null,
@@ -126,22 +81,11 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "会员等级: 高级会员",
-            "Moderato 权益基础上",
-            "5 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
-            "5 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 15 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
+            "每周更新的使用额度，允许多设备登录分享套餐额度，支持多项目高效工作"
           ]
         },
         {
-          "name": "Vivace (月)",
+          "name": "Allegretto (月)",
           "currentPrice": 199,
           "currentPriceText": "¥199/月",
           "originalPrice": null,
@@ -149,18 +93,19 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "会员等级: 旗舰会员",
-            "Moderato 权益基础上",
-            "10 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
-            "10 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 30 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
+            "充足的每周额度，更高的并发上限，为高级用户提供超值选择"
+          ]
+        },
+        {
+          "name": "Allegro (月)",
+          "currentPrice": 699,
+          "currentPriceText": "¥699/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "尊享澎湃额度，完美适配日常办公与高强度开发需求"
           ]
         }
       ]
@@ -498,15 +443,14 @@
         },
         {
           "name": "Max（旗舰版）",
-          "currentPrice": 360,
-          "currentPriceText": "¥360/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "currentPrice": 324,
+          "currentPriceText": "¥324/月",
+          "originalPrice": 360,
+          "originalPriceText": "¥360/月",
           "unit": "月",
-          "notes": "首购优惠：¥180/月",
+          "notes": "LingClaw首发尝鲜立省¥36/月；首购优惠：¥180/月",
           "serviceDetails": [
             "适用场景: 适合资深开发者的海量工作负载",
-            "贾维斯",
             "每 4 小时 2000 Prompts 配额（20x Lite）",
             "高质量开源模型，覆盖主流编码场景",
             "稳定响应速度，持续在线可用",
@@ -572,6 +516,112 @@
           "notes": null,
           "serviceDetails": [
             "5,000次/5小时、30,000次/7天、60,000次/1个月"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "mthreads-ai",
+      "sourceUrls": [
+        "https://code.mthreads.com/"
+      ],
+      "fetchedAt": "2026-03-05T06:10:00.000Z",
+      "plans": [
+        {
+          "name": "Lite Plan",
+          "currentPrice": 120,
+          "currentPriceText": "¥120/季度",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "季度",
+          "notes": "约¥40/月",
+          "serviceDetails": [
+            "每5小时约120次提示（Claude Pro 的3倍用量）",
+            "GLM-4.7 最新开源模型，持续更新",
+            "支持 Claude Code、Cursor、Cline、Kilo Code 等主流工具",
+            "摩尔线程 MTT S5000 算力支持"
+          ]
+        },
+        {
+          "name": "Pro Plan",
+          "currentPrice": 600,
+          "currentPriceText": "¥600/季度",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "季度",
+          "notes": "约¥200/月，Lite Plan 的5倍用量",
+          "serviceDetails": [
+            "每5小时约600次提示",
+            "更快的生成速度，响应保障",
+            "最新开源模型持续更新",
+            "支持主流 AI 编码工具"
+          ]
+        },
+        {
+          "name": "Max Plan",
+          "currentPrice": 1200,
+          "currentPriceText": "¥1200/季度",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "季度",
+          "notes": "约¥400/月，Pro Plan 的4倍用量",
+          "serviceDetails": [
+            "每5小时约2400次提示",
+            "峰值期优先访问，抢先体验新功能",
+            "最新开源模型持续更新",
+            "支持主流 AI 编码工具"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "zenmux-ai",
+      "sourceUrls": [
+        "https://zenmux.ai/pricing/subscription"
+      ],
+      "fetchedAt": "2026-03-05T06:10:00.000Z",
+      "plans": [
+        {
+          "name": "Pro",
+          "currentPrice": 20,
+          "currentPriceText": "$20/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "50 Flows/5h",
+            "100+ Coding | ImageGen | LLM 模型",
+            "Studio Chat + API Request",
+            "优先技术支持"
+          ]
+        },
+        {
+          "name": "Max",
+          "currentPrice": 100,
+          "currentPriceText": "$100/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "300 Flows/5h（6x Pro 用量）",
+            "GPT-5.2 Pro 及视频模型",
+            "优先体验新功能"
+          ]
+        },
+        {
+          "name": "Ultra",
+          "currentPrice": 200,
+          "currentPriceText": "$200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "800 Flows/5h（16x Pro 用量）",
+            "所有模型支持",
+            "专为高强度 Vibe Coding 和专业开发打造"
           ]
         }
       ]

@@ -11,6 +11,8 @@ const PROVIDER_LABELS = {
   "x-aio": "X-AIO",
   "compshare-ai": "优云智算",
   "infini-ai": "无问芯穹",
+  "mthreads-ai": "摩尔线程",
+  "zenmux-ai": "Zenmux",
 };
 
 const PROVIDER_BUY_URLS = {
@@ -24,6 +26,8 @@ const PROVIDER_BUY_URLS = {
   "x-aio": "https://code.x-aio.com/",
   "compshare-ai": "https://www.compshare.cn/docs/modelverse/package_plan/package",
   "infini-ai": "https://cloud.infini-ai.com/platform/ai",
+  "mthreads-ai": "https://code.mthreads.com/",
+  "zenmux-ai": "https://zenmux.ai/pricing/subscription",
 };
 
 const reloadButtonEl = document.querySelector("#reloadButton");
