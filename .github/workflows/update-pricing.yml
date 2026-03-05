@@ -26,57 +26,105 @@ jobs:
       - name: Fetch latest provider pricing
         run: npm run pricing:fetch
 
-      - name: Detect Aliyun parsing failure
-        id: aliyun_failure
+      - name: Detect provider parsing failures
+        id: provider_failures
         run: |
-          node -e "const fs=require('node:fs');const data=JSON.parse(fs.readFileSync('docs/provider-pricing.json','utf8'));const failures=Array.isArray(data.failures)?data.failures:[];const aliyunFailures=failures.map(String).filter((msg)=>/Unable to (parse|locate).*Aliyun/i.test(msg));const out=process.env.GITHUB_OUTPUT;fs.appendFileSync(out,'has_failure='+(aliyunFailures.length>0)+'\n');if(aliyunFailures.length>0){const message=aliyunFailures.join(' | ').replace(/\r?\n/g,' ').trim();fs.appendFileSync(out,'failure_message='+message+'\n');}"
+          node -e "
+          const fs = require('node:fs');
+          const data = JSON.parse(fs.readFileSync('docs/provider-pricing.json', 'utf8'));
+          const failures = Array.isArray(data.failures) ? data.failures : [];
+          
+          // Provider ID to display name mapping
+          const providerNames = {
+            'aliyun-ai': '阿里云百炼',
+            'baidu-qianfan-ai': '百度智能云千帆',
+            'compshare-ai': '优云智算',
+            'infini-ai': '无问芯穹',
+            'kimi-ai': 'Kimi',
+            'kwaikat-ai': '快手 KwaiKAT',
+            'minimax-ai': 'MiniMax',
+            'mthreads-ai': '摩尔线程',
+            'volcengine-ai': '火山引擎',
+            'x-aio': 'X-AIO',
+            'zenmux-ai': 'Zenmux',
+            'zhipu-ai': '智谱 z.ai'
+          };
+          
+          // Extract provider ID from failure message
+          function extractProviderId(message) {
+            const match = message.match(/^([^:]+):/);
+            return match ? match[1].trim() : null;
+          }
+          
+          const providerFailures = failures.map(msg => {
+            const providerId = extractProviderId(msg);
+            return {
+              providerId,
+              providerName: providerNames[providerId] || providerId,
+              message: msg
+            };
+          }).filter(f => f.providerId);
+          
+          const out = process.env.GITHUB_OUTPUT;
+          fs.appendFileSync(out, 'has_failures=' + (providerFailures.length > 0) + '\n');
+          fs.appendFileSync(out, 'failure_count=' + providerFailures.length + '\n');
+          fs.appendFileSync(out, 'failures_json=' + JSON.stringify(JSON.stringify(providerFailures)) + '\n');
+          "
 
-      - name: Create issue for Aliyun parsing failure
-        if: steps.aliyun_failure.outputs.has_failure == 'true'
+      - name: Create issues for provider parsing failures
+        if: steps.provider_failures.outputs.has_failures == 'true'
         uses: actions/github-script@v7
         env:
-          FAILURE_MESSAGE: ${{ steps.aliyun_failure.outputs.failure_message }}
+          FAILURES_JSON: ${{ steps.provider_failures.outputs.failures_json }}
         with:
           script: |
-            const marker = '<!-- auto-pricing-aliyun-parse-failure -->';
-            const title = '抓取失败：Unable to parse Aliyun coding plans';
+            const markerPrefix = '<!-- auto-pricing-parse-failure -->';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const failureMessage = process.env.FAILURE_MESSAGE || 'Unable to parse Aliyun coding plans';
-            const body = `${marker}
-            阿里云百炼的 coding 套餐页面可能已变更，自动抓取出现解析失败。
-
-            - 失败信息：\\`${failureMessage}\\`
-            - 工作流运行：${runUrl}
-            - 时间（UTC）：${new Date().toISOString()}
-
-            @sandrewzq 请检查页面结构并更新解析逻辑。`;
-
+            const failures = JSON.parse(process.env.FAILURES_JSON || '[]');
+            
             const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
               per_page: 100,
             });
+            
+            for (const failure of failures) {
+              const providerId = failure.providerId;
+              const providerName = failure.providerName;
+              const failureMessage = failure.message;
+              const marker = `${markerPrefix} ${providerId}`;
+              const title = `抓取失败：${providerName} 套餐解析失败`;
+              
+              const body = `${marker}
+            ${providerName} 的 coding 套餐页面可能已变更，自动抓取出现解析失败。
 
-            const existing = issues.find((issue) =>
-              !issue.pull_request &&
-              issue.title === title &&
-              typeof issue.body === 'string' &&
-              issue.body.includes(marker),
-            );
+            - 失败信息：\`${failureMessage}\`
+            - 工作流运行：${runUrl}
+            - 时间（UTC）：${new Date().toISOString()}
 
-            if (existing) {
-              core.info(`Aliyun parsing issue already open: #${existing.number}`);
-              return;
+            @sandrewzq 请检查页面结构并更新解析逻辑。`;
+
+              const existing = issues.find((issue) =>
+                !issue.pull_request &&
+                issue.title === title &&
+                typeof issue.body === 'string' &&
+                issue.body.includes(marker),
+              );
+
+              if (existing) {
+                core.info(`${providerName} parsing issue already open: #${existing.number}`);
+                continue;
+              }
+
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+              });
+              core.info(`Created issue for ${providerName}: #${created.data.number}`);
             }
-
-            const created = await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title,
-              body,
-            });
-            core.info(`Created issue #${created.data.number}`);
 
       - name: Commit pricing changes
         run: |

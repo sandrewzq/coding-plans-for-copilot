@@ -254,12 +254,34 @@ h1 {
   gap: 1rem;
 }
 
-.toolbar p {
-  margin: 0;
-  color: var(--muted);
+.toolbar-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.search-input,
+.price-filter {
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--item-bg);
+  color: var(--bg-ink);
   font-size: 0.95rem;
-  line-height: 1.5;
-  font-weight: 500;
+  font-family: inherit;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: var(--muted);
+}
+
+.search-input:focus,
+.price-filter:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--card-bg);
 }
 
 .toolbar-actions {
@@ -583,6 +605,16 @@ h1 {
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 .skeleton {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   background-color: var(--line);
@@ -592,7 +624,33 @@ h1 {
   pointer-events: none;
 }
 
-.skeleton * {
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--line) 0%,
+    var(--item-bg) 50%,
+    var(--line) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 4px;
+  color: transparent !important;
+  user-select: none;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+}
+
+.skeleton *,
+.skeleton-shimmer * {
   visibility: hidden;
 }
 
@@ -636,6 +694,16 @@ h1 {
     align-items: center;
   }
 
+  .toolbar-filters {
+    flex-direction: row;
+    width: auto;
+    gap: 1rem;
+  }
+
+  .search-input {
+    min-width: 250px;
+  }
+
   .toolbar-actions {
     flex-direction: row;
     width: auto;
@@ -652,4 +720,91 @@ h1 {
   .plan-list {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
+}
+
+/* Compare panel styles */
+.compare-panel {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-md);
+}
+
+.compare-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.compare-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--bg-ink);
+}
+
+.compare-content {
+  overflow-x: auto;
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.compare-table th,
+.compare-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.compare-table th {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.compare-table td {
+  color: var(--bg-ink);
+}
+
+.compare-table tr:hover {
+  background: var(--item-bg);
+}
+
+.compare-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.compare-select-hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0;
+}
+
+/* Plan item with compare checkbox */
+.plan-item {
+  position: relative;
+}
+
+.plan-compare {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.plan-compare input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }

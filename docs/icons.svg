@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <defs>
+    <!-- App Icon -->
+    <symbol id="icon-app" viewBox="0 0 32 32">
+      <rect width="32" height="32" rx="8" fill="#0c7c59"/>
+      <text x="16" y="23" text-anchor="middle" fill="white" font-size="20" font-family="serif">¥</text>
+    </symbol>
+
+    <!-- Search Icon -->
+    <symbol id="icon-search" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    </symbol>
+
+    <!-- Filter Icon -->
+    <symbol id="icon-filter" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+    </symbol>
+
+    <!-- Compare Icon -->
+    <symbol id="icon-compare" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M10 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v2h2V1h-2v2zm0 15H5l5-6v6zm9-15h-5v2h5v14h-5v2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 15v-6l5 6h-5z"/>
+    </symbol>
+
+    <!-- Theme Icon (Dark) -->
+    <symbol id="icon-moon" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M9 2c-1.05 0-2.05.16-3 .46 1.69 1.2 2.86 3.05 3.14 5.18.31 2.42-.51 4.78-2.13 6.46C5.36 15.63 3.19 16.5 1 16.5c-.67 0-1.32-.07-1.95-.2C1.06 19.25 4.1 21.5 7.5 21.5c4.69 0 8.5-3.81 8.5-8.5S12.19 4.5 7.5 4.5c-.63 0-1.24.07-1.83.2C6.15 2.75 7.5 2 9 2z"/>
+    </symbol>
+
+    <!-- Theme Icon (Light) -->
+    <symbol id="icon-sun" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/>
+    </symbol>
+
+    <!-- Reload Icon -->
+    <symbol id="icon-reload" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+    </symbol>
+
+    <!-- External Link Icon -->
+    <symbol id="icon-external" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+    </symbol>
+
+    <!-- Error Icon -->
+    <symbol id="icon-error" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+    </symbol>
+
+    <!-- Check Icon -->
+    <symbol id="icon-check" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+    </symbol>
+
+    <!-- Close Icon -->
+    <symbol id="icon-close" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+    </symbol>
+  </defs>
+</svg>

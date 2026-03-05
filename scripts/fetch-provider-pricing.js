@@ -12,6 +12,7 @@ const {
   normalizeServiceDetails,
   normalizeProviderCurrencySymbols,
 } = require("./utils");
+const { validatePricingData } = require("./schema-validator");
 
 const OUTPUT_FILE = path.resolve(__dirname, "..", "docs", "provider-pricing.json");
 const TASK_TIMEOUT_MS = 30_000;
@@ -117,6 +118,15 @@ async function main() {
     providers: normalizeProviderCurrencySymbols(providers),
     failures,
   };
+
+  // Validate output data before writing
+  const validation = validatePricingData(output);
+  if (!validation.isValid) {
+    console.error("[pricing] Validation failed:");
+    validation.errors.forEach((error) => console.error(`  - ${error}`));
+    throw new Error("Output data validation failed");
+  }
+  console.log("[pricing] ✓ Data validation passed");
 
   const outputText = `${JSON.stringify(output, null, 2)}\n`;
 

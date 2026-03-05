@@ -5,9 +5,12 @@
     "description": "Coding Plans Pricing Dashboard",
     "scripts": {
         "pricing:fetch": "node ./scripts/fetch-provider-pricing.js",
-        "pricing:serve": "node ./scripts/serve-pricing-page.js"
+        "pricing:serve": "node ./scripts/serve-pricing-page.js",
+        "lint": "eslint scripts/ docs/app.js",
+        "lint:fix": "eslint scripts/ docs/app.js --fix"
     },
     "devDependencies": {
-        "@types/node": "^20.14.9"
+        "@types/node": "^20.14.9",
+        "eslint": "^8.57.0"
     }
 }

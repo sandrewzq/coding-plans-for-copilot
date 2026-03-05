@@ -1,7 +1,19 @@
+#!/usr/bin/env node
+
 "use strict";
+
+/**
+ * @fileoverview Utility functions for provider pricing data fetching and processing.
+ * This module provides common utilities for HTML parsing, text normalization,
+ * currency detection, and HTTP requests.
+ */
 
 const { AsyncLocalStorage } = require("node:async_hooks");
 
+/**
+ * HTML entity mappings for decoding
+ * @constant {Object.<string, string>}
+ */
 const HTML_ENTITIES = {
   "&lt;": "<",
   "&gt;": ">",
@@ -13,20 +25,44 @@ const HTML_ENTITIES = {
   "&reg;": "®",
 };
 
+/**
+ * Regex pattern for detecting CNY currency indicators
+ * @constant {RegExp}
+ */
 const CNY_CURRENCY_HINT = /(¥|￥|元|人民币|\b(?:CNY|RMB)\b)/i;
 
+/**
+ * Regex pattern for detecting USD currency indicators
+ * @constant {RegExp}
+ */
 const USD_CURRENCY_HINT = /(\$|\b(?:USD|US\$)\b|美元|dollar)/i;
 
+/**
+ * Common HTTP headers for requests
+ * @constant {Object.<string, string>}
+ */
 const COMMON_HEADERS = {
   "user-agent":
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
   accept: "text/html,application/json;q=0.9,*/*;q=0.8",
 };
 
+/**
+ * AsyncLocalStorage for request context propagation
+ * @constant {AsyncLocalStorage}
+ */
 const REQUEST_CONTEXT = new AsyncLocalStorage();
 
+/**
+ * Default request timeout in milliseconds
+ * @constant {number}
+ */
 const REQUEST_TIMEOUT_MS = 15_000;
 
+/**
+ * Provider ID constants
+ * @constant {Object.<string, string>}
+ */
 const PROVIDER_IDS = {
   ZHIPU: "zhipu-ai",
   KIMI: "kimi-ai",
@@ -42,6 +78,13 @@ const PROVIDER_IDS = {
   ZENMUX: "zenmux-ai",
 };
 
+/**
+ * Decodes HTML entities in a string
+ * @param {string} value - The string to decode
+ * @returns {string} The decoded string
+ * @example
+ * decodeHtml("&lt;div&gt;Hello&lt;/div&gt;") // returns "<div>Hello</div>"
+ */
 function decodeHtml(value) {
   if (typeof value !== "string") {
     return "";
@@ -52,20 +95,44 @@ function decodeHtml(value) {
     .trim();
 }
 
+/**
+ * Removes HTML tags from a string
+ * @param {string} value - The string containing HTML
+ * @returns {string} The string without HTML tags
+ * @example
+ * stripTags("<p>Hello <b>World</b></p>") // returns "Hello World"
+ */
 function stripTags(value) {
   return decodeHtml(String(value || "").replace(/<[^>]+>/g, " "));
 }
 
+/**
+ * Normalizes text by decoding HTML entities, unicode literals, and whitespace
+ * @param {string} value - The text to normalize
+ * @returns {string} The normalized text
+ */
 function normalizeText(value) {
   return decodeHtml(decodeUnicodeLiteral(String(value || "")).replace(/\s+/g, " ")).trim();
 }
 
+/**
+ * Decodes unicode escape sequences (\uXXXX) in a string
+ * @param {string} value - The string containing unicode escapes
+ * @returns {string} The decoded string
+ * @example
+ * decodeUnicodeLiteral("\\u4e2d\\u6587") // returns "中文"
+ */
 function decodeUnicodeLiteral(value) {
   return String(value || "").replace(/\\u([0-9a-fA-F]{4})/g, (_, code) =>
     String.fromCharCode(Number.parseInt(code, 16)),
   );
 }
 
+/**
+ * Checks if a text appears to contain price information
+ * @param {string} text - The text to check
+ * @returns {boolean} True if the text looks like a price
+ */
 function isPriceLike(text) {
   const value = normalizeText(text);
   if (!value) {
@@ -80,6 +147,16 @@ function isPriceLike(text) {
   return /(¥|￥|元|首月|\/\s*[年月日次])/i.test(value);
 }
 
+/**
+ * Parses price text to extract amount, text, and unit
+ * @param {string} text - The price text to parse
+ * @returns {Object} Object containing amount, text, and unit
+ * @returns {number|null} returns.amount - The numeric amount
+ * @returns {string|null} returns.text - The normalized text
+ * @returns {string|null} returns.unit - The time unit (月/年/日等)
+ * @example
+ * parsePriceText("¥99/月") // returns { amount: 99, text: "¥99/月", unit: "月" }
+ */
 function parsePriceText(text) {
   const value = normalizeText(text);
   if (!value) {
@@ -107,10 +184,21 @@ function parsePriceText(text) {
   };
 }
 
+/**
+ * Compacts inline text by normalizing whitespace
+ * @param {string} value - The text to compact
+ * @returns {string} The compacted text
+ */
 function compactInlineText(value) {
   return String(value || "").replace(/\s+/g, " ").trim();
 }
 
+/**
+ * Detects currency type from text
+ * @param {string} text - The text to analyze
+ * @param {string} [fallback="USD"] - The fallback currency if detection fails
+ * @returns {string} The detected currency ("CNY" or "USD")
+ */
 function detectCurrencyFromText(text, fallback = "USD") {
   const value = compactInlineText(text);
   if (!value) {
@@ -125,6 +213,14 @@ function detectCurrencyFromText(text, fallback = "USD") {
   return fallback;
 }
 
+/**
+ * Normalizes money text based on detected currency
+ * @param {string} rawValue - The raw money text
+ * @param {string} [fallbackCurrency="USD"] - Fallback currency for normalization
+ * @returns {string|null} The normalized money text
+ * @example
+ * normalizeMoneyTextByCurrency("99元/月", "CNY") // returns "¥99/月"
+ */
 function normalizeMoneyTextByCurrency(rawValue, fallbackCurrency = "USD") {
   const text = compactInlineText(rawValue);
   if (!text) {
@@ -160,6 +256,11 @@ function normalizeMoneyTextByCurrency(rawValue, fallbackCurrency = "USD") {
   return normalized.replace(/^\$\s+/, "$");
 }
 
+/**
+ * Normalizes currency symbols in a plan object
+ * @param {Object} plan - The plan object to normalize
+ * @returns {Object} The normalized plan object
+ */
 function normalizePlanCurrencySymbols(plan) {
   if (!plan || typeof plan !== "object") {
     return plan;
@@ -191,6 +292,11 @@ function normalizePlanCurrencySymbols(plan) {
   };
 }
 
+/**
+ * Normalizes currency symbols for all providers
+ * @param {Object[]} providers - Array of provider objects
+ * @returns {Object[]} Array of normalized provider objects
+ */
 function normalizeProviderCurrencySymbols(providers) {
   return (providers || []).map((provider) => ({
     ...provider,
@@ -198,6 +304,11 @@ function normalizeProviderCurrencySymbols(providers) {
   }));
 }
 
+/**
+ * Removes duplicate plans based on key fields
+ * @param {Object[]} plans - Array of plan objects
+ * @returns {Object[]} Array of deduplicated plans
+ */
 function dedupePlans(plans) {
   const seen = new Set();
   const result = [];
@@ -220,6 +331,15 @@ function dedupePlans(plans) {
   return result;
 }
 
+/**
+ * Fetches text content from a URL with retry logic
+ * @param {string} url - The URL to fetch
+ * @param {Object} [options={}] - Fetch options
+ * @param {number} [options.retries=1] - Number of retries
+ * @param {number} [options.retryDelayMs=400] - Delay between retries
+ * @returns {Promise<string>} The fetched text content
+ * @throws {Error} If all retry attempts fail
+ */
 async function fetchText(url, options = {}) {
   const context = REQUEST_CONTEXT.getStore() || {};
   const {
@@ -286,6 +406,13 @@ async function fetchText(url, options = {}) {
   throw lastError;
 }
 
+/**
+ * Fetches and parses JSON from a URL
+ * @param {string} url - The URL to fetch
+ * @param {Object} [options={}] - Fetch options
+ * @returns {Promise<Object>} The parsed JSON data
+ * @throws {Error} If fetch or parse fails
+ */
 async function fetchJson(url, options = {}) {
   const text = await fetchText(url, options);
   try {
@@ -295,6 +422,11 @@ async function fetchJson(url, options = {}) {
   }
 }
 
+/**
+ * Extracts table rows from HTML
+ * @param {string} html - The HTML content
+ * @returns {string[][]} Array of rows, each row is an array of cell texts
+ */
 function extractRows(html) {
   const rows = [];
   const matches = html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi);
@@ -307,6 +439,11 @@ function extractRows(html) {
   return rows;
 }
 
+/**
+ * Formats a numeric amount as a string
+ * @param {number} amount - The amount to format
+ * @returns {string|null} The formatted amount or null if invalid
+ */
 function formatAmount(amount) {
   if (!Number.isFinite(amount)) {
     return null;
@@ -314,6 +451,11 @@ function formatAmount(amount) {
   return Number.isInteger(amount) ? String(amount) : amount.toFixed(2).replace(/\.?0+$/, "");
 }
 
+/**
+ * Normalizes service details from various input formats
+ * @param {string|string[]|null|undefined} values - The service details to normalize
+ * @returns {string[]|null} Array of normalized service details or null
+ */
 function normalizeServiceDetails(values) {
   const list = Array.isArray(values) ? values : values ? [values] : [];
   const normalized = unique(
@@ -325,6 +467,14 @@ function normalizeServiceDetails(values) {
   return normalized.length > 0 ? normalized : null;
 }
 
+/**
+ * Builds service details from table rows
+ * @param {string[][]} rows - Table rows
+ * @param {number} column - Column index to extract values from
+ * @param {Object} [options={}] - Options
+ * @param {string[]} [options.excludeLabels=[]] - Labels to exclude
+ * @returns {string[]|null} Array of service details or null
+ */
 function buildServiceDetailsFromRows(rows, column, options = {}) {
   const excludeLabels = new Set(
     (options.excludeLabels || []).map((value) => normalizeText(value).toLowerCase()).filter(Boolean),
@@ -344,6 +494,19 @@ function buildServiceDetailsFromRows(rows, column, options = {}) {
   return normalizeServiceDetails(details);
 }
 
+/**
+ * Creates a standardized plan object
+ * @param {Object} params - Plan parameters
+ * @param {string} params.name - Plan name
+ * @param {string} params.currentPriceText - Current price text
+ * @param {number} [params.currentPrice=null] - Current price amount
+ * @param {string} [params.originalPriceText=null] - Original price text
+ * @param {number} [params.originalPrice=null] - Original price amount
+ * @param {string} [params.unit=null] - Time unit
+ * @param {string} [params.notes=null] - Additional notes
+ * @param {string[]} [params.serviceDetails=null] - Service details
+ * @returns {Object} Standardized plan object
+ */
 function asPlan({
   name,
   currentPriceText,
@@ -368,6 +531,12 @@ function asPlan({
   };
 }
 
+/**
+ * Converts a relative URL to absolute URL
+ * @param {string} url - The URL (relative or absolute)
+ * @param {string} baseUrl - The base URL
+ * @returns {string} The absolute URL
+ */
 function absoluteUrl(url, baseUrl) {
   try {
     return new URL(url, baseUrl).toString();
@@ -376,10 +545,20 @@ function absoluteUrl(url, baseUrl) {
   }
 }
 
+/**
+ * Returns unique values from an array
+ * @param {Array} values - Array of values
+ * @returns {Array} Array of unique values
+ */
 function unique(values) {
   return [...new Set(values.filter(Boolean))];
 }
 
+/**
+ * Converts time unit constant to label
+ * @param {string} value - Time unit constant (e.g., "TIME_UNIT_MONTH")
+ * @returns {string|null} The corresponding label (e.g., "月") or null
+ */
 function timeUnitLabel(value) {
   if (value === "TIME_UNIT_MONTH") {
     return "月";
@@ -393,6 +572,11 @@ function timeUnitLabel(value) {
   return null;
 }
 
+/**
+ * Checks if a unit represents a monthly period
+ * @param {string} value - The unit to check
+ * @returns {boolean} True if the unit is monthly
+ */
 function isMonthlyUnit(value) {
   const unit = normalizeText(value).toLowerCase();
   if (!unit) {
@@ -401,6 +585,11 @@ function isMonthlyUnit(value) {
   return /^(月|month|monthly)$/.test(unit);
 }
 
+/**
+ * Checks if price text represents a monthly price
+ * @param {string} value - The price text to check
+ * @returns {boolean} True if the price is monthly
+ */
 function isMonthlyPriceText(value) {
   const text = normalizeText(value);
   if (!text) {
@@ -412,30 +601,46 @@ function isMonthlyPriceText(value) {
   return /\/\s*(月|month|monthly)/i.test(text);
 }
 
+/**
+ * Checks if a plan is a standard monthly/quarterly plan
+ * Filters out first-month promos, annual, and daily plans
+ * @param {Object} plan - The plan to check
+ * @returns {boolean} True if the plan is a standard monthly/quarterly plan
+ */
 function isStandardMonthlyPlan(plan) {
   const priceText = normalizeText(plan?.currentPriceText || "");
   const unit = normalizeText(plan?.unit || "").toLowerCase();
   const hasMonthlyUnit = isMonthlyUnit(plan?.unit);
   const hasMonthlyPriceText = isMonthlyPriceText(priceText);
-  const hasQuarterlyUnit = /^(\u5b63\u5ea6|\u5b63|quarter|quarterly)$/.test(unit);
-  const hasQuarterlyPriceText = /\/\s*(\u5b63\u5ea6|\u5b63|quarter)/i.test(priceText);
+  const hasQuarterlyUnit = /^(季度|季|quarter|quarterly)$/.test(unit);
+  const hasQuarterlyPriceText = /\/\s*(季度|季|quarter)/i.test(priceText);
   // Reject first-month promo or annual/daily plans
-  if (priceText && /\u9996\u6708|first\s*month/i.test(priceText)) {
+  if (priceText && /首月|first\s*month/i.test(priceText)) {
     return false;
   }
-  if (/^(\u5e74|year|annual|day|\u65e5)$/.test(unit)) {
+  if (/^(年|year|annual|day|日)$/.test(unit)) {
     return false;
   }
-  if (priceText && /\/\s*(\u5e74|year|annual|day|\u65e5)/i.test(priceText)) {
+  if (priceText && /\/\s*(年|year|annual|day|日)/i.test(priceText)) {
     return false;
   }
   return hasMonthlyUnit || hasMonthlyPriceText || hasQuarterlyUnit || hasQuarterlyPriceText;
 }
 
+/**
+ * Filters and deduplicates standard monthly plans
+ * @param {Object[]} plans - Array of plan objects
+ * @returns {Object[]} Filtered and deduplicated plans
+ */
 function keepStandardMonthlyPlans(plans) {
   return dedupePlans((plans || []).filter((plan) => isStandardMonthlyPlan(plan)));
 }
 
+/**
+ * Strips simple markdown formatting from text
+ * @param {string} text - The text containing markdown
+ * @returns {string} The text without markdown
+ */
 function stripSimpleMarkdown(text) {
   return normalizeText(text)
     .replace(/<label>\s*([^<]+)\s*<\/label>/gi, "$1")
@@ -478,5 +683,5 @@ module.exports = {
   isMonthlyPriceText,
   isStandardMonthlyPlan,
   keepStandardMonthlyPlans,
-  stripSimpleMarkdown
+  stripSimpleMarkdown,
 };

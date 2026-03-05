@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
   <title>编码套餐看板 · AI 模型定价一览</title>
   <meta name="description" content="实时汇总智谱、Kimi、火山引擎、MiniMax、阿里云等主流 AI 供应商的编程套餐价格，自动抓取更新。" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="编码套餐看板 · AI 模型定价一览" />
   <meta property="og:description" content="实时汇总智谱、Kimi、火山引擎、MiniMax、阿里云等主流 AI 供应商的编程套餐价格，自动抓取更新。" />
   <meta property="og:url" content="https://sandrewzq.github.io/coding-plans-for-copilot/" />
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230c7c59'/><text x='16' y='23' text-anchor='middle' fill='white' font-size='20' font-family='serif'>¥</text></svg>" />
+  <link rel="icon" href="./icons.svg#icon-app" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -53,11 +53,29 @@
         </header>
 
         <section class="toolbar">
-          <p>筛选规则：展示月费与季费套餐（不含年费与首月特惠价）。</p>
+          <div class="toolbar-filters">
+            <input type="text" id="searchInput" class="search-input" placeholder="搜索套餐名称或供应商..." />
+            <select id="priceFilter" class="price-filter">
+              <option value="">所有价格</option>
+              <option value="0-50">¥0 - ¥50</option>
+              <option value="50-100">¥50 - ¥100</option>
+              <option value="100-200">¥100 - ¥200</option>
+              <option value="200+">¥200+</option>
+            </select>
+          </div>
           <div class="toolbar-actions">
+            <button id="compareButton" class="btn-secondary" type="button">📊 对比套餐</button>
             <button id="themeToggle" class="btn-secondary" type="button">🌙 暗色模式</button>
             <button id="reloadButton" class="btn-primary" type="button">重新加载</button>
           </div>
+        </section>
+
+        <section id="comparePanel" class="compare-panel hidden">
+          <div class="compare-header">
+            <h3>套餐对比</h3>
+            <button id="closeCompare" class="btn-secondary" type="button">关闭</button>
+          </div>
+          <div id="compareContent" class="compare-content"></div>
         </section>
 
         <section id="errorBanner" class="error hidden" role="status" aria-live="polite"></section>

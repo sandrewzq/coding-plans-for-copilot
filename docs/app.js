@@ -52,6 +52,18 @@ const errorBannerEl = document.querySelector("#errorBanner");
 const generatedAtEl = document.querySelector("#generatedAt");
 const providerCountEl = document.querySelector("#providerCount");
 const planCountEl = document.querySelector("#planCount");
+const searchInputEl = document.querySelector("#searchInput");
+const priceFilterEl = document.querySelector("#priceFilter");
+const compareButtonEl = document.querySelector("#compareButton");
+const comparePanelEl = document.querySelector("#comparePanel");
+const closeCompareEl = document.querySelector("#closeCompare");
+const compareContentEl = document.querySelector("#compareContent");
+
+// Store original data for filtering
+let originalData = null;
+
+// Store selected plans for comparison
+let selectedPlansForCompare = new Set();
 
 function formatDate(isoText) {
   if (!isoText) {
@@ -245,7 +257,74 @@ function getProviderPurchaseUrl(provider) {
   return null;
 }
 
+/**
+ * Filters providers and plans based on search query and price range
+ * @param {Object} data - The pricing data
+ * @param {string} searchQuery - The search query
+ * @param {string} priceRange - The price range filter
+ * @returns {Object} Filtered data
+ */
+function filterData(data, searchQuery, priceRange) {
+  const query = searchQuery.toLowerCase().trim();
+  const providers = Array.isArray(data.providers) ? data.providers : [];
+
+  return {
+    ...data,
+    providers: providers
+      .map((provider) => {
+        const providerName = (PROVIDER_LABELS[provider.provider] || provider.provider).toLowerCase();
+        const matchesProvider = providerName.includes(query);
+
+        const filteredPlans = (provider.plans || []).filter((plan) => {
+          // Check if plan name matches search
+          const planNameMatch = (plan.name || "").toLowerCase().includes(query);
+          // Check if service details match search
+          const serviceDetailsMatch = (plan.serviceDetails || []).some((detail) =>
+            detail.toLowerCase().includes(query),
+          );
+          // Check if notes match search
+          const notesMatch = (plan.notes || "").toLowerCase().includes(query);
+
+          const matchesSearch = matchesProvider || planNameMatch || serviceDetailsMatch || notesMatch;
+
+          // Check price range
+          let matchesPrice = true;
+          if (priceRange && plan.currentPrice !== null && plan.currentPrice !== undefined) {
+            const price = plan.currentPrice;
+            switch (priceRange) {
+              case "0-50":
+                matchesPrice = price >= 0 && price <= 50;
+                break;
+              case "50-100":
+                matchesPrice = price > 50 && price <= 100;
+                break;
+              case "100-200":
+                matchesPrice = price > 100 && price <= 200;
+                break;
+              case "200+":
+                matchesPrice = price > 200;
+                break;
+            }
+          }
+
+          return matchesSearch && matchesPrice;
+        });
+
+        return {
+          ...provider,
+          plans: filteredPlans,
+        };
+      })
+      .filter((provider) => provider.plans.length > 0),
+  };
+}
+
 function renderProviders(data) {
+  // Store original data for filtering
+  if (!originalData) {
+    originalData = JSON.parse(JSON.stringify(data));
+  }
+
   const providers = Array.isArray(data.providers) ? data.providers : [];
   const visibleProviders = providers
     .filter((provider) => (provider.plans || []).length > 0)
@@ -318,6 +397,29 @@ function renderProviders(data) {
       }
 
       item.append(name, priceRow);
+
+      // Add compare checkbox
+      const compareWrapper = createElement("div", "plan-compare");
+      const compareCheckbox = document.createElement("input");
+      compareCheckbox.type = "checkbox";
+      compareCheckbox.title = "加入对比";
+      compareCheckbox.dataset.provider = provider.provider;
+      compareCheckbox.dataset.planName = plan.name;
+      compareCheckbox.addEventListener("change", (e) => {
+        const planKey = `${provider.provider}:${plan.name}`;
+        if (e.target.checked) {
+          if (selectedPlansForCompare.size >= 4) {
+            alert("最多只能选择 4 个套餐进行对比");
+            e.target.checked = false;
+            return;
+          }
+          selectedPlansForCompare.add(planKey);
+        } else {
+          selectedPlansForCompare.delete(planKey);
+        }
+      });
+      compareWrapper.append(compareCheckbox);
+      item.append(compareWrapper);
 
       const offerInfo = getPlanOffer(provider, plan);
       if (offerInfo) {
@@ -397,15 +499,15 @@ function renderSkeletonProviders() {
   for (let i = 0; i < 3; i++) {
     const card = createElement("article", "provider-card");
     const head = createElement("header", "provider-head");
-    const title = createElement("h2", "provider-title skeleton", "Loading Provider API");
+    const title = createElement("h2", "provider-title skeleton-shimmer", "Loading Provider API");
     head.append(title);
 
     const planList = createElement("ul", "plan-list");
     for (let j = 0; j < 2; j++) {
       const item = createElement("li", "plan-item");
-      const name = createElement("h3", "plan-name skeleton", "Awesome Plan Title Here");
+      const name = createElement("h3", "plan-name skeleton-shimmer", "Awesome Plan Title Here");
       const priceRow = createElement("p", "price-row");
-      priceRow.append(createElement("span", "price-now skeleton", "¥999.00/月"));
+      priceRow.append(createElement("span", "price-now skeleton-shimmer", "¥999.00/月"));
       item.append(name, priceRow);
       planList.append(item);
     }
@@ -453,8 +555,136 @@ async function loadData() {
 }
 
 reloadButtonEl.addEventListener("click", () => {
+  // Reset filters when reloading
+  if (searchInputEl) searchInputEl.value = "";
+  if (priceFilterEl) priceFilterEl.value = "";
+  originalData = null;
   loadData();
 });
+
+// Search and filter handling
+function applyFilters() {
+  if (!originalData) return;
+  const searchQuery = searchInputEl ? searchInputEl.value : "";
+  const priceRange = priceFilterEl ? priceFilterEl.value : "";
+  const filteredData = filterData(originalData, searchQuery, priceRange);
+  renderProviders(filteredData);
+  renderFailures(filteredData);
+}
+
+if (searchInputEl) {
+  searchInputEl.addEventListener("input", () => {
+    applyFilters();
+  });
+}
+
+if (priceFilterEl) {
+  priceFilterEl.addEventListener("change", () => {
+    applyFilters();
+  });
+}
+
+// Compare functionality
+function renderCompareTable() {
+  if (!compareContentEl || !originalData) return;
+
+  if (selectedPlansForCompare.size === 0) {
+    compareContentEl.innerHTML = '<p class="compare-select-hint">请至少选择一个套餐进行对比</p>';
+    return;
+  }
+
+  const selectedPlans = [];
+  for (const provider of originalData.providers) {
+    for (const plan of provider.plans) {
+      const planKey = `${provider.provider}:${plan.name}`;
+      if (selectedPlansForCompare.has(planKey)) {
+        selectedPlans.push({
+          provider: PROVIDER_LABELS[provider.provider] || provider.provider,
+          ...plan,
+        });
+      }
+    }
+  }
+
+  const table = document.createElement("table");
+  table.className = "compare-table";
+
+  // Header row
+  const thead = document.createElement("thead");
+  const headerRow = document.createElement("tr");
+  headerRow.append(createElement("th", "", "项目"));
+  for (const plan of selectedPlans) {
+    headerRow.append(createElement("th", "", `${plan.provider} - ${plan.name}`));
+  }
+  thead.append(headerRow);
+  table.append(thead);
+
+  // Data rows
+  const tbody = document.createElement("tbody");
+
+  // Price row
+  const priceRow = document.createElement("tr");
+  priceRow.append(createElement("td", "", "价格"));
+  for (const plan of selectedPlans) {
+    const priceText = plan.currentPriceText || (plan.currentPrice ? `¥${plan.currentPrice}` : "-");
+    priceRow.append(createElement("td", "", priceText));
+  }
+  tbody.append(priceRow);
+
+  // Original price row
+  const originalPriceRow = document.createElement("tr");
+  originalPriceRow.append(createElement("td", "", "原价"));
+  for (const plan of selectedPlans) {
+    const originalText = plan.originalPriceText || (plan.originalPrice ? `¥${plan.originalPrice}` : "-");
+    originalPriceRow.append(createElement("td", "", originalText));
+  }
+  tbody.append(originalPriceRow);
+
+  // Unit row
+  const unitRow = document.createElement("tr");
+  unitRow.append(createElement("td", "", "计费周期"));
+  for (const plan of selectedPlans) {
+    unitRow.append(createElement("td", "", plan.unit || "-"));
+  }
+  tbody.append(unitRow);
+
+  // Notes row
+  const notesRow = document.createElement("tr");
+  notesRow.append(createElement("td", "", "备注"));
+  for (const plan of selectedPlans) {
+    notesRow.append(createElement("td", "", plan.notes || "-"));
+  }
+  tbody.append(notesRow);
+
+  // Service details row
+  const serviceRow = document.createElement("tr");
+  serviceRow.append(createElement("td", "", "服务内容"));
+  for (const plan of selectedPlans) {
+    const serviceText = (plan.serviceDetails || []).join("；") || "-";
+    serviceRow.append(createElement("td", "", serviceText));
+  }
+  tbody.append(serviceRow);
+
+  table.append(tbody);
+  compareContentEl.replaceChildren(table);
+}
+
+if (compareButtonEl) {
+  compareButtonEl.addEventListener("click", () => {
+    if (comparePanelEl) {
+      comparePanelEl.classList.remove("hidden");
+      renderCompareTable();
+    }
+  });
+}
+
+if (closeCompareEl) {
+  closeCompareEl.addEventListener("click", () => {
+    if (comparePanelEl) {
+      comparePanelEl.classList.add("hidden");
+    }
+  });
+}
 
 // Theme handling
 const themeToggleEl = document.querySelector("#themeToggle");

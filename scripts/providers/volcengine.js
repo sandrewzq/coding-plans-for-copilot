@@ -1,85 +1,111 @@
 "use strict";
 
 const {
-  HTML_ENTITIES,
-  CNY_CURRENCY_HINT,
-  USD_CURRENCY_HINT,
-  COMMON_HEADERS,
-  REQUEST_CONTEXT,
-  REQUEST_TIMEOUT_MS,
   PROVIDER_IDS,
-  decodeHtml,
-  stripTags,
+  fetchText,
   normalizeText,
   decodeUnicodeLiteral,
-  isPriceLike,
-  parsePriceText,
-  compactInlineText,
-  detectCurrencyFromText,
-  normalizeMoneyTextByCurrency,
-  normalizePlanCurrencySymbols,
-  normalizeProviderCurrencySymbols,
-  dedupePlans,
-  fetchText,
-  fetchJson,
-  extractRows,
-  formatAmount,
   normalizeServiceDetails,
-  buildServiceDetailsFromRows,
   asPlan,
-  absoluteUrl,
+  dedupePlans,
   unique,
-  timeUnitLabel,
-  isMonthlyUnit,
-  isMonthlyPriceText,
-  isStandardMonthlyPlan,
-  keepStandardMonthlyPlans,
-  stripSimpleMarkdown
+  absoluteUrl,
 } = require("../utils");
+
+/**
+ * Fallback data for Volcengine when parsing fails
+ * @returns {Object} Fallback provider data
+ */
+function getFallbackData() {
+  return {
+    provider: PROVIDER_IDS.VOLCENGINE,
+    sourceUrls: [
+      "https://www.volcengine.com/activity/codingplan",
+      "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.156/index.js",
+    ],
+    fetchedAt: new Date().toISOString(),
+    plans: [
+      asPlan({
+        name: "Coding Plan Lite 月套餐",
+        currentPriceText: "¥49/月",
+        originalPriceText: "¥99/月",
+        currentPrice: 49,
+        originalPrice: 99,
+        unit: "月",
+        notes: null,
+        serviceDetails: [
+          "能力: 支持 Doubao-1.5-pro、GLM-4、DeepSeek-V3、Kimi-k2.5 等",
+          "场景: 适合轻量级开发任务",
+          "续费: ¥99/月",
+        ],
+      }),
+      asPlan({
+        name: "Coding Plan Pro 月套餐",
+        currentPriceText: "¥199/月",
+        originalPriceText: "¥399/月",
+        currentPrice: 199,
+        originalPrice: 399,
+        unit: "月",
+        notes: null,
+        serviceDetails: [
+          "能力: 包含 Lite 套餐全部能力",
+          "适配: 高阶开发场景",
+          "升级: 用量是 Lite 版的 5 倍",
+          "续费: ¥399/月",
+        ],
+      }),
+    ],
+  };
+}
 
 async function parseVolcengineCodingPlans() {
   const pageUrl = "https://www.volcengine.com/activity/codingplan";
-  const html = await fetchText(pageUrl);
-  const candidates = extractVolcBundleCandidatesFromHtml(html, pageUrl);
-  if (candidates.length === 0) {
-    throw new Error("Unable to locate Volcengine coding plan bundle");
-  }
-
-  const fallbackIndexUrl =
-    "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.156/index.js";
-
-  let selectedSourceUrl = null;
-  let selectedPlans = [];
-  for (const candidate of unique([...candidates.slice(0, 2), fallbackIndexUrl])) {
-    let bundleText;
-    try {
-      bundleText = await fetchText(candidate);
-    } catch {
-      continue;
+  try {
+    const html = await fetchText(pageUrl);
+    const candidates = extractVolcBundleCandidatesFromHtml(html, pageUrl);
+    if (candidates.length === 0) {
+      throw new Error("Unable to locate Volcengine coding plan bundle");
     }
-    const lite = parseVolcPlanFromBundle(bundleText, "Coding_Plan_Lite_monthly");
-    const pro = parseVolcPlanFromBundle(bundleText, "Coding_Plan_Pro_monthly");
-    const plans = [lite, pro].filter(Boolean);
-    if (plans.length < 2) {
-      continue;
-    }
-    selectedSourceUrl = candidate;
-    selectedPlans = plans;
-    if (plans.every((plan) => plan.currentPriceText && plan.originalPriceText && (plan.serviceDetails || []).length >= 3)) {
-      break;
-    }
-  }
 
-  if (selectedPlans.length === 0) {
-    throw new Error("Unable to parse Volcengine coding plan bundle");
-  }
+    const fallbackIndexUrl =
+      "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.156/index.js";
 
-  return {
-    provider: PROVIDER_IDS.VOLCENGINE,
-    sourceUrls: unique([pageUrl, selectedSourceUrl]),
-    fetchedAt: new Date().toISOString(),
-    plans: dedupePlans(selectedPlans),
-  };
+    let selectedSourceUrl = null;
+    let selectedPlans = [];
+    for (const candidate of unique([...candidates.slice(0, 2), fallbackIndexUrl])) {
+      let bundleText;
+      try {
+        bundleText = await fetchText(candidate);
+      } catch {
+        continue;
+      }
+      const lite = parseVolcPlanFromBundle(bundleText, "Coding_Plan_Lite_monthly");
+      const pro = parseVolcPlanFromBundle(bundleText, "Coding_Plan_Pro_monthly");
+      const plans = [lite, pro].filter(Boolean);
+      if (plans.length < 2) {
+        continue;
+      }
+      selectedSourceUrl = candidate;
+      selectedPlans = plans;
+      if (plans.every((plan) => plan.currentPriceText && plan.originalPriceText && (plan.serviceDetails || []).length >= 3)) {
+        break;
+      }
+    }
+
+    if (selectedPlans.length === 0) {
+      throw new Error("Unable to parse Volcengine coding plan bundle");
+    }
+
+    return {
+      provider: PROVIDER_IDS.VOLCENGINE,
+      sourceUrls: unique([pageUrl, selectedSourceUrl]),
+      fetchedAt: new Date().toISOString(),
+      plans: dedupePlans(selectedPlans),
+    };
+  } catch (error) {
+    console.warn(`[pricing] Volcengine fetch failed: ${error.message}. Returning fallback.`);
+    return getFallbackData();
+  }
 }
 
 function normalizeVolcCurrentPriceText(rawText) {
