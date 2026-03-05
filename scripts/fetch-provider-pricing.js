@@ -47,6 +47,8 @@ const HTML_ENTITIES = {
   "&quot;": "\"",
   "&#39;": "'",
   "&nbsp;": " ",
+  "&yen;": "¥",
+  "&reg;": "®",
 };
 
 const CNY_CURRENCY_HINT = /(¥|￥|元|人民币|\b(?:CNY|RMB)\b)/i;
@@ -1422,12 +1424,13 @@ async function parseAliyunCodingPlans() {
     // The DOM structure might break up the price with spans (e.g. <span>￥</span><span>39.90</span>),
     // and uses fullwidth ￥ (U+FFE5) for the flash price but narrow ¥ (U+00A5) for the regular price.
     // Stripping all tags and spaces makes the regex extremely robust.
-    const cleanHtml = html.replace(/<[^>]+>/g, "").replace(/\s+/g, "");
+    const cleanHtml = decodeHtml(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, "");
     const liteFlashMatch =
-      cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,500}?官网折扣价[^¥￥0-9]*[¥￥]40(?:[^0-9]|$)/i) ||
+      cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,1500}?官网折扣价[^¥￥0-9]*[¥￥]40(?:[^0-9]|$)/i) ||
       cleanHtml.match(/首月(?:新购)?低至[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
     const proFlashMatch =
-      cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,800}?官网折扣价[^¥￥0-9]*[¥￥]200(?:[^0-9]|$)/i);
+      cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,1500}?官网折扣价[^¥￥0-9]*[¥￥]200(?:[^0-9]|$)/i) ||
+      cleanHtml.match(/Pro(?:高级)?套餐[^0-9]{0,500}?([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月/i);
     const flashPriceByTier = new Map([
       ["Lite", liteFlashMatch ? Number(liteFlashMatch[1]) : null],
       ["Pro", proFlashMatch ? Number(proFlashMatch[1]) : null],

@@ -262,7 +262,7 @@
           "originalPrice": 40,
           "originalPriceText": "¥40/月",
           "unit": "月",
-          "notes": "新客首月 7.9",
+          "notes": "新客首月 7.9元",
           "serviceDetails": [
             "能力: 支持 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus、MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等模型",
             "场景: 面向处理轻量级工作负载的个人开发者",
@@ -271,12 +271,12 @@
         },
         {
           "name": "Coding Plan Pro",
-          "currentPrice": 200,
-          "currentPriceText": "¥200/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "currentPrice": 39.9,
+          "currentPriceText": "¥39.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
           "unit": "月",
-          "notes": null,
+          "notes": "新客首月 39.9元",
           "serviceDetails": [
             "权益: 享受 Lite 套餐的全部能力与权益",
             "额度: 用量是 Lite 版的 5 倍",
