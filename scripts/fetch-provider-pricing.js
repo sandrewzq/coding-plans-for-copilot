@@ -1392,6 +1392,17 @@ async function parseAliyunCodingPlans() {
     return amount / 100;
   };
 
+  // Extract new-customer first-month flash prices once, before the per-plan loop.
+  // Use "Coding Plan Lite/Pro" as precise anchors so Pro doesn't accidentally match the
+  // global page banner (e.g. "首月低至 7.9 元") intended for Lite.
+  const liteFlashMatch = html.match(/Coding Plan Lite[\s\S]{0,3000}?新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)/i)
+    || html.match(/首月(?:新购)?低至[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
+  const proFlashMatch = html.match(/Coding Plan Pro[\s\S]{0,3000}?新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
+  const flashPriceByTier = new Map([
+    ["Lite", liteFlashMatch ? Number(liteFlashMatch[1]) : null],
+    ["Pro", proFlashMatch ? Number(proFlashMatch[1]) : null],
+  ]);
+
   const plans = [];
   for (const planDef of planDefs) {
     const payload = await fetchJson(queryPriceUrl, {
@@ -1436,22 +1447,7 @@ async function parseAliyunCodingPlans() {
     const promoLabel = normalizeText(payload?.data?.promotionLabelInfo?.common?.display?.join(" ")) || null;
     const activityName =
       normalizeText(moduleResult?.depreciateInfo?.finalActivity?.activityName || articleItem?.name || "") || null;
-    // Try to extract the limited-time promo price from the page (e.g., "超划算" flash sale price).
-    // The API returns the "官网折扣价" (official discount price) as discountedCents.
-    // Flash sale prices (e.g., ¥7.9) are shown as "新客首月" on the page.
-    const flashSaleAmounts = {
-      Lite: null,
-      Pro: null,
-    };
-    const flashLiteMatch = html.match(/Lite[^]*?新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)/i)
-      || html.match(/新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)[^]*?Lite/i)
-      || html.match(/首月(?:新购)?低至[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
-    const flashProMatch = html.match(/Pro[^]*?新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)/i)
-      || html.match(/新客首月[^0-9]*([0-9]+(?:\.[0-9]+)?)[^]*?Pro/i);
-    if (flashLiteMatch) flashSaleAmounts.Lite = Number(flashLiteMatch[1]);
-    if (flashProMatch) flashSaleAmounts.Pro = Number(flashProMatch[1]);
-
-    const flashSaleAmount = Number.isFinite(flashSaleAmounts[planDef.tier]) ? flashSaleAmounts[planDef.tier] : null;
+    const flashSaleAmount = flashPriceByTier.get(planDef.tier) ?? null;
     plans.push(
       asPlan({
         name: `Coding Plan ${planDef.tier}`,
