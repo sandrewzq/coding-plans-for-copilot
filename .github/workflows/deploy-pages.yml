@@ -12,6 +12,8 @@ on:
       - Update Provider Pricing
     types:
       - completed
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -21,7 +23,7 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -31,6 +33,12 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Debug workflow info
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Workflow run ID: ${{ github.event.workflow_run.id }}"
+
       - name: Checkout
         uses: actions/checkout@v4
 
