@@ -121,7 +121,7 @@ function parseMinimaxOriginalPrice(priceText, currentText) {
     return null;
   }
   let original = normalizeText(originalMatch[1]);
-  if (!\/\s*[年月]/.test(original)) {
+  if (!/\/\s*[年月]/.test(original)) {
     const unitMatch = currentText.match(/\/\s*([年月])/);
     if (unitMatch) {
       original = `${original} /${unitMatch[1]}`;
