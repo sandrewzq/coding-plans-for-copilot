@@ -82,7 +82,7 @@ async function parseMinimaxCodingPlans() {
           continue;
         }
         const currentText = normalizeText(rawPriceCell.replace(/\(\s*原价[^)）]+\)/g, ""));
-        if (!\/\s*月/i.test(currentText) || /首月/i.test(currentText)) {
+        if (!/\/\s*月/i.test(currentText) || /首月/i.test(currentText)) {
           continue;
         }
         const originalText = parseMinimaxOriginalPrice(rawPriceCell, currentText);
