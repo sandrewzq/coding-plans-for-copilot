@@ -30,6 +30,21 @@ const PROVIDER_BUY_URLS = {
   "zenmux-ai": "https://zenmux.ai/pricing/subscription",
 };
 
+const PROVIDER_ORDER = [
+  "zhipu-ai",
+  "kimi-ai",
+  "minimax-ai",
+  "aliyun-ai",
+  "volcengine-ai",
+  "kwaikat-ai",
+  "baidu-qianfan-ai",
+  "infini-ai",
+  "compshare-ai",
+  "mthreads-ai",
+  "x-aio",
+  "zenmux-ai",
+];
+
 const reloadButtonEl = document.querySelector("#reloadButton");
 const providerGridEl = document.querySelector("#providerGrid");
 const errorBannerEl = document.querySelector("#errorBanner");
@@ -98,6 +113,17 @@ function getPlanCurrencySymbol(plan) {
 function displayPrice(plan) {
   return plan.currentPriceText
     || (Number.isFinite(plan.currentPrice) ? `${getPlanCurrencySymbol(plan)}${plan.currentPrice}` : "价格待确认");
+}
+
+function priceTextHasUnit(text) {
+  const value = String(text || "");
+  if (!value) {
+    return false;
+  }
+  if (/\/\s*(月|季|年|month|quarter|year)/i.test(value)) {
+    return true;
+  }
+  return /(每月|每季|每年)/.test(value);
 }
 
 function getPlanServices(plan) {
@@ -220,7 +246,18 @@ function getProviderPurchaseUrl(provider) {
 
 function renderProviders(data) {
   const providers = Array.isArray(data.providers) ? data.providers : [];
-  const visibleProviders = providers.filter((provider) => (provider.plans || []).length > 0);
+  const visibleProviders = providers
+    .filter((provider) => (provider.plans || []).length > 0)
+    .sort((left, right) => {
+      const leftIndex = PROVIDER_ORDER.indexOf(left?.provider);
+      const rightIndex = PROVIDER_ORDER.indexOf(right?.provider);
+      const safeLeft = leftIndex === -1 ? Number.POSITIVE_INFINITY : leftIndex;
+      const safeRight = rightIndex === -1 ? Number.POSITIVE_INFINITY : rightIndex;
+      if (safeLeft !== safeRight) {
+        return safeLeft - safeRight;
+      }
+      return String(left?.provider || "").localeCompare(String(right?.provider || ""));
+    });
 
   providerGridEl.replaceChildren();
 
@@ -254,6 +291,7 @@ function renderProviders(data) {
       const item = createElement("li", "plan-item");
       const name = createElement("h3", "plan-name", plan.name || "未命名套餐");
       const priceRow = createElement("p", "price-row");
+      const priceText = displayPrice(plan);
 
       const isDiscount =
         plan.originalPriceText &&
@@ -262,12 +300,12 @@ function renderProviders(data) {
 
       if (isDiscount) {
         priceRow.append(createElement("span", "price-original", `原价 ${plan.originalPriceText}`));
-        priceRow.append(createElement("span", "price-discount", `优惠价 ${displayPrice(plan)}`));
+        priceRow.append(createElement("span", "price-discount", `优惠价 ${priceText}`));
       } else {
-        priceRow.append(createElement("span", "price-now", displayPrice(plan)));
+        priceRow.append(createElement("span", "price-now", priceText));
       }
 
-      if (plan.unit) {
+      if (plan.unit && !priceTextHasUnit(priceText)) {
         priceRow.append(createElement("span", "unit-tag", normalizeUnit(plan.unit)));
       }
 

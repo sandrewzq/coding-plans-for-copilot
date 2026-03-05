@@ -1,41 +1,113 @@
 "use strict";
 
 const {
-  HTML_ENTITIES,
-  CNY_CURRENCY_HINT,
-  USD_CURRENCY_HINT,
-  COMMON_HEADERS,
-  REQUEST_CONTEXT,
-  REQUEST_TIMEOUT_MS,
   PROVIDER_IDS,
-  decodeHtml,
-  stripTags,
-  normalizeText,
-  decodeUnicodeLiteral,
-  isPriceLike,
-  parsePriceText,
-  compactInlineText,
-  detectCurrencyFromText,
-  normalizeMoneyTextByCurrency,
-  normalizePlanCurrencySymbols,
-  normalizeProviderCurrencySymbols,
-  dedupePlans,
   fetchText,
-  fetchJson,
-  extractRows,
-  formatAmount,
+  normalizeText,
   normalizeServiceDetails,
-  buildServiceDetailsFromRows,
+  formatAmount,
   asPlan,
   absoluteUrl,
   unique,
-  timeUnitLabel,
-  isMonthlyUnit,
-  isMonthlyPriceText,
-  isStandardMonthlyPlan,
-  keepStandardMonthlyPlans,
-  stripSimpleMarkdown
+  dedupePlans,
 } = require("../utils");
+
+function extractPlanBlocks(source) {
+  const blocks = [];
+  let index = source.indexOf("{id:\"");
+  while (index >= 0) {
+    const start = index;
+    let depth = 0;
+    let end = -1;
+    for (let i = start; i < source.length; i += 1) {
+      const char = source[i];
+      if (char === "{") {
+        depth += 1;
+      } else if (char === "}") {
+        depth -= 1;
+        if (depth === 0) {
+          end = i + 1;
+          break;
+        }
+      }
+    }
+    if (end > start) {
+      blocks.push(source.slice(start, end));
+    }
+    index = source.indexOf("{id:\"", start + 1);
+  }
+  return blocks;
+}
+
+function extractStringValue(block, key) {
+  const match = block.match(new RegExp(`${key}:\"([^\"]+)\"`));
+  return match ? match[1] : null;
+}
+
+function extractNumberValue(block, key) {
+  if (!block) {
+    return null;
+  }
+  const match = block.match(new RegExp(`${key}:([0-9]+(?:\\.[0-9]+)?)`));
+  return match ? Number(match[1]) : null;
+}
+
+function extractObjectBlock(block, key) {
+  const keyIndex = block.indexOf(`${key}:{`);
+  if (keyIndex < 0) {
+    return null;
+  }
+  const start = block.indexOf("{", keyIndex);
+  if (start < 0) {
+    return null;
+  }
+  let depth = 0;
+  for (let i = start; i < block.length; i += 1) {
+    const char = block[i];
+    if (char === "{") {
+      depth += 1;
+    } else if (char === "}") {
+      depth -= 1;
+      if (depth === 0) {
+        return block.slice(start, i + 1);
+      }
+    }
+  }
+  return null;
+}
+
+function extractArrayItems(block, key) {
+  const keyIndex = block.indexOf(`${key}:[`);
+  if (keyIndex < 0) {
+    return [];
+  }
+  const start = block.indexOf("[", keyIndex);
+  if (start < 0) {
+    return [];
+  }
+  let depth = 0;
+  let end = -1;
+  for (let i = start; i < block.length; i += 1) {
+    const char = block[i];
+    if (char === "[") {
+      depth += 1;
+    } else if (char === "]") {
+      depth -= 1;
+      if (depth === 0) {
+        end = i;
+        break;
+      }
+    }
+  }
+  if (end < 0) {
+    return [];
+  }
+  const content = block.slice(start + 1, end);
+  const items = [...content.matchAll(/"((?:\\.|[^"])*)"|'((?:\\.|[^'])*)'/g)]
+    .map((match) => normalizeText(match[1] || match[2] || ""))
+    .filter(Boolean);
+  return unique(items);
+}
 
 async function parseXAioCodingPlans() {
   const pageUrl = "https://code.x-aio.com/";
@@ -47,45 +119,52 @@ async function parseXAioCodingPlans() {
   const appUrl = absoluteUrl(appPath, pageUrl);
   const appJs = await fetchText(appUrl);
 
-  const planRegex =
-    /\{id:"([^"]+)",name:"([^"]+)",nameCN:"([^"]+)"[\s\S]*?price:\{monthly:([0-9]+(?:\.[0-9]+)?)[\s\S]*?firstOrder:\{monthly:([0-9]+(?:\.[0-9]+)?)[\s\S]*?description:"([^"]*)"[\s\S]*?features:\[([^\]]*)\]/g;
+  const planBlocks = extractPlanBlocks(appJs)
+    .filter((block) => ["lite", "pro", "max"].includes(String(extractStringValue(block, "id") || "").toLowerCase()));
+
   const plans = [];
-  const seenIds = new Set();
-  let match;
-  while ((match = planRegex.exec(appJs)) !== null) {
-    const planId = match[1];
-    if (seenIds.has(planId)) {
-      continue;
-    }
-    seenIds.add(planId);
-    const name = normalizeText(match[2]);
-    const nameCn = normalizeText(match[3]);
-    const monthlyPrice = Number(match[4]);
-    const firstOrderPrice = Number(match[5]);
-    const description = normalizeText(match[6]);
-    const featureBlock = String(match[7] || "");
-    const features = unique(
-      [...featureBlock.matchAll(/"([^"]+)"/g)]
-        .map((item) => normalizeText(item[1]))
-        .filter(Boolean),
-    );
+  for (const block of planBlocks) {
+    const name = normalizeText(extractStringValue(block, "name") || "");
+    const nameCn = normalizeText(extractStringValue(block, "nameCN") || "");
+    const description = normalizeText(extractStringValue(block, "description") || "");
+    const priceBlock = extractObjectBlock(block, "price");
+    const promoBlock = extractObjectBlock(block, "promo");
+    const firstOrderBlock = extractObjectBlock(block, "firstOrder");
+
+    const monthlyPrice = extractNumberValue(priceBlock, "monthly");
     if (!Number.isFinite(monthlyPrice)) {
       continue;
     }
+
+    const promoMonthly = extractNumberValue(promoBlock, "monthly");
+    const currentMonthly = Number.isFinite(promoMonthly) ? promoMonthly : monthlyPrice;
+    const originalMonthly =
+      Number.isFinite(promoMonthly) && Number.isFinite(monthlyPrice) && promoMonthly < monthlyPrice
+        ? monthlyPrice
+        : null;
+
+    const firstOrderMonthly = extractNumberValue(firstOrderBlock, "monthly");
+    const features = extractArrayItems(block, "features");
+    const serviceDetails = normalizeServiceDetails([
+      description ? `适用场景: ${description}` : null,
+      ...features,
+    ]);
+
+    const notes =
+      Number.isFinite(firstOrderMonthly) && firstOrderMonthly < currentMonthly
+        ? `首购优惠：¥${formatAmount(firstOrderMonthly)}/月`
+        : null;
+
     plans.push(
       asPlan({
         name: nameCn ? `${name}（${nameCn}）` : name,
-        currentPriceText: `¥${formatAmount(monthlyPrice)}/月`,
-        currentPrice: monthlyPrice,
+        currentPriceText: `¥${formatAmount(currentMonthly)}/月`,
+        currentPrice: currentMonthly,
+        originalPriceText: originalMonthly ? `¥${formatAmount(originalMonthly)}/月` : null,
+        originalPrice: originalMonthly,
         unit: "月",
-        notes: [
-          Number.isFinite(firstOrderPrice) && firstOrderPrice < monthlyPrice
-            ? `首购优惠：¥${formatAmount(firstOrderPrice)}/月`
-            : null,
-        ]
-          .filter(Boolean)
-          .join("；"),
-        serviceDetails: [description ? `适用场景: ${description}` : null, ...features],
+        notes,
+        serviceDetails,
       }),
     );
   }
