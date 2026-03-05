@@ -1674,13 +1674,13 @@ async function main() {
   const tasks = [
     { provider: PROVIDER_IDS.ZHIPU, fn: parseZhipuCodingPlans },
     { provider: PROVIDER_IDS.KIMI, fn: parseKimiCodingPlans },
-    { provider: PROVIDER_IDS.VOLCENGINE, fn: parseVolcengineCodingPlans },
     { provider: PROVIDER_IDS.MINIMAX, fn: parseMinimaxCodingPlans },
+    { provider: PROVIDER_IDS.VOLCENGINE, fn: parseVolcengineCodingPlans },
+    { provider: PROVIDER_IDS.ALIYUN, fn: parseAliyunCodingPlans },
     { provider: PROVIDER_IDS.BAIDU, fn: parseBaiduCodingPlans },
     { provider: PROVIDER_IDS.KWAIKAT, fn: parseKwaikatCodingPlans },
     { provider: PROVIDER_IDS.XAIO, fn: parseXAioCodingPlans },
     { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans },
-    { provider: PROVIDER_IDS.ALIYUN, fn: parseAliyunCodingPlans },
     { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
   ];
 
