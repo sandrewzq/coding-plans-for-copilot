@@ -1418,13 +1418,15 @@ async function parseAliyunCodingPlans() {
   };
 
   // Extract new-customer first-month flash prices once, before the per-plan loop.
-  // Use the "官网折扣价" anchors to find the flash price for each tier independently.
-  // Pattern: find ¥X/月 that appears BEFORE "官网折扣价...¥40" (Lite) or "官网折扣价...¥200" (Pro).
+  // The DOM structure might break up the price with spans (e.g. <span>￥</span><span>39.90</span>),
+  // and uses fullwidth ￥ (U+FFE5) for the flash price but narrow ¥ (U+00A5) for the regular price.
+  // Stripping all tags and spaces makes the regex extremely robust.
+  const cleanHtml = stripTags(html).replace(/\s+/g, "");
   const liteFlashMatch =
-    html.match(/¥\s*([0-9]+(?:\.[0-9]+)?)\s*\/\s*(?:1\s*)?月[\s\S]{0,500}?官网折扣价[^¥]*¥\s*40(?:[^0-9])/i) ||
-    html.match(/首月(?:新购)?低至[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
+    cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,500}?官网折扣价[^¥￥0-9]*[¥￥]40(?:[^0-9]|$)/i) ||
+    cleanHtml.match(/首月(?:新购)?低至[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
   const proFlashMatch =
-    html.match(/¥\s*([0-9]+(?:\.[0-9]+)?)\s*\/\s*(?:1\s*)?月[\s\S]{0,800}?官网折扣价[^¥]*¥\s*200(?:[^0-9])/i);
+    cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,800}?官网折扣价[^¥￥0-9]*[¥￥]200(?:[^0-9]|$)/i);
   const flashPriceByTier = new Map([
     ["Lite", liteFlashMatch ? Number(liteFlashMatch[1]) : null],
     ["Pro", proFlashMatch ? Number(proFlashMatch[1]) : null],

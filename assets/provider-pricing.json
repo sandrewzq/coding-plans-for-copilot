@@ -111,6 +111,44 @@
       ]
     },
     {
+      "provider": "aliyun-ai",
+      "sourceUrls": [
+        "https://www.aliyun.com/benefit/scene/codingplan"
+      ],
+      "fetchedAt": "2026-03-05T06:10:00.000Z",
+      "plans": [
+        {
+          "name": "Coding Plan Lite",
+          "currentPrice": 7.9,
+          "currentPriceText": "¥7.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40.00/月",
+          "unit": "月",
+          "notes": "新客首月 7.9；包含 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 等级",
+          "serviceDetails": [
+            "权益: 享受 Lite 套餐的全部能力与权益",
+            "额度: 用量是 Lite 版的 5 倍",
+            "场景: 面向处理轻量级工作负载的个人开发者",
+            "工具: Qwen Code、OpenClaw、OpenCode、Claude Code插件、Codex、Cline、Cursor等"
+          ]
+        },
+        {
+          "name": "Coding Plan Pro",
+          "currentPrice": 39.9,
+          "currentPriceText": "¥39.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200.00/月",
+          "unit": "月",
+          "notes": "官网折扣价 39.9；包含 Lite 包所有权",
+          "serviceDetails": [
+            "权益: 享受 Lite 套餐的全部能力与权益",
+            "额度: 用量是 Lite 版的 5 倍",
+            "场景: 适合大型开发任务，专业级 AI 编程体验"
+          ]
+        }
+      ]
+    },
+    {
       "provider": "minimax-ai",
       "sourceUrls": [
         "https://platform.minimaxi.com/docs/guides/pricing-coding-plan",
