@@ -1,17 +1,29 @@
 {
-    "name": "coding-plans-dashboard",
-    "version": "1.0.0",
-    "private": true,
-    "description": "Coding Plans Pricing Dashboard",
-    "scripts": {
-        "pricing:fetch": "node ./scripts/fetch-provider-pricing.js",
-        "pricing:serve": "node ./scripts/serve-pricing-page.js",
-        "pricing:history": "node ./scripts/price-history.js",
-        "lint": "eslint scripts/ docs/app.js",
-        "lint:fix": "eslint scripts/ docs/app.js --fix"
-    },
-    "devDependencies": {
-        "@types/node": "^20.14.9",
-        "eslint": "^8.57.0"
-    }
+  "name": "coding-plans-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Coding Plans Pricing Dashboard",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "pricing:fetch": "node ./scripts/fetch-provider-pricing.js",
+    "pricing:serve": "node ./scripts/serve-pricing-page.js",
+    "pricing:history": "node ./scripts/price-history.js",
+    "lint": "eslint scripts/ docs/app.js",
+    "lint:fix": "eslint scripts/ docs/app.js --fix",
+    "format": "prettier --write \"**/*.{js,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{js,json,md,yml,yaml}\"",
+    "test": "node tests/run-tests.js",
+    "test:unit": "node tests/run-tests.js",
+    "test:schema": "node tests/schema-validator.test.js",
+    "test:utils": "node tests/utils.test.js",
+    "validate": "node scripts/schema-validator.js",
+    "setup:hooks": "git config core.hooksPath .githooks",
+    "ci": "npm run lint && npm run format:check && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3"
+  }
 }

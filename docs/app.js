@@ -46,6 +46,16 @@ const PROVIDER_ORDER = [
   "zenmux-ai",
 ];
 
+// Capability keywords mapping
+const CAPABILITY_KEYWORDS = {
+  "code-completion": ["代码补全", "代码生成", "Code", "Claude Code", "Cursor", "Cline", "Kilo Code", "IDE", "插件"],
+  "chat": ["对话", "Chat", "聊天", "问答"],
+  "agent": ["Agent", "代理", "智能体", "Kimi Claw", "OpenClaw"],
+  "api": ["API", "接口", "调用"],
+  "ide-plugin": ["IDE", "插件", "VS Code", "JetBrains", "Cursor", "Claude Code"],
+  "multi-model": ["多模型", "模型切换", "Qwen", "GLM", "Kimi", "DeepSeek", "MiniMax"],
+};
+
 const reloadButtonEl = document.querySelector("#reloadButton");
 const providerGridEl = document.querySelector("#providerGrid");
 const providerNavEl = document.querySelector("#providerNav");
@@ -55,16 +65,29 @@ const providerCountEl = document.querySelector("#providerCount");
 const planCountEl = document.querySelector("#planCount");
 const searchInputEl = document.querySelector("#searchInput");
 const priceFilterEl = document.querySelector("#priceFilter");
+const sortFilterEl = document.querySelector("#sortFilter");
 const compareButtonEl = document.querySelector("#compareButton");
 const comparePanelEl = document.querySelector("#comparePanel");
 const closeCompareEl = document.querySelector("#closeCompare");
+const clearCompareEl = document.querySelector("#clearCompare");
 const compareContentEl = document.querySelector("#compareContent");
+const compareCountEl = document.querySelector("#compareCount");
+const calculatorButtonEl = document.querySelector("#calculatorButton");
+const calculatorPanelEl = document.querySelector("#calculatorPanel");
+const closeCalculatorEl = document.querySelector("#closeCalculator");
+const monthlyRequestsEl = document.querySelector("#monthlyRequests");
+const requestsPerHourEl = document.querySelector("#requestsPerHour");
+const budgetLimitEl = document.querySelector("#budgetLimit");
+const calculatorResultsEl = document.querySelector("#calculatorResults");
 
 // Store original data for filtering
 let originalData = null;
 
 // Store selected plans for comparison
-let selectedPlansForCompare = new Set();
+const selectedPlansForCompare = new Set();
+
+// Store countdown intervals
+const countdownIntervals = new Map();
 
 function formatDate(isoText) {
   if (!isoText) {
@@ -125,8 +148,13 @@ function getPlanCurrencySymbol(plan) {
 }
 
 function displayPrice(plan) {
-  return plan.currentPriceText
-    || (Number.isFinite(plan.currentPrice) ? `${getPlanCurrencySymbol(plan)}${plan.currentPrice}` : "价格待确认");
+  if (plan.currentPriceText) {
+    return plan.currentPriceText;
+  }
+  if (Number.isFinite(plan.currentPrice)) {
+    return `${getPlanCurrencySymbol(plan)}${plan.currentPrice}/月`;
+  }
+  return "价格待确认";
 }
 
 function priceTextHasUnit(text) {
@@ -259,68 +287,308 @@ function getProviderPurchaseUrl(provider) {
 }
 
 /**
+ * Detect plan capabilities based on service details and notes
+ * @param {Object} plan - The plan object
+ * @returns {Array} Array of capability tags
+ */
+function detectCapabilities(plan) {
+  const capabilities = new Set();
+  const textToAnalyze = [
+    ...(plan.serviceDetails || []),
+    plan.notes || "",
+    plan.name || "",
+  ].join(" ").toLowerCase();
+
+  for (const [capability, keywords] of Object.entries(CAPABILITY_KEYWORDS)) {
+    for (const keyword of keywords) {
+      if (textToAnalyze.includes(keyword.toLowerCase())) {
+        capabilities.add(capability);
+        break;
+      }
+    }
+  }
+
+  return Array.from(capabilities);
+}
+
+/**
+ * Get capability display info
+ * @param {string} capability - Capability key
+ * @returns {Object} Display info
+ */
+function getCapabilityInfo(capability) {
+  const info = {
+    "code-completion": { label: "代码补全", icon: "💻" },
+    "chat": { label: "对话", icon: "💬" },
+    "agent": { label: "Agent", icon: "🤖" },
+    "api": { label: "API", icon: "🔌" },
+    "ide-plugin": { label: "IDE插件", icon: "🛠️" },
+    "multi-model": { label: "多模型", icon: "🔄" },
+  };
+  return info[capability] || { label: capability, icon: "✨" };
+}
+
+/**
+ * Render capability tags
+ * @param {Array} capabilities - Array of capability keys
+ * @returns {HTMLElement} Capability container
+ */
+function renderCapabilityTags(capabilities) {
+  const container = createElement("div", "plan-capabilities");
+  for (const capability of capabilities) {
+    const info = getCapabilityInfo(capability);
+    const tag = createElement("span", `capability-tag ${capability}`, `${info.icon} ${info.label}`);
+    container.append(tag);
+  }
+  return container;
+}
+
+/**
+ * Check if plan has a limited time offer and calculate countdown
+ * @param {Object} plan - The plan object
+ * @returns {Object|null} Countdown info or null
+ */
+function getOfferCountdown(plan) {
+  const notes = String(plan?.notes || "");
+  
+  // Check for various offer patterns
+  const offerPatterns = [
+    /(?:新客|新人|新用户)?\s*首月(?:特惠|优惠)?/i,
+    /(?:首购优惠|首购特惠)/i,
+    /(?:新人专享|新客专享|新用户专享)/i,
+    /(?:官网折扣价|限时限购|限时特惠|限时抢购)/i,
+  ];
+
+  const hasOffer = offerPatterns.some(pattern => pattern.test(notes));
+  
+  if (!hasOffer) {return null;}
+
+  // For demo purposes, assume offers end at end of current month
+  // In production, this would come from actual offer end dates
+  const now = new Date();
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+  
+  return {
+    endDate: endOfMonth,
+    label: "限时优惠截止",
+  };
+}
+
+/**
+ * Render countdown timer
+ * @param {Object} countdown - Countdown info
+ * @param {string} planKey - Unique plan key
+ * @returns {HTMLElement} Countdown element
+ */
+function renderCountdown(countdown, planKey) {
+  const container = createElement("div", "countdown-timer");
+  container.dataset.planKey = planKey;
+  
+  const label = createElement("span", "countdown-label", countdown.label);
+  const value = createElement("span", "countdown-value", "");
+  
+  container.append(label, value);
+  
+  // Start countdown
+  updateCountdown(value, countdown.endDate, container);
+  const interval = setInterval(() => {
+    updateCountdown(value, countdown.endDate, container);
+  }, 1000);
+  
+  countdownIntervals.set(planKey, interval);
+  
+  return container;
+}
+
+/**
+ * Update countdown display
+ * @param {HTMLElement} element - Value element
+ * @param {Date} endDate - End date
+ * @param {HTMLElement} container - Container element
+ */
+function updateCountdown(element, endDate, container) {
+  const now = new Date();
+  const diff = endDate - now;
+  
+  if (diff <= 0) {
+    element.textContent = "已结束";
+    container.classList.add("ended");
+    return;
+  }
+  
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  
+  if (days > 0) {
+    element.textContent = `${days}天 ${hours}小时`;
+  } else {
+    element.textContent = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }
+  
+  // Add urgent class if less than 24 hours
+  if (diff < 24 * 60 * 60 * 1000) {
+    container.classList.add("urgent");
+  }
+}
+
+/**
+ * Clear all countdown intervals
+ */
+function clearAllCountdowns() {
+  for (const interval of countdownIntervals.values()) {
+    clearInterval(interval);
+  }
+  countdownIntervals.clear();
+}
+
+/**
  * Filters providers and plans based on search query and price range
  * @param {Object} data - The pricing data
  * @param {string} searchQuery - The search query
  * @param {string} priceRange - The price range filter
+ * @param {string} sortBy - Sort option
  * @returns {Object} Filtered data
  */
-function filterData(data, searchQuery, priceRange) {
+function filterData(data, searchQuery, priceRange, sortBy = "") {
   const query = searchQuery.toLowerCase().trim();
   const providers = Array.isArray(data.providers) ? data.providers : [];
 
+  let filteredProviders = providers
+    .map((provider) => {
+      const providerName = (PROVIDER_LABELS[provider.provider] || provider.provider).toLowerCase();
+      const matchesProvider = providerName.includes(query);
+
+      const filteredPlans = (provider.plans || []).filter((plan) => {
+        // Check if plan name matches search
+        const planNameMatch = (plan.name || "").toLowerCase().includes(query);
+        // Check if service details match search
+        const serviceDetailsMatch = (plan.serviceDetails || []).some((detail) =>
+          detail.toLowerCase().includes(query),
+        );
+        // Check if notes match search
+        const notesMatch = (plan.notes || "").toLowerCase().includes(query);
+
+        const matchesSearch = matchesProvider || planNameMatch || serviceDetailsMatch || notesMatch;
+
+        // Check price range
+        let matchesPrice = true;
+        if (priceRange && plan.currentPrice !== null && plan.currentPrice !== undefined) {
+          const price = plan.currentPrice;
+          switch (priceRange) {
+            case "0-50":
+              matchesPrice = price >= 0 && price <= 50;
+              break;
+            case "50-100":
+              matchesPrice = price > 50 && price <= 100;
+              break;
+            case "100-200":
+              matchesPrice = price > 100 && price <= 200;
+              break;
+            case "200+":
+              matchesPrice = price > 200;
+              break;
+          }
+        }
+
+        return matchesSearch && matchesPrice;
+      });
+
+      return {
+        ...provider,
+        plans: filteredPlans,
+      };
+    })
+    .filter((provider) => provider.plans.length > 0);
+
+  // Apply sorting
+  if (sortBy) {
+    filteredProviders = sortProviders(filteredProviders, sortBy);
+  }
+
   return {
     ...data,
-    providers: providers
-      .map((provider) => {
-        const providerName = (PROVIDER_LABELS[provider.provider] || provider.provider).toLowerCase();
-        const matchesProvider = providerName.includes(query);
-
-        const filteredPlans = (provider.plans || []).filter((plan) => {
-          // Check if plan name matches search
-          const planNameMatch = (plan.name || "").toLowerCase().includes(query);
-          // Check if service details match search
-          const serviceDetailsMatch = (plan.serviceDetails || []).some((detail) =>
-            detail.toLowerCase().includes(query),
-          );
-          // Check if notes match search
-          const notesMatch = (plan.notes || "").toLowerCase().includes(query);
-
-          const matchesSearch = matchesProvider || planNameMatch || serviceDetailsMatch || notesMatch;
-
-          // Check price range
-          let matchesPrice = true;
-          if (priceRange && plan.currentPrice !== null && plan.currentPrice !== undefined) {
-            const price = plan.currentPrice;
-            switch (priceRange) {
-              case "0-50":
-                matchesPrice = price >= 0 && price <= 50;
-                break;
-              case "50-100":
-                matchesPrice = price > 50 && price <= 100;
-                break;
-              case "100-200":
-                matchesPrice = price > 100 && price <= 200;
-                break;
-              case "200+":
-                matchesPrice = price > 200;
-                break;
-            }
-          }
-
-          return matchesSearch && matchesPrice;
-        });
-
-        return {
-          ...provider,
-          plans: filteredPlans,
-        };
-      })
-      .filter((provider) => provider.plans.length > 0),
+    providers: filteredProviders,
   };
 }
 
+/**
+ * Sort providers and plans
+ * @param {Array} providers - Array of providers
+ * @param {string} sortBy - Sort option
+ * @returns {Array} Sorted providers
+ */
+function sortProviders(providers, sortBy) {
+  const sortedProviders = [...providers];
+  
+  switch (sortBy) {
+    case "price-asc":
+      // Flatten all plans, sort by price, then group by provider
+      return sortPlansByPrice(sortedProviders, true);
+    case "price-desc":
+      return sortPlansByPrice(sortedProviders, false);
+    case "name":
+      sortedProviders.sort((a, b) => {
+        const nameA = PROVIDER_LABELS[a.provider] || a.provider;
+        const nameB = PROVIDER_LABELS[b.provider] || b.provider;
+        return nameA.localeCompare(nameB, "zh-CN");
+      });
+      return sortedProviders;
+    default:
+      return sortedProviders;
+  }
+}
+
+/**
+ * Sort plans by price
+ * @param {Array} providers - Array of providers
+ * @param {boolean} ascending - Sort ascending
+ * @returns {Array} Sorted providers
+ */
+function sortPlansByPrice(providers, ascending) {
+  // Create a flat list of all plans with provider info
+  const allPlans = [];
+  for (const provider of providers) {
+    for (const plan of provider.plans) {
+      allPlans.push({
+        ...plan,
+        provider: provider.provider,
+        providerName: PROVIDER_LABELS[provider.provider] || provider.provider,
+        sourceUrls: provider.sourceUrls,
+        fetchedAt: provider.fetchedAt,
+      });
+    }
+  }
+  
+  // Sort by price
+  allPlans.sort((a, b) => {
+    const priceA = a.currentPrice ?? Number.POSITIVE_INFINITY;
+    const priceB = b.currentPrice ?? Number.POSITIVE_INFINITY;
+    return ascending ? priceA - priceB : priceB - priceA;
+  });
+  
+  // Group back by provider (but now providers will have plans in price order)
+  const providerMap = new Map();
+  for (const plan of allPlans) {
+    if (!providerMap.has(plan.provider)) {
+      providerMap.set(plan.provider, {
+        provider: plan.provider,
+        sourceUrls: plan.sourceUrls,
+        fetchedAt: plan.fetchedAt,
+        plans: [],
+      });
+    }
+    providerMap.get(plan.provider).plans.push(plan);
+  }
+  
+  return Array.from(providerMap.values());
+}
+
 function renderProviders(data) {
+  // Clear existing countdowns
+  clearAllCountdowns();
+
   // Store original data for filtering
   if (!originalData) {
     originalData = JSON.parse(JSON.stringify(data));
@@ -406,8 +674,29 @@ function renderProviders(data) {
       compareCheckbox.title = "加入对比";
       compareCheckbox.dataset.provider = provider.provider;
       compareCheckbox.dataset.planName = plan.name;
+
+      // Toggle selection function
+      const planKey = `${provider.provider}:${plan.name}`;
+      const toggleSelection = () => {
+        if (selectedPlansForCompare.has(planKey)) {
+          selectedPlansForCompare.delete(planKey);
+          compareCheckbox.checked = false;
+          item.classList.remove("selected");
+        } else {
+          if (selectedPlansForCompare.size >= 4) {
+            alert("最多只能选择 4 个套餐进行对比");
+            return;
+          }
+          selectedPlansForCompare.add(planKey);
+          compareCheckbox.checked = true;
+          item.classList.add("selected");
+        }
+        updateCompareCount();
+      };
+
+      // Checkbox change event
       compareCheckbox.addEventListener("change", (e) => {
-        const planKey = `${provider.provider}:${plan.name}`;
+        e.stopPropagation();
         if (e.target.checked) {
           if (selectedPlansForCompare.size >= 4) {
             alert("最多只能选择 4 个套餐进行对比");
@@ -415,17 +704,48 @@ function renderProviders(data) {
             return;
           }
           selectedPlansForCompare.add(planKey);
+          item.classList.add("selected");
         } else {
           selectedPlansForCompare.delete(planKey);
+          item.classList.remove("selected");
         }
+        updateCompareCount();
       });
+
+      // Click on card to toggle selection
+      item.addEventListener("click", (e) => {
+        // Don't toggle if clicking on links or buttons
+        if (e.target.tagName === "A" || e.target.tagName === "BUTTON" || e.target.closest("a") || e.target.closest("button")) {
+          return;
+        }
+        toggleSelection();
+      });
+
+      // Set initial state if already selected
+      if (selectedPlansForCompare.has(planKey)) {
+        compareCheckbox.checked = true;
+        item.classList.add("selected");
+      }
+
       compareWrapper.append(compareCheckbox);
       item.append(compareWrapper);
+
+      // Add capability tags
+      const capabilities = detectCapabilities(plan);
+      if (capabilities.length > 0) {
+        item.append(renderCapabilityTags(capabilities));
+      }
+
+      // Add countdown timer for offers
+      const countdown = getOfferCountdown(plan);
+      if (countdown) {
+        item.append(renderCountdown(countdown, planKey));
+      }
 
       // Add price trend indicator
       const trend = getPlanPriceTrend(provider.provider, plan.name);
       if (trend.length > 0) {
-        const trendEl = renderPriceTrend(trend);
+        const trendEl = renderPriceTrend(trend, provider.provider, plan.name);
         item.append(trendEl);
       }
 
@@ -534,7 +854,7 @@ let priceHistoryData = null;
 async function loadPriceHistory() {
   try {
     const response = await fetch(HISTORY_PATH, { cache: "no-store" });
-    if (!response.ok) return null;
+    if (!response.ok) {return null;}
     return await response.json();
   } catch {
     return null;
@@ -548,12 +868,12 @@ async function loadPriceHistory() {
  * @returns {Array} Price trend data
  */
 function getPlanPriceTrend(providerId, planName) {
-  if (!priceHistoryData || !priceHistoryData.history) return [];
+  if (!priceHistoryData || !priceHistoryData.history) {return [];}
 
   const trend = [];
   for (const snapshot of priceHistoryData.history) {
     for (const provider of snapshot.providers || []) {
-      if (provider.provider !== providerId) continue;
+      if (provider.provider !== providerId) {continue;}
       for (const plan of provider.plans || []) {
         if (plan.name === planName) {
           trend.push({
@@ -569,11 +889,56 @@ function getPlanPriceTrend(providerId, planName) {
 }
 
 /**
- * Renders a mini price trend chart
+ * Creates an SVG mini sparkline chart
  * @param {Array} trend - Price trend data
+ * @param {number} width - Chart width
+ * @param {number} height - Chart height
+ * @returns {string} SVG HTML string
+ */
+function createSparkline(trend, width = 60, height = 24) {
+  if (trend.length < 2) {return '';}
+
+  const prices = trend.map(t => t.currentPrice);
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const priceRange = maxPrice - minPrice || 1;
+
+  // Calculate points
+  const points = trend.map((t, i) => {
+    const x = (i / (trend.length - 1)) * width;
+    const y = height - ((t.currentPrice - minPrice) / priceRange) * (height - 4) - 2;
+    return `${x},${y}`;
+  }).join(' ');
+
+  // Determine color based on trend
+  const firstPrice = trend[0].currentPrice;
+  const lastPrice = trend[trend.length - 1].currentPrice;
+  const isIncrease = lastPrice > firstPrice;
+  const strokeColor = isIncrease ? '#c62828' : '#2e7d32';
+
+  return `
+    <svg class="sparkline" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+      <polyline
+        fill="none"
+        stroke="${strokeColor}"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        points="${points}"
+      />
+      <circle cx="${width}" cy="${height - ((lastPrice - minPrice) / priceRange) * (height - 4) - 2}" r="2.5" fill="${strokeColor}" />
+    </svg>
+  `;
+}
+
+/**
+ * Renders a mini price trend chart with sparkline
+ * @param {Array} trend - Price trend data
+ * @param {string} providerId - Provider ID
+ * @param {string} planName - Plan name
  * @returns {HTMLElement} Trend element
  */
-function renderPriceTrend(trend) {
+function renderPriceTrend(trend, providerId, planName) {
   const container = createElement("div", "price-trend");
 
   if (trend.length < 2) {
@@ -586,7 +951,10 @@ function renderPriceTrend(trend) {
   const hasChanged = firstPrice !== lastPrice;
 
   if (!hasChanged) {
-    container.innerHTML = '<span class="trend-stable">价格稳定</span>';
+    container.innerHTML = `
+      <span class="trend-stable">价格稳定</span>
+      ${createSparkline(trend)}
+    `;
     return container;
   }
 
@@ -600,11 +968,218 @@ function renderPriceTrend(trend) {
     `${isIncrease ? "↑" : "↓"} ${Math.abs(changePercent)}%`
   );
 
+  const sparklineContainer = createElement("span", "sparkline-container");
+  sparklineContainer.innerHTML = createSparkline(trend);
+
   const trendTooltip = createElement("span", "trend-tooltip");
   trendTooltip.textContent = `历史价格: ${trend.map((t) => t.currentPriceText || t.currentPrice).join(" → ")}`;
 
-  container.append(trendBadge, trendTooltip);
+  // Add click handler to show detailed chart
+  container.style.cursor = 'pointer';
+  container.title = '点击查看详细价格历史';
+  container.addEventListener('click', () => showPriceHistoryModal(trend, providerId, planName));
+
+  container.append(trendBadge, sparklineContainer, trendTooltip);
   return container;
+}
+
+/**
+ * Shows a modal with detailed price history chart
+ * @param {Array} trend - Price trend data
+ * @param {string} providerId - Provider ID
+ * @param {string} planName - Plan name
+ */
+function showPriceHistoryModal(trend, providerId, planName) {
+  // Remove existing modal if any
+  const existingModal = document.querySelector('.price-history-modal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+
+  const providerName = PROVIDER_LABELS[providerId] || providerId;
+
+  const modal = createElement('div', 'price-history-modal');
+  modal.innerHTML = `
+    <div class="price-history-overlay"></div>
+    <div class="price-history-content">
+      <div class="price-history-header">
+        <h3>${providerName} - ${planName}</h3>
+        <button class="price-history-close" aria-label="关闭">&times;</button>
+      </div>
+      <div class="price-history-chart-container">
+        ${createDetailedChart(trend)}
+      </div>
+      <div class="price-history-stats">
+        ${createPriceStats(trend)}
+      </div>
+    </div>
+  `;
+
+  // Close handlers
+  const closeBtn = modal.querySelector('.price-history-close');
+  const overlay = modal.querySelector('.price-history-overlay');
+
+  const closeModal = () => modal.remove();
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', closeModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {closeModal();}
+  }, { once: true });
+
+  document.body.appendChild(modal);
+}
+
+/**
+ * Creates a detailed SVG line chart
+ * @param {Array} trend - Price trend data
+ * @returns {string} SVG HTML string
+ */
+function createDetailedChart(trend) {
+  if (trend.length < 1) {return '<p>暂无数据</p>';}
+
+  const width = 500;
+  const height = 200;
+  const padding = { top: 20, right: 30, bottom: 40, left: 60 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+
+  const prices = trend.map(t => t.currentPrice);
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const priceRange = maxPrice - minPrice || 1;
+  const pricePadding = priceRange * 0.1;
+  const yMin = Math.max(0, minPrice - pricePadding);
+  const yMax = maxPrice + pricePadding;
+
+  // Generate chart points
+  const points = trend.map((t, i) => {
+    const x = padding.left + (i / Math.max(1, trend.length - 1)) * chartWidth;
+    const y = padding.top + chartHeight - ((t.currentPrice - yMin) / (yMax - yMin)) * chartHeight;
+    return { x, y, price: t.currentPrice, date: new Date(t.timestamp) };
+  });
+
+  // Create path for line
+  const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+
+  // Create area path
+  const areaD = `${pathD} L ${points[points.length - 1].x} ${padding.top + chartHeight} L ${points[0].x} ${padding.top + chartHeight} Z`;
+
+  // Generate Y-axis labels
+  const yLabels = [];
+  for (let i = 0; i <= 4; i++) {
+    const value = yMin + (yMax - yMin) * (i / 4);
+    const y = padding.top + chartHeight - (i / 4) * chartHeight;
+    yLabels.push({ value, y });
+  }
+
+  // Generate X-axis labels (show first, middle, last dates)
+  const xLabels = [];
+  const labelIndices = [0, Math.floor((trend.length - 1) / 2), trend.length - 1];
+  labelIndices.forEach(i => {
+    if (i >= 0 && i < trend.length) {
+      const date = new Date(trend[i].timestamp);
+      xLabels.push({
+        x: padding.left + (i / Math.max(1, trend.length - 1)) * chartWidth,
+        label: `${date.getMonth() + 1}/${date.getDate()}`
+      });
+    }
+  });
+
+  const firstPrice = trend[0].currentPrice;
+  const lastPrice = trend[trend.length - 1].currentPrice;
+  const isIncrease = lastPrice > firstPrice;
+  const strokeColor = isIncrease ? '#c62828' : '#2e7d32';
+  const fillColor = isIncrease ? 'rgba(198, 40, 40, 0.1)' : 'rgba(46, 125, 50, 0.1)';
+
+  return `
+    <svg class="price-history-chart" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
+      <!-- Grid lines -->
+      ${yLabels.map(l => `
+        <line x1="${padding.left}" y1="${l.y}" x2="${width - padding.right}" y2="${l.y}"
+          stroke="var(--line)" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+      `).join('')}
+
+      <!-- Y-axis labels -->
+      ${yLabels.map(l => `
+        <text x="${padding.left - 10}" y="${l.y + 4}" text-anchor="end" font-size="11" fill="var(--muted)">
+          ¥${l.value.toFixed(0)}
+        </text>
+      `).join('')}
+
+      <!-- X-axis labels -->
+      ${xLabels.map(l => `
+        <text x="${l.x}" y="${height - 10}" text-anchor="middle" font-size="11" fill="var(--muted)">
+          ${l.label}
+        </text>
+      `).join('')}
+
+      <!-- Area fill -->
+      <path d="${areaD}" fill="${fillColor}" />
+
+      <!-- Line -->
+      <path d="${pathD}" fill="none" stroke="${strokeColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Data points -->
+      ${points.map((p, i) => `
+        <circle cx="${p.x}" cy="${p.y}" r="4" fill="${strokeColor}" stroke="white" stroke-width="2"
+          class="chart-point" data-price="¥${p.price}" data-date="${p.date.toLocaleDateString('zh-CN')}"/>
+      `).join('')}
+
+      <!-- Current price label -->
+      <text x="${points[points.length - 1].x}" y="${points[points.length - 1].y - 10}"
+        text-anchor="end" font-size="12" font-weight="bold" fill="${strokeColor}">
+        ¥${lastPrice}
+      </text>
+    </svg>
+  `;
+}
+
+/**
+ * Creates price statistics HTML
+ * @param {Array} trend - Price trend data
+ * @returns {string} Stats HTML string
+ */
+function createPriceStats(trend) {
+  if (trend.length < 2) {return '';}
+
+  const prices = trend.map(t => t.currentPrice);
+  const firstPrice = prices[0];
+  const lastPrice = prices[prices.length - 1];
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+  const change = lastPrice - firstPrice;
+  const changePercent = firstPrice > 0 ? ((change / firstPrice) * 100).toFixed(1) : 0;
+
+  const firstDate = new Date(trend[0].timestamp).toLocaleDateString('zh-CN');
+  const lastDate = new Date(trend[trend.length - 1].timestamp).toLocaleDateString('zh-CN');
+
+  return `
+    <div class="price-stat-grid">
+      <div class="price-stat-item">
+        <span class="price-stat-label">起始价格</span>
+        <span class="price-stat-value">¥${firstPrice}</span>
+        <span class="price-stat-date">${firstDate}</span>
+      </div>
+      <div class="price-stat-item">
+        <span class="price-stat-label">当前价格</span>
+        <span class="price-stat-value ${change >= 0 ? 'price-up' : 'price-down'}">¥${lastPrice}</span>
+        <span class="price-stat-date">${lastDate}</span>
+      </div>
+      <div class="price-stat-item">
+        <span class="price-stat-label">价格变化</span>
+        <span class="price-stat-value ${change >= 0 ? 'price-up' : 'price-down'}">
+          ${change >= 0 ? '↑' : '↓'} ${Math.abs(changePercent)}%
+        </span>
+        <span class="price-stat-date">¥${Math.abs(change).toFixed(1)}</span>
+      </div>
+      <div class="price-stat-item">
+        <span class="price-stat-label">最低 / 最高</span>
+        <span class="price-stat-value">¥${minPrice} / ¥${maxPrice}</span>
+        <span class="price-stat-date">平均: ¥${avgPrice.toFixed(1)}</span>
+      </div>
+    </div>
+  `;
 }
 
 async function loadData() {
@@ -651,18 +1226,20 @@ async function loadData() {
 
 reloadButtonEl.addEventListener("click", () => {
   // Reset filters when reloading
-  if (searchInputEl) searchInputEl.value = "";
-  if (priceFilterEl) priceFilterEl.value = "";
+  if (searchInputEl) {searchInputEl.value = "";}
+  if (priceFilterEl) {priceFilterEl.value = "";}
+  if (sortFilterEl) {sortFilterEl.value = "";}
   originalData = null;
   loadData();
 });
 
 // Search and filter handling
 function applyFilters() {
-  if (!originalData) return;
+  if (!originalData) {return;}
   const searchQuery = searchInputEl ? searchInputEl.value : "";
   const priceRange = priceFilterEl ? priceFilterEl.value : "";
-  const filteredData = filterData(originalData, searchQuery, priceRange);
+  const sortBy = sortFilterEl ? sortFilterEl.value : "";
+  const filteredData = filterData(originalData, searchQuery, priceRange, sortBy);
   renderProviders(filteredData);
   renderFailures(filteredData);
 }
@@ -679,9 +1256,21 @@ if (priceFilterEl) {
   });
 }
 
+if (sortFilterEl) {
+  sortFilterEl.addEventListener("change", () => {
+    applyFilters();
+  });
+}
+
 // Compare functionality
+function updateCompareCount() {
+  if (compareCountEl) {
+    compareCountEl.textContent = `已选择 ${selectedPlansForCompare.size}/4 个套餐`;
+  }
+}
+
 function renderCompareTable() {
-  if (!compareContentEl || !originalData) return;
+  if (!compareContentEl || !originalData) {return;}
 
   if (selectedPlansForCompare.size === 0) {
     compareContentEl.innerHTML = '<p class="compare-select-hint">请至少选择一个套餐进行对比</p>';
@@ -695,6 +1284,7 @@ function renderCompareTable() {
       if (selectedPlansForCompare.has(planKey)) {
         selectedPlans.push({
           provider: PROVIDER_LABELS[provider.provider] || provider.provider,
+          providerId: provider.provider,
           ...plan,
         });
       }
@@ -717,12 +1307,22 @@ function renderCompareTable() {
   // Data rows
   const tbody = document.createElement("tbody");
 
-  // Price row
+  // Price row - highlight best (lowest) price
   const priceRow = document.createElement("tr");
   priceRow.append(createElement("td", "", "价格"));
+  const prices = selectedPlans.map(p => p.currentPrice ?? Number.POSITIVE_INFINITY);
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices.filter(p => p !== Number.POSITIVE_INFINITY));
+  
   for (const plan of selectedPlans) {
     const priceText = plan.currentPriceText || (plan.currentPrice ? `¥${plan.currentPrice}` : "-");
-    priceRow.append(createElement("td", "", priceText));
+    const cell = createElement("td", "", priceText);
+    if (plan.currentPrice === minPrice && selectedPlans.length > 1) {
+      cell.classList.add("highlight-best");
+    } else if (plan.currentPrice === maxPrice && selectedPlans.length > 1) {
+      cell.classList.add("highlight-worst");
+    }
+    priceRow.append(cell);
   }
   tbody.append(priceRow);
 
@@ -743,6 +1343,16 @@ function renderCompareTable() {
   }
   tbody.append(unitRow);
 
+  // Capabilities row
+  const capabilitiesRow = document.createElement("tr");
+  capabilitiesRow.append(createElement("td", "", "模型能力"));
+  for (const plan of selectedPlans) {
+    const capabilities = detectCapabilities(plan);
+    const capabilityTexts = capabilities.map(c => getCapabilityInfo(c).label);
+    capabilitiesRow.append(createElement("td", "", capabilityTexts.join("、") || "-"));
+  }
+  tbody.append(capabilitiesRow);
+
   // Notes row
   const notesRow = document.createElement("tr");
   notesRow.append(createElement("td", "", "备注"));
@@ -760,15 +1370,51 @@ function renderCompareTable() {
   }
   tbody.append(serviceRow);
 
+  // Buy link row
+  const buyRow = document.createElement("tr");
+  buyRow.append(createElement("td", "", "购买链接"));
+  for (const plan of selectedPlans) {
+    const buyUrl = PROVIDER_BUY_URLS[plan.providerId] || "";
+    if (buyUrl) {
+      const link = createElement("a", "buy-link", "前往购买");
+      link.href = buyUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      const cell = createElement("td", "");
+      cell.append(link);
+      buyRow.append(cell);
+    } else {
+      buyRow.append(createElement("td", "", "-"));
+    }
+  }
+  tbody.append(buyRow);
+
   table.append(tbody);
-  compareContentEl.replaceChildren(table);
+  
+  // Add legend
+  const legend = createElement("div", "compare-highlight-legend");
+  legend.innerHTML = `
+    <span><span class="legend-best"></span> 最优价格</span>
+    <span><span class="legend-worst"></span> 最高价格</span>
+  `;
+  
+  compareContentEl.replaceChildren(table, legend);
 }
 
 if (compareButtonEl) {
   compareButtonEl.addEventListener("click", () => {
     if (comparePanelEl) {
-      comparePanelEl.classList.remove("hidden");
-      renderCompareTable();
+      const isHidden = comparePanelEl.classList.contains("hidden");
+      // Hide calculator if open
+      if (calculatorPanelEl && !calculatorPanelEl.classList.contains("hidden")) {
+        calculatorPanelEl.classList.add("hidden");
+      }
+      if (isHidden) {
+        comparePanelEl.classList.remove("hidden");
+        renderCompareTable();
+      } else {
+        comparePanelEl.classList.add("hidden");
+      }
     }
   });
 }
@@ -779,6 +1425,265 @@ if (closeCompareEl) {
       comparePanelEl.classList.add("hidden");
     }
   });
+}
+
+if (clearCompareEl) {
+  clearCompareEl.addEventListener("click", () => {
+    selectedPlansForCompare.clear();
+    updateCompareCount();
+    renderCompareTable();
+    // Re-render to clear selection UI
+    applyFilters();
+  });
+}
+
+// Calculator functionality
+if (calculatorButtonEl) {
+  calculatorButtonEl.addEventListener("click", () => {
+    if (calculatorPanelEl) {
+      const isHidden = calculatorPanelEl.classList.contains("hidden");
+      // Hide compare if open
+      if (comparePanelEl && !comparePanelEl.classList.contains("hidden")) {
+        comparePanelEl.classList.add("hidden");
+      }
+      if (isHidden) {
+        calculatorPanelEl.classList.remove("hidden");
+      } else {
+        calculatorPanelEl.classList.add("hidden");
+      }
+    }
+  });
+}
+
+if (closeCalculatorEl) {
+  closeCalculatorEl.addEventListener("click", () => {
+    if (calculatorPanelEl) {
+      calculatorPanelEl.classList.add("hidden");
+    }
+  });
+}
+
+/**
+ * Parse request limit from service details
+ * @param {Object} plan - Plan object
+ * @returns {Object} Parsed limits
+ */
+function parseRequestLimits(plan) {
+  const serviceDetails = (plan.serviceDetails || []).join(" ");
+  const notes = plan.notes || "";
+  const allText = `${serviceDetails} ${notes}`;
+  
+  const limits = {
+    monthly: null,
+    weekly: null,
+    hourly: null,
+    per5Hours: null,
+    per4Hours: null,
+  };
+  
+  // Match patterns like "1000次/月", "1200次/5小时", "500 Prompts/4小时"
+  const monthlyMatch = allText.match(/(\d+(?:,\d{3})*)\s*(?:次|Prompts).*?(?:\/月|每月|月限额)/i);
+  if (monthlyMatch) {
+    limits.monthly = parseInt(monthlyMatch[1].replace(/,/g, ""));
+  }
+  
+  const weeklyMatch = allText.match(/(\d+(?:,\d{3})*)\s*(?:次|Prompts).*?(?:\/周|每周|周限额)/i);
+  if (weeklyMatch) {
+    limits.weekly = parseInt(weeklyMatch[1].replace(/,/g, ""));
+  }
+  
+  const per5HoursMatch = allText.match(/(\d+(?:,\d{3})*)\s*(?:次|Prompts).*?(?:\/\s*5\s*小时|每\s*5\s*小时)/i);
+  if (per5HoursMatch) {
+    limits.per5Hours = parseInt(per5HoursMatch[1].replace(/,/g, ""));
+    limits.hourly = limits.per5Hours / 5;
+  }
+  
+  const per4HoursMatch = allText.match(/(\d+(?:,\d{3})*)\s*(?:次|Prompts).*?(?:\/\s*4\s*小时|每\s*4\s*小时)/i);
+  if (per4HoursMatch) {
+    limits.per4Hours = parseInt(per4HoursMatch[1].replace(/,/g, ""));
+    limits.hourly = limits.per4Hours / 4;
+  }
+  
+  const hourlyMatch = allText.match(/(\d+(?:,\d{3})*)\s*(?:次|Prompts).*?(?:\/小时|每小时)/i);
+  if (hourlyMatch && !limits.hourly) {
+    limits.hourly = parseInt(hourlyMatch[1].replace(/,/g, ""));
+  }
+  
+  return limits;
+}
+
+/**
+ * Calculate plan suitability score
+ * @param {Object} plan - Plan object
+ * @param {number} monthlyRequests - User's monthly requests
+ * @param {number} requestsPerHour - User's hourly requests
+ * @param {number} budgetLimit - User's budget limit
+ * @returns {Object} Score and recommendation info
+ */
+function calculatePlanSuitability(plan, monthlyRequests, requestsPerHour, budgetLimit) {
+  const limits = parseRequestLimits(plan);
+  const price = plan.currentPrice ?? Number.POSITIVE_INFINITY;
+  
+  let score = 0;
+  const reasons = [];
+  const warnings = [];
+  
+  // Budget check
+  if (budgetLimit && price > budgetLimit) {
+    return { score: -1, reasons: ["超出预算"], warnings: [], isRecommended: false };
+  }
+  
+  // Check monthly limits
+  if (monthlyRequests && limits.monthly) {
+    const monthlyRatio = monthlyRequests / limits.monthly;
+    if (monthlyRatio <= 0.5) {
+      score += 30;
+      reasons.push("月额度充足");
+    } else if (monthlyRatio <= 0.8) {
+      score += 20;
+      reasons.push("月额度合适");
+    } else if (monthlyRatio <= 1) {
+      score += 10;
+      reasons.push("月额度刚好");
+    } else {
+      score -= 20;
+      warnings.push("月额度可能不足");
+    }
+  }
+  
+  // Check hourly limits
+  if (requestsPerHour && limits.hourly) {
+    const hourlyRatio = requestsPerHour / limits.hourly;
+    if (hourlyRatio <= 0.5) {
+      score += 30;
+      reasons.push("小时额度充足");
+    } else if (hourlyRatio <= 0.8) {
+      score += 20;
+      reasons.push("小时额度合适");
+    } else if (hourlyRatio <= 1) {
+      score += 10;
+    } else {
+      score -= 20;
+      warnings.push("小时额度可能不足");
+    }
+  }
+  
+  // Price factor (lower is better)
+  if (price !== Number.POSITIVE_INFINITY) {
+    const allPlans = originalData?.providers?.flatMap(p => p.plans) || [];
+    const allPrices = allPlans.map(p => p.currentPrice).filter(p => p !== null && p !== undefined);
+    const minPrice = Math.min(...allPrices);
+    const maxPrice = Math.max(...allPrices);
+    const priceRange = maxPrice - minPrice || 1;
+    
+    // Normalize price score (0-20 points for being affordable)
+    const priceScore = 20 * (1 - (price - minPrice) / priceRange);
+    score += Math.max(0, priceScore);
+  }
+  
+  // Capabilities bonus
+  const capabilities = detectCapabilities(plan);
+  if (capabilities.includes("code-completion")) {
+    score += 10;
+    reasons.push("支持代码补全");
+  }
+  if (capabilities.includes("multi-model")) {
+    score += 5;
+    reasons.push("多模型支持");
+  }
+  
+  return {
+    score,
+    reasons,
+    warnings,
+    isRecommended: score > 30,
+    limits,
+  };
+}
+
+/**
+ * Update calculator results
+ */
+function updateCalculatorResults() {
+  if (!calculatorResultsEl || !originalData) {return;}
+  
+  const monthlyRequests = parseInt(monthlyRequestsEl?.value) || 0;
+  const requestsPerHour = parseInt(requestsPerHourEl?.value) || 0;
+  const budgetLimit = parseInt(budgetLimitEl?.value) || 0;
+  
+  if (!monthlyRequests && !requestsPerHour) {
+    calculatorResultsEl.innerHTML = '<p class="calc-hint">输入使用量参数，查看最适合的套餐推荐</p>';
+    return;
+  }
+  
+  // Calculate suitability for all plans
+  const allPlans = [];
+  for (const provider of originalData.providers) {
+    for (const plan of provider.plans) {
+      const suitability = calculatePlanSuitability(plan, monthlyRequests, requestsPerHour, budgetLimit);
+      allPlans.push({
+        ...plan,
+        provider: PROVIDER_LABELS[provider.provider] || provider.provider,
+        providerId: provider.provider,
+        suitability,
+      });
+    }
+  }
+  
+  // Sort by score
+  allPlans.sort((a, b) => b.suitability.score - a.suitability.score);
+  
+  // Get top recommendations
+  const topPlans = allPlans.filter(p => p.suitability.score > 0).slice(0, 5);
+  
+  if (topPlans.length === 0) {
+    calculatorResultsEl.innerHTML = '<p class="calc-hint">没有找到符合条件的套餐，请调整筛选条件</p>';
+    return;
+  }
+  
+  // Render recommendations
+  const container = createElement("div", "calc-recommendations");
+  
+  for (let i = 0; i < topPlans.length; i++) {
+    const plan = topPlans[i];
+    const isBestMatch = i === 0;
+    
+    const recEl = createElement("div", `calc-recommendation ${isBestMatch ? 'best-match' : ''}`);
+    
+    const header = createElement("div", "calc-recommendation-header");
+    const title = createElement("span", "calc-recommendation-title", `${plan.provider} - ${plan.name}`);
+    const price = createElement("span", "calc-recommendation-price", plan.currentPriceText || `¥${plan.currentPrice}`);
+    header.append(title, price);
+    
+    const matchInfo = createElement("div", "calc-recommendation-match");
+    if (isBestMatch) {
+      matchInfo.textContent = `⭐ 最佳匹配 (匹配度: ${Math.round(plan.suitability.score)})`;
+    } else {
+      matchInfo.textContent = `匹配度: ${Math.round(plan.suitability.score)}`;
+    }
+    
+    const details = createElement("div", "calc-recommendation-details");
+    const reasons = [...plan.suitability.reasons, ...plan.suitability.warnings];
+    if (reasons.length > 0) {
+      details.textContent = reasons.join(" · ");
+    }
+    
+    recEl.append(header, matchInfo, details);
+    container.append(recEl);
+  }
+  
+  calculatorResultsEl.replaceChildren(container);
+}
+
+// Calculator input listeners
+if (monthlyRequestsEl) {
+  monthlyRequestsEl.addEventListener("input", updateCalculatorResults);
+}
+if (requestsPerHourEl) {
+  requestsPerHourEl.addEventListener("input", updateCalculatorResults);
+}
+if (budgetLimitEl) {
+  budgetLimitEl.addEventListener("input", updateCalculatorResults);
 }
 
 // Theme handling
@@ -803,5 +1708,39 @@ themeToggleEl.addEventListener("click", () => {
     themeToggleEl.textContent = "☀️ 亮色模式";
   }
 });
+
+// Back to top functionality
+const backToTopBtn = document.querySelector("#backToTop");
+
+if (backToTopBtn) {
+  // Show/hide button based on scroll position
+  const toggleBackToTop = () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.remove("hidden");
+    } else {
+      backToTopBtn.classList.add("hidden");
+    }
+  };
+
+  // Throttle scroll event
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        toggleBackToTop();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // Scroll to top on click
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+}
 
 loadData();

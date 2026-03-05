@@ -33,7 +33,7 @@ async function parseZhipuCodingPlans() {
   if (moduleStart < 0) {
     throw new Error("Unable to locate Zhipu coding pricing module");
   }
-  const nextModuleMatch = pricingChunkText.slice(moduleStart + 1).match(/},\"[0-9a-z]{4,6}\":function/i);
+  const nextModuleMatch = pricingChunkText.slice(moduleStart + 1).match(/},"[0-9a-z]{4,6}":function/i);
   const moduleEnd = nextModuleMatch ? moduleStart + 1 + nextModuleMatch.index : pricingChunkText.length;
   const moduleSection = pricingChunkText.slice(moduleStart, moduleEnd);
 

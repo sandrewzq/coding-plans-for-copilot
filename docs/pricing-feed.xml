@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>编码套餐看板 - 价格变动订阅</title>
+    <link>https://sandrewzq.github.io/coding-plans-for-copilot/</link>
+    <description>实时汇总智谱、Kimi、火山引擎、MiniMax、阿里云等主流 AI 供应商的编程套餐价格变动</description>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 05 Mar 2026 15:33:27 GMT</lastBuildDate>
+    <atom:link href="https://sandrewzq.github.io/coding-plans-for-copilot/pricing-feed.xml" rel="self" type="application/rss+xml"/>
+    
+    <image>
+      <url>https://sandrewzq.github.io/coding-plans-for-copilot/icons.svg</url>
+      <title>编码套餐看板</title>
+      <link>https://sandrewzq.github.io/coding-plans-for-copilot/</link>
+    </image>
+
+    <item>
+      <title>【价格更新】阿里云百炼 Coding Plan Lite 新客首月优惠 ¥7.9</title>
+      <link>https://www.aliyun.com/benefit/scene/codingplan</link>
+      <guid isPermaLink="false">aliyun-ai-coding-plan-lite-2026-03-05</guid>
+      <pubDate>Thu, 05 Mar 2026 15:33:27 GMT</pubDate>
+      <category>阿里云百炼</category>
+      <description><![CDATA[
+        <h3>阿里云百炼 - Coding Plan Lite</h3>
+        <p><strong>当前价格：</strong>¥7.9/月（新客首月）</p>
+        <p><strong>原价：</strong>¥40/月</p>
+        <p><strong>优惠：</strong>新客首月 7.9 元</p>
+        <p><strong>支持模型：</strong>Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus、MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等</p>
+        <p><strong>适用场景：</strong>面向处理轻量级工作负载的个人开发者</p>
+      ]]></description>
+    </item>
+
+    <item>
+      <title>【价格更新】火山引擎 Coding Plan Lite 月套餐 ¥9.9</title>
+      <link>https://www.volcengine.com/activity/codingplan</link>
+      <guid isPermaLink="false">volcengine-ai-coding-plan-lite-2026-03-05</guid>
+      <pubDate>Thu, 05 Mar 2026 15:33:27 GMT</pubDate>
+      <category>火山引擎</category>
+      <description><![CDATA[
+        <h3>火山引擎 - Coding Plan Lite 月套餐</h3>
+        <p><strong>当前价格：</strong>¥9.9/月</p>
+        <p><strong>续费价格：</strong>¥40/月</p>
+        <p><strong>支持模型：</strong>Doubao、GLM、DeepSeek、Kimi等</p>
+        <p><strong>适配工具：</strong>支持 Claude Code、Cursor等主流编程工具</p>
+        <p><strong>特色功能：</strong>支持自由切换模型，或开启Auto模式</p>
+      ]]></description>
+    </item>
+
+    <item>
+      <title>【价格更新】智谱 GLM Coding Lite 月套餐 ¥49</title>
+      <link>https://www.bigmodel.cn/glm-coding?ic=BZRLCDAC1G</link>
+      <guid isPermaLink="false">zhipu-ai-glm-coding-lite-2026-03-05</guid>
+      <pubDate>Thu, 05 Mar 2026 15:33:27 GMT</pubDate>
+      <category>智谱AI</category>
+      <description><![CDATA[
+        <h3>智谱 z.ai - GLM Coding Lite (月)</h3>
+        <p><strong>当前价格：</strong>¥49/月</p>
+        <p><strong>下个月度续费金额：</strong>¥49</p>
+        <p><strong>每5小时限额：</strong>最多约 80 次 prompts</p>
+        <p><strong>每周限额：</strong>最多约 400 次 prompts</p>
+        <p><strong>限额说明：</strong>动态刷新，额度在请求消耗 5 小时后刷新重置</p>
+      ]]></description>
+    </item>
+
+    <item>
+      <title>【价格更新】Kimi Andante 月套餐 ¥49</title>
+      <link>https://www.kimi.com/code/zh</link>
+      <guid isPermaLink="false">kimi-ai-andante-2026-03-05</guid>
+      <pubDate>Thu, 05 Mar 2026 15:33:27 GMT</pubDate>
+      <category>Kimi</category>
+      <description><![CDATA[
+        <h3>Kimi - Andante (月)</h3>
+        <p><strong>当前价格：</strong>¥49/月</p>
+        <p><strong>会员等级：</strong>试用会员</p>
+        <p><strong>权益：</strong></p>
+        <ul>
+          <li>更多 Agent 额度</li>
+          <li>Agent 4 倍速优先用</li>
+          <li>K2.5 提速并提升额度</li>
+          <li>Kimi Code 可调用</li>
+        </ul>
+      ]]></description>
+    </item>
+
+    <item>
+      <title>【价格更新】MiniMax Starter 套餐 ¥29/月</title>
+      <link>https://platform.minimaxi.com/subscribe/coding-plan</link>
+      <guid isPermaLink="false">minimax-ai-starter-2026-03-05</guid>
+      <pubDate>Thu, 05 Mar 2026 15:33:27 GMT</pubDate>
+      <category>MiniMax</category>
+      <description><![CDATA[
+        <h3>MiniMax - Starter</h3>
+        <p><strong>当前价格：</strong>¥29/月</p>
+        <p><strong>用量：</strong>40 prompts / 每 5 小时</p>
+        <p><strong>支持模型：</strong>MiniMax M2.5、MiniMax M2.1、MiniMax M2</p>
+        <p><strong>适用场景：</strong>适合入门级开发场景，满足基础开发需求</p>
+      ]]></description>
+    </item>
+
+    <item>
+      <title>【价格更新】快手 KwaiKAT Coding Mini ¥8.8/月</title>
+      <link>https://www.streamlake.com/marketing/coding-plan</link>
+      <guid isPermaLink="false">kwaikat-ai-coding-mini-2026-03-05</guid>
+      <pubDate>Thu, 05 Mar 2026 15:33:27 GMT</pubDate>
+      <category>快手KwaiKAT</category>
+      <description><![CDATA[
+        <h3>快手 KwaiKAT - KAT Coding Mini</h3>
+        <p><strong>当前价格：</strong>¥8.8/月</p>
+        <p><strong>原价：</strong>¥29/月</p>
+        <p><strong>用量：</strong>40 Prompts / 5小时</p>
+        <p><strong>特点：</strong>适合初次体验者的轻量化选择，最低成本体验 KAT-Coder-Pro V1</p>
+      ]]></description>
+    </item>
+
+    <item>
+      <title>【价格更新】X-AIO Lite（入门版）¥36/月</title>
+      <link>https://code.x-aio.com/</link>
+      <guid isPermaLink="false">x-aio-lite-2026-03-05</guid>
+      <pubDate>Thu, 05 Mar 2026 15:33:27 GMT</pubDate>
+      <category>X-AIO</category>
+      <description><![CDATA[
+        <h3>X-AIO - Lite（入门版）</h3>
+        <p><strong>当前价格：</strong>¥36/月</p>
+        <p><strong>适用场景：</strong>适合个人开发者的轻量级使用</p>
+        <p><strong>配额：</strong>每 4 小时 100 Prompts</p>
+        <p><strong>权益：</strong>资源包折扣 9 折</p>
+        <p><strong>兼容性：</strong>兼容 10+ 主流 AI 编码工具</p>
+      ]]></description>
+    </item>
+
+    <item>
+      <title>【价格更新】Zenmux Pro $20/月</title>
+      <link>https://zenmux.ai/pricing/subscription</link>
+      <guid isPermaLink="false">zenmux-ai-pro-2026-03-05</guid>
+      <pubDate>Thu, 05 Mar 2026 15:33:27 GMT</pubDate>
+      <category>Zenmux</category>
+      <description><![CDATA[
+        <h3>Zenmux - Pro</h3>
+        <p><strong>当前价格：</strong>$20/月</p>
+        <p><strong>用量：</strong>50 Flows/5h</p>
+        <p><strong>支持模型：</strong>100+ Coding | ImageGen | LLM 模型</p>
+        <p><strong>功能：</strong>Studio Chat + API Request</p>
+        <p><strong>支持：</strong>优先技术支持</p>
+      ]]></description>
+    </item>
+
+  </channel>
+</rss>

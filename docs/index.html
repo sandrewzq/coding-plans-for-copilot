@@ -6,12 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
   <title>编码套餐看板 · AI 模型定价一览</title>
-  <meta name="description" content="实时汇总智谱、Kimi、火山引擎、MiniMax、阿里云等主流 AI 供应商的编程套餐价格，自动抓取更新。" />
+  <meta name="description" content="实时汇总智谱、Kimi、火山引擎、MiniMax、阿里云等主流 AI 厂商的编程套餐价格，自动抓取更新。" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="编码套餐看板 · AI 模型定价一览" />
-  <meta property="og:description" content="实时汇总智谱、Kimi、火山引擎、MiniMax、阿里云等主流 AI 供应商的编程套餐价格，自动抓取更新。" />
+  <meta property="og:description" content="实时汇总智谱、Kimi、火山引擎、MiniMax、阿里云等主流 AI 厂商的编程套餐价格，自动抓取更新。" />
   <meta property="og:url" content="https://sandrewzq.github.io/coding-plans-for-copilot/" />
   <link rel="icon" href="./icons.svg#icon-app" />
+  <link rel="alternate" type="application/rss+xml" title="编码套餐价格变动 RSS" href="./pricing-feed.xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -25,9 +26,9 @@
   <div class="backdrop"></div>
   <main class="page">
     <div class="page-layout">
-      <aside class="sidebar" aria-label="供应商导航">
+      <aside class="sidebar" aria-label="厂商导航">
         <div class="sidebar-card">
-          <h2>供应商</h2>
+          <h2>厂商</h2>
           <nav class="sidebar-nav">
             <ul id="providerNav" class="sidebar-list"></ul>
           </nav>
@@ -38,11 +39,14 @@
         <header class="hero">
           <p class="eyebrow">GitHub Pages · 自动抓取</p>
           <h1>编码套餐看板</h1>
-          <p class="subtitle">仅展示各供应商公开页面可解析到的标准月费与备注信息。</p>
+          <p class="subtitle">仅展示各厂商公开页面可解析到的标准月费与备注信息。</p>
           <div class="hero-actions">
             <a class="hero-link" href="https://github.com/sandrewzq/coding-plans-for-copilot" target="_blank"
               rel="noopener noreferrer">
               查看本工程（GitHub）
+            </a>
+            <a class="hero-link rss-link" href="./pricing-feed.xml" target="_blank" rel="noopener noreferrer">
+              📡 RSS 订阅
             </a>
           </div>
           <div class="stats" id="stats">
@@ -54,7 +58,7 @@
 
         <section class="toolbar">
           <div class="toolbar-filters">
-            <input type="text" id="searchInput" class="search-input" placeholder="搜索套餐名称或供应商..." />
+            <input type="text" id="searchInput" class="search-input" placeholder="搜索套餐名称或厂商..." />
             <select id="priceFilter" class="price-filter">
               <option value="">所有价格</option>
               <option value="0-50">¥0 - ¥50</option>
@@ -62,18 +66,55 @@
               <option value="100-200">¥100 - ¥200</option>
               <option value="200+">¥200+</option>
             </select>
+            <select id="sortFilter" class="price-filter">
+              <option value="">默认排序</option>
+              <option value="price-asc">价格：低到高</option>
+              <option value="price-desc">价格：高到低</option>
+              <option value="name">名称排序</option>
+            </select>
           </div>
           <div class="toolbar-actions">
+            <button id="calculatorButton" class="btn-secondary" type="button">🧮 价格计算器</button>
             <button id="compareButton" class="btn-secondary" type="button">📊 对比套餐</button>
             <button id="themeToggle" class="btn-secondary" type="button">🌙 暗色模式</button>
             <button id="reloadButton" class="btn-primary" type="button">重新加载</button>
           </div>
         </section>
 
+        <section id="calculatorPanel" class="calculator-panel hidden">
+          <div class="calculator-header">
+            <h3>💰 价格计算器</h3>
+            <button id="closeCalculator" class="btn-secondary" type="button">关闭</button>
+          </div>
+          <div class="calculator-content">
+            <div class="calculator-inputs">
+              <div class="calc-group">
+                <label for="monthlyRequests">每月请求次数</label>
+                <input type="number" id="monthlyRequests" class="calc-input" placeholder="例如：1000" min="0" />
+              </div>
+              <div class="calc-group">
+                <label for="requestsPerHour">每小时请求次数</label>
+                <input type="number" id="requestsPerHour" class="calc-input" placeholder="例如：50" min="0" />
+              </div>
+              <div class="calc-group">
+                <label for="budgetLimit">预算上限（元/月）</label>
+                <input type="number" id="budgetLimit" class="calc-input" placeholder="可选" min="0" />
+              </div>
+            </div>
+            <div id="calculatorResults" class="calculator-results">
+              <p class="calc-hint">输入使用量参数，查看最适合的套餐推荐</p>
+            </div>
+          </div>
+        </section>
+
         <section id="comparePanel" class="compare-panel hidden">
           <div class="compare-header">
-            <h3>套餐对比</h3>
-            <button id="closeCompare" class="btn-secondary" type="button">关闭</button>
+            <h3>📊 套餐对比</h3>
+            <div class="compare-actions">
+              <span id="compareCount" class="compare-count">已选择 0/4 个套餐</span>
+              <button id="clearCompare" class="btn-secondary" type="button">清空选择</button>
+              <button id="closeCompare" class="btn-secondary" type="button">关闭</button>
+            </div>
           </div>
           <div id="compareContent" class="compare-content"></div>
         </section>
@@ -83,6 +124,13 @@
       </div>
     </div>
   </main>
+
+  <!-- Back to top button -->
+  <button id="backToTop" class="back-to-top hidden" type="button" aria-label="返回顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
 </body>
 
 </html>

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-03-05T15:27:10.113Z",
+  "generatedAt": "2026-03-05T15:33:27.876Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan"
       ],
-      "fetchedAt": "2026-03-05T15:27:03.469Z",
+      "fetchedAt": "2026-03-05T15:33:27.289Z",
       "plans": [
         {
           "name": "Coding Plan Lite",
@@ -44,7 +44,7 @@
       "sourceUrls": [
         "https://cloud.baidu.com/product/codingplan.html"
       ],
-      "fetchedAt": "2026-03-05T15:26:58.454Z",
+      "fetchedAt": "2026-03-05T15:33:27.022Z",
       "plans": [
         {
           "name": "Coding Plan Lite",
@@ -83,7 +83,7 @@
       "sourceUrls": [
         "https://www.compshare.cn/docs/modelverse/package_plan/package"
       ],
-      "fetchedAt": "2026-03-05T15:26:56.613Z",
+      "fetchedAt": "2026-03-05T15:33:26.925Z",
       "plans": [
         {
           "name": "包月畅享包 Lite",
@@ -137,7 +137,7 @@
         "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.d94bcdaa.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
-      "fetchedAt": "2026-03-05T15:27:10.112Z",
+      "fetchedAt": "2026-03-05T15:33:27.875Z",
       "plans": [
         {
           "name": "Infini Coding Lite",
@@ -169,10 +169,28 @@
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
-        "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods"
+        "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-D1BykeQ-.js"
       ],
-      "fetchedAt": "2026-03-05T15:26:58.654Z",
+      "fetchedAt": "2026-03-05T15:33:27.314Z",
       "plans": [
+        {
+          "name": "Adagio (月)",
+          "currentPrice": 0,
+          "currentPriceText": "¥0/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "试用计划",
+          "serviceDetails": [
+            "会员等级: 免费试用",
+            "体验 Agent 功能",
+            "跨设备同步使用",
+            "搜索实时资讯",
+            "理解图片与文档",
+            "生成代码与数据分析"
+          ]
+        },
         {
           "name": "Andante (月)",
           "currentPrice": 49,
@@ -182,7 +200,11 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "提供专属 Kimi Code 使用额度，旗舰模型抢先体验，支持多个编程会话"
+            "会员等级: 试用会员",
+            "更多 Agent 额度",
+            "Agent 4 倍速优先用",
+            "K2.5 提速并提升额度",
+            "Kimi Code 可调用"
           ]
         },
         {
@@ -194,7 +216,12 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "每周更新的使用额度，允许多设备登录分享套餐额度，支持多项目高效工作"
+            "会员等级: 基础会员",
+            "Andante 权益基础上",
+            "2 倍 Agent 额度",
+            "Agent 多任务并行",
+            "2 倍 K2.5 模型使用额度",
+            "Kimi Code 4 倍额度"
           ]
         },
         {
@@ -206,7 +233,16 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "充足的每周额度，更高的并发上限，为高级用户提供超值选择"
+            "会员等级: 进阶会员",
+            "Andante 权益基础上",
+            "4 倍 Agent 额度",
+            "Agent 多任务并行",
+            "4 倍 K2.5 模型使用额度",
+            "Kimi Code 20 倍额度",
+            "专属助理 一键部署 Kimi Claw",
+            "实验性功能 Agent 集群：",
+            "多 Agent 并行，数倍生产力",
+            "适用海量搜索、长文写作、批量处理"
           ]
         },
         {
@@ -218,7 +254,16 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "尊享澎湃额度，完美适配日常办公与高强度开发需求"
+            "会员等级: 高级会员",
+            "Andante 权益基础上",
+            "10 倍 Agent 额度",
+            "Agent 多任务并行",
+            "10 倍 K2.5 模型使用额度",
+            "Kimi Code 60 倍额度",
+            "专属助理 一键部署 Kimi Claw",
+            "实验性功能 Agent 集群：",
+            "多 Agent 并行，数倍生产力",
+            "适用海量搜索、长文写作、批量处理"
           ]
         }
       ]
@@ -230,7 +275,7 @@
         "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
         "https://console.streamlake.com/api/common/describe-product-detail"
       ],
-      "fetchedAt": "2026-03-05T15:26:59.999Z",
+      "fetchedAt": "2026-03-05T15:33:27.060Z",
       "plans": [
         {
           "name": "KAT Coding Mini",
@@ -300,7 +345,7 @@
         "https://platform.minimaxi.com/docs/guides/pricing-coding-plan",
         "https://platform.minimaxi.com/subscribe/coding-plan"
       ],
-      "fetchedAt": "2026-03-05T15:26:58.177Z",
+      "fetchedAt": "2026-03-05T15:33:27.293Z",
       "plans": [
         {
           "name": "Plus-极速版",
@@ -399,7 +444,7 @@
       "sourceUrls": [
         "https://code.mthreads.com/"
       ],
-      "fetchedAt": "2026-03-05T15:26:54.554Z",
+      "fetchedAt": "2026-03-05T15:33:26.794Z",
       "plans": [
         {
           "name": "Lite Plan",
@@ -454,7 +499,7 @@
         "https://www.volcengine.com/activity/codingplan",
         "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.169/index.js"
       ],
-      "fetchedAt": "2026-03-05T15:27:01.246Z",
+      "fetchedAt": "2026-03-05T15:33:27.608Z",
       "plans": [
         {
           "name": "Coding Plan Lite 月套餐",
@@ -492,7 +537,7 @@
         "https://code.x-aio.com/",
         "https://code.x-aio.com/assets/index-kY5B5WUy.js"
       ],
-      "fetchedAt": "2026-03-05T15:26:57.632Z",
+      "fetchedAt": "2026-03-05T15:33:27.116Z",
       "plans": [
         {
           "name": "Lite（入门版）",
@@ -501,7 +546,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥18/月",
+          "notes": null,
           "serviceDetails": [
             "适用场景: 适合个人开发者的轻量级使用",
             "每 4 小时 100 Prompts 配额",
@@ -519,7 +564,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥90/月",
+          "notes": null,
           "serviceDetails": [
             "适用场景: 适合专业团队的高频使用",
             "每 4 小时 500 Prompts 配额（5x Lite）",
@@ -537,7 +582,7 @@
           "originalPrice": 360,
           "originalPriceText": "¥360/月",
           "unit": "月",
-          "notes": "首购优惠：¥180/月",
+          "notes": null,
           "serviceDetails": [
             "适用场景: 适合资深开发者的海量工作负载",
             "激活开箱即用的OpenClaw！可领取一台属于自己的\"贾维斯\"！",
@@ -556,7 +601,7 @@
       "sourceUrls": [
         "https://zenmux.ai/pricing/subscription"
       ],
-      "fetchedAt": "2026-03-05T15:26:54.557Z",
+      "fetchedAt": "2026-03-05T15:33:26.798Z",
       "plans": [
         {
           "name": "Pro",
@@ -611,7 +656,7 @@
         "https://bigmodel.cn/js/chunk-0d4f69d1.465ec58a.js",
         "https://docs.bigmodel.cn/cn/coding-plan/overview"
       ],
-      "fetchedAt": "2026-03-05T15:27:04.303Z",
+      "fetchedAt": "2026-03-05T15:33:27.786Z",
       "plans": [
         {
           "name": "GLM Coding Lite (月)",

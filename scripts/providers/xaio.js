@@ -40,7 +40,7 @@ function extractPlanBlocks(source) {
 }
 
 function extractStringValue(block, key) {
-  const match = block.match(new RegExp(`${key}:\"([^\"]+)\"`));
+  const match = block.match(new RegExp(`${key}:"([^"]+)"`));
   return match ? match[1] : null;
 }
 
@@ -129,8 +129,6 @@ async function parseXAioCodingPlans() {
     const description = normalizeText(extractStringValue(block, "description") || "");
     const priceBlock = extractObjectBlock(block, "price");
     const promoBlock = extractObjectBlock(block, "promo");
-    const firstOrderBlock = extractObjectBlock(block, "firstOrder");
-
     const monthlyPrice = extractNumberValue(priceBlock, "monthly");
     if (!Number.isFinite(monthlyPrice)) {
       continue;
@@ -143,17 +141,14 @@ async function parseXAioCodingPlans() {
         ? monthlyPrice
         : null;
 
-    const firstOrderMonthly = extractNumberValue(firstOrderBlock, "monthly");
     const features = extractArrayItems(block, "features");
     const serviceDetails = normalizeServiceDetails([
       description ? `适用场景: ${description}` : null,
       ...features,
     ]);
 
-    const notes =
-      Number.isFinite(firstOrderMonthly) && firstOrderMonthly < currentMonthly
-        ? `首购优惠：¥${formatAmount(firstOrderMonthly)}/月`
-        : null;
+    // X-AIO 已取消首购优惠，仅保留邀请码优惠
+    const notes = null;
 
     plans.push(
       asPlan({

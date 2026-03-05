@@ -87,7 +87,7 @@ function extractPriceInfo(plan) {
  * @returns {boolean} True if prices are different
  */
 function hasPriceChanged(oldPrice, newPrice) {
-  if (!oldPrice || !newPrice) return true;
+  if (!oldPrice || !newPrice) {return true;}
   
   return (
     oldPrice.currentPrice !== newPrice.currentPrice ||
@@ -227,7 +227,7 @@ function getPlanPriceTrend(provider, planName) {
   
   for (const snapshot of history.history || []) {
     for (const p of snapshot.providers || []) {
-      if (p.provider !== provider) continue;
+      if (p.provider !== provider) {continue;}
       
       for (const plan of p.plans || []) {
         if (plan.name === planName) {
@@ -262,7 +262,7 @@ function getRecentChanges(days = 7) {
     const current = history.history[i];
     const previous = history.history[i - 1];
     
-    if (new Date(current.timestamp) < cutoffDate) continue;
+    if (new Date(current.timestamp) < cutoffDate) {continue;}
     
     const detected = detectPriceChanges(
       { providers: current.providers },

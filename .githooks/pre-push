@@ -1,0 +1,60 @@
+#!/bin/sh
+
+# Pre-push hook for coding-plans-for-copilot
+# This hook runs lint and tests before allowing a push
+# To install: git config core.hooksPath .githooks
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+echo "${CYAN}"
+echo "=================================================="
+echo "  Pre-push Hook: Running Lint & Tests"
+echo "=================================================="
+echo "${NC}"
+
+# Step 1: Run ESLint
+echo "${YELLOW}Step 1/2: Running ESLint...${NC}"
+npm run lint
+
+# Check the exit code
+if [ $? -ne 0 ]; then
+    echo "${RED}"
+    echo "=================================================="
+    echo "  ❌ ESLint Failed!"
+    echo "=================================================="
+    echo "${NC}"
+    echo "${RED}Push aborted. Please fix the linting errors above.${NC}"
+    echo "${YELLOW}Tip: Run 'npm run lint:fix' to auto-fix some issues.${NC}"
+    exit 1
+fi
+
+echo "${GREEN}  ✅ ESLint Passed!${NC}"
+echo ""
+
+# Step 2: Run the test suite
+echo "${YELLOW}Step 2/2: Running Tests...${NC}"
+node tests/run-tests.js
+
+# Check the exit code
+if [ $? -ne 0 ]; then
+    echo "${RED}"
+    echo "=================================================="
+    echo "  ❌ Tests Failed!"
+    echo "=================================================="
+    echo "${NC}"
+    echo "${RED}Push aborted. Please fix the issues above before pushing.${NC}"
+    exit 1
+fi
+
+echo "${GREEN}"
+echo "=================================================="
+echo "  ✅ All Checks Passed!"
+echo "=================================================="
+echo "${NC}"
+echo "Proceeding with push..."
+exit 0

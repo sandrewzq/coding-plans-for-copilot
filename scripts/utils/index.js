@@ -649,6 +649,9 @@ function stripSimpleMarkdown(text) {
     .trim();
 }
 
+// Export error handling utilities
+const errors = require("./errors");
+
 module.exports = {
   HTML_ENTITIES,
   CNY_CURRENCY_HINT,
@@ -684,4 +687,6 @@ module.exports = {
   isStandardMonthlyPlan,
   keepStandardMonthlyPlans,
   stripSimpleMarkdown,
+  // Error handling exports
+  ...errors,
 };

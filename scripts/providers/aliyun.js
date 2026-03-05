@@ -122,7 +122,7 @@ async function parseAliyunCodingPlans() {
       cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,1500}?官网折扣价[^¥￥0-9]*[¥￥]200(?:[^0-9]|$)/i) ||
       cleanHtml.match(/Pro(?:高级)?套餐[^0-9]{0,500}?([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月/i);
 
-    const entryScriptMatch = html.match(/cloud-assets\.alicdn\.com\/lowcode\/entry\/prod\/[^\"'\s]+\.js/i);
+    const entryScriptMatch = html.match(/cloud-assets\.alicdn\.com\/lowcode\/entry\/prod\/[^"'\s]+\.js/i);
     const entryScriptUrl = entryScriptMatch
       ? `https://${entryScriptMatch[0]}`
       : null;

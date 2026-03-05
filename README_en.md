@@ -1,23 +1,45 @@
 # Coding Plans Dashboard
 
-This project contains an automated dashboard for fetching and displaying the latest standard monthly prices of various Chinese AI coding providers.
+A static dashboard that automatically fetches and displays standard trial and monthly subscription pricing for AI coding model providers.
 
-## Features
-- **Pricing Fetcher**: Automatically scrapes or queries the official pricing information of providers.
-- **Web Dashboard**: Displays all raw data in a simple, standardized grid format.
+## Highlights
+- **Automated fetch & dedupe**: Node.js scripts pull official pricing (Zhipu, Kimi, Minimax, Baidu, Volcengine, etc.).
+- **Standardized output**: Generates `provider-pricing.json` for the frontend.
+- **Pure static UI**: HTML/Vanilla JS/CSS with no runtime dependencies.
+- **Local preview**: Lightweight HTTP server for quick verification.
 
-## Overview
-- `docs/` contains the static dashboard code which is hosted via GitHub Pages.
-- `scripts/` contains Node.js scripts to fetch the data and to test the page locally.
+## Quick Start
 
-## Development
-
+### 1. Install dependencies
 ```bash
-# Fetch latest pricing data
-npm run pricing:fetch
-
-# Serve dashboard locally for verification
-npm run pricing:serve
+npm install
 ```
 
-See the [Dashboard Live Page](https://sandrewzq.github.io/coding-plans-for-copilot/).
+### 2. Fetch latest pricing
+```bash
+npm run pricing:fetch
+```
+
+### 3. Preview locally
+```bash
+npm run pricing:serve
+```
+Open `http://127.0.0.1:4173` in your browser.
+
+### Live Page
+[Dashboard Live Page](https://sandrewzq.github.io/coding-plans-for-copilot/)
+
+## Project Structure
+- `docs/`: static dashboard page and runtime data (`provider-pricing.json`).
+- `scripts/`: pricing fetchers and local server.
+- `scripts/providers/`: provider parsers.
+- `scripts/utils/`: shared utilities and normalization logic.
+- `assets/`: data snapshots (optional).
+
+## Data Notes
+- Keeps only “standard monthly/trial” plans and filters entries without useful details.
+- Failed providers are recorded in the `failures` field for troubleshooting.
+
+## Contributing
+- Add a new parser in `scripts/providers/`.
+- Register the new task in `scripts/fetch-provider-pricing.js`.

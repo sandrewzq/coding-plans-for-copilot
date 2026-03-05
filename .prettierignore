@@ -1,0 +1,8 @@
+node_modules/
+dist/
+build/
+coverage/
+docs/provider-pricing.json
+assets/provider-pricing.json
+*.min.js
+*.min.css
