@@ -89,9 +89,8 @@ body {
 }
 
 .page-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.5rem;
+  display: block;
+  position: relative;
 }
 
 .page-content {
@@ -150,14 +149,15 @@ body {
   background: var(--card-bg);
 }
 
-@media (min-width: 1100px) {
-  .page-layout {
-    grid-template-columns: 220px minmax(0, 1fr);
-    align-items: start;
-  }
-
+@media (min-width: 1200px) {
   .sidebar {
     display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateX(calc(-100% - 1.5rem));
+    width: 200px;
+    z-index: 2;
   }
 }
 
