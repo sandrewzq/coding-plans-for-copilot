@@ -1164,7 +1164,7 @@ async function parseInfiniCodingPlans() {
 
   let selectedChunkUrl = null;
   let selectedPlans = [];
-  for (const chunkPath of candidateChunkPaths.slice(0, 15)) {
+  for (const chunkPath of candidateChunkPaths.slice(0, 30)) {
     const chunkUrl = absoluteUrl(chunkPath, mainScriptUrl);
     let chunkText;
     try {
@@ -1172,7 +1172,7 @@ async function parseInfiniCodingPlans() {
     } catch {
       continue;
     }
-    if (!/Infini Coding (Lite|Pro)/i.test(chunkText)) {
+    if (chunkText.length < 5000 || !/Infini Coding (Lite|Pro)/i.test(chunkText)) {
       continue;
     }
     const serviceDetailsByTier = parseInfiniServiceDetailsByTier(chunkText);
@@ -1731,7 +1731,6 @@ async function main() {
 
     try {
       const data = result.value;
-      const { fetchedAt: _ignoredFetchedAt, ...providerWithoutFetchedAt } = data;
       const monthlyPlans = keepStandardMonthlyPlans(data.plans || [])
         .map((plan) => {
           const serviceDetails = plan.serviceDetails || normalizeServiceDetails(plan.notes);
@@ -1745,7 +1744,7 @@ async function main() {
         throw new Error(`${data.provider}: no standard monthly plans found`);
       }
       providers.push({
-        ...providerWithoutFetchedAt,
+        ...data,
         plans: monthlyPlans,
       });
     } catch (error) {

@@ -287,6 +287,24 @@ function renderProviders(data) {
 
     card.append(head, planList);
 
+    // Footer: fetchedAt + source link
+    const hasMeta = provider.fetchedAt || (Array.isArray(provider.sourceUrls) && provider.sourceUrls.length > 0);
+    if (hasMeta) {
+      const meta = createElement("div", "provider-meta");
+      if (provider.fetchedAt) {
+        meta.append(createElement("span", "provider-fetched-at", `更新于 ${formatDate(provider.fetchedAt)}`));
+      }
+      const firstSource = Array.isArray(provider.sourceUrls) ? provider.sourceUrls[0] : null;
+      if (firstSource) {
+        const srcLink = createElement("a", "source-link", "数据来源");
+        srcLink.href = firstSource;
+        srcLink.target = "_blank";
+        srcLink.rel = "noopener noreferrer";
+        meta.append(srcLink);
+      }
+      card.append(meta);
+    }
+
     providerGridEl.append(card);
   }
 
