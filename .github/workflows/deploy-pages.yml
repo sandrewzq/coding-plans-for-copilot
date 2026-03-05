@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - "docs/**"
-      - "assets/provider-pricing.json"
       - ".github/workflows/deploy-pages.yml"
   workflow_run:
     workflows:
@@ -37,9 +36,6 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
-      - name: Sync pricing data for Pages
-        run: cp assets/provider-pricing.json docs/provider-pricing.json
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

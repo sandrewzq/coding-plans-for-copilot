@@ -29,7 +29,7 @@ jobs:
       - name: Detect Aliyun parsing failure
         id: aliyun_failure
         run: |
-          node -e "const fs=require('node:fs');const data=JSON.parse(fs.readFileSync('assets/provider-pricing.json','utf8'));const failures=Array.isArray(data.failures)?data.failures:[];const aliyunFailures=failures.map(String).filter((msg)=>/Unable to (parse|locate).*Aliyun/i.test(msg));const out=process.env.GITHUB_OUTPUT;fs.appendFileSync(out,'has_failure='+(aliyunFailures.length>0)+'\n');if(aliyunFailures.length>0){const message=aliyunFailures.join(' | ').replace(/\r?\n/g,' ').trim();fs.appendFileSync(out,'failure_message='+message+'\n');}"
+          node -e "const fs=require('node:fs');const data=JSON.parse(fs.readFileSync('docs/provider-pricing.json','utf8'));const failures=Array.isArray(data.failures)?data.failures:[];const aliyunFailures=failures.map(String).filter((msg)=>/Unable to (parse|locate).*Aliyun/i.test(msg));const out=process.env.GITHUB_OUTPUT;fs.appendFileSync(out,'has_failure='+(aliyunFailures.length>0)+'\n');if(aliyunFailures.length>0){const message=aliyunFailures.join(' | ').replace(/\r?\n/g,' ').trim();fs.appendFileSync(out,'failure_message='+message+'\n');}"
 
       - name: Create issue for Aliyun parsing failure
         if: steps.aliyun_failure.outputs.has_failure == 'true'
@@ -82,7 +82,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/provider-pricing.json
+          git add docs/provider-pricing.json
           if git diff --cached --quiet; then
             echo "No pricing changes detected."
             exit 0
