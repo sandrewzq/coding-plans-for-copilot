@@ -650,10 +650,24 @@ function renderProviders(data) {
     card.id = providerId;
     const head = createElement("header", "provider-head");
 
-    // Create header top row with title and buy link
+    // Create header top row with title and actions (invite code + buy link)
     const headerTopRow = createElement("div", "provider-header-top");
     const title = createElement("h2", "provider-title", providerName);
     headerTopRow.append(title);
+
+    // Create actions container for invite code and buy link
+    const actionsContainer = createElement("div", "provider-actions");
+
+    // For X-AIO, add invite code before buy link
+    if (provider.provider === "x-aio") {
+      const inviteCodeEl = createElement("div", "invite-code");
+      inviteCodeEl.innerHTML = `
+        <span class="invite-code-label">邀请码：</span>
+        <code class="invite-code-value" onclick="navigator.clipboard.writeText('b3d7ebff9c11472eb4f4').then(() => alert('邀请码已复制！'))">b3d7ebff9c11472eb4f4</code>
+        <span class="invite-code-hint">（点击复制）</span>
+      `;
+      actionsContainer.append(inviteCodeEl);
+    }
 
     const providerBuyUrl = getProviderPurchaseUrl(provider);
     if (providerBuyUrl) {
@@ -661,22 +675,11 @@ function renderProviders(data) {
       buyLink.href = providerBuyUrl;
       buyLink.target = "_blank";
       buyLink.rel = "noopener noreferrer";
-      headerTopRow.append(buyLink);
+      actionsContainer.append(buyLink);
     }
-    head.append(headerTopRow);
 
-    // For X-AIO, add invite code row below header
-    if (provider.provider === "x-aio") {
-      const inviteRow = createElement("div", "provider-invite-row");
-      const inviteCodeEl = createElement("div", "invite-code");
-      inviteCodeEl.innerHTML = `
-        <span class="invite-code-label">邀请码：</span>
-        <code class="invite-code-value" onclick="navigator.clipboard.writeText('b3d7ebff9c11472eb4f4').then(() => alert('邀请码已复制！'))">b3d7ebff9c11472eb4f4</code>
-        <span class="invite-code-hint">（点击复制）</span>
-      `;
-      inviteRow.append(inviteCodeEl);
-      head.append(inviteRow);
-    }
+    headerTopRow.append(actionsContainer);
+    head.append(headerTopRow);
 
     // Add provider-level capability tags (aggregated from all plans)
     const providerCapabilities = detectProviderCapabilities(provider);

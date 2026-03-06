@@ -1032,7 +1032,7 @@ select.price-filter {
   margin-bottom: 1rem;
 }
 
-/* Header top row: title on left, buy link on right */
+/* Header top row: title on left, actions on right */
 .provider-header-top {
   display: flex;
   justify-content: space-between;
@@ -1040,9 +1040,11 @@ select.price-filter {
   gap: 1rem;
 }
 
-.provider-invite-row {
+/* Actions container: invite code + buy link */
+.provider-actions {
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .provider-title {
