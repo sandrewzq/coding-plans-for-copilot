@@ -27,7 +27,7 @@ const PROVIDER_BUY_URLS = {
   "infini-ai": "https://cloud.infini-ai.com/platform/ai",
   "compshare-ai": "https://www.compshare.cn/docs/modelverse/package_plan/package",
   "mthreads-ai": "https://code.mthreads.com/",
-  "x-aio": "https://code.x-aio.com/",
+  "x-aio": "https://code.x-aio.com/register?ref=b3d7ebff9c11472eb4f4",
   "zenmux-ai": "https://zenmux.ai/pricing/subscription",
 };
 
