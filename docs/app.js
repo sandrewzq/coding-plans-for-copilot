@@ -312,6 +312,25 @@ function detectCapabilities(plan) {
 }
 
 /**
+ * Detect provider capabilities by aggregating all plan capabilities
+ * @param {Object} provider - The provider object
+ * @returns {Array} Array of capability tags
+ */
+function detectProviderCapabilities(provider) {
+  const allCapabilities = new Set();
+
+  // Aggregate capabilities from all plans
+  for (const plan of provider.plans || []) {
+    const planCapabilities = detectCapabilities(plan);
+    for (const cap of planCapabilities) {
+      allCapabilities.add(cap);
+    }
+  }
+
+  return Array.from(allCapabilities);
+}
+
+/**
  * Get capability display info
  * @param {string} capability - Capability key
  * @returns {Object} Display info
@@ -671,6 +690,12 @@ function renderProviders(data) {
       }
     }
 
+    // Add provider-level capability tags (aggregated from all plans)
+    const providerCapabilities = detectProviderCapabilities(provider);
+    if (providerCapabilities.length > 0) {
+      head.append(renderCapabilityTags(providerCapabilities));
+    }
+
     const planList = createElement("ul", "plan-list");
     for (const plan of provider.plans) {
       const item = createElement("li", "plan-item");
@@ -758,12 +783,6 @@ function renderProviders(data) {
 
       compareWrapper.append(compareCheckbox);
       item.append(compareWrapper);
-
-      // Add capability tags
-      const capabilities = detectCapabilities(plan);
-      if (capabilities.length > 0) {
-        item.append(renderCapabilityTags(capabilities));
-      }
 
       // Add countdown timer for offers
       const countdown = getOfferCountdown(plan);
