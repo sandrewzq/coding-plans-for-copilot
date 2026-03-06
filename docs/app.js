@@ -822,25 +822,76 @@ function renderFailures(data) {
   setError(`抓取存在 ${failures.length} 个失败项：${failures.join("；")}`);
 }
 
+/**
+ * Renders skeleton loading cards with improved visual feedback
+ */
 function renderSkeletonProviders() {
   providerGridEl.replaceChildren();
+
+  // Create loading status indicator
+  const loadingStatus = createElement("div", "loading-status");
+  loadingStatus.innerHTML = `
+    <div class="loading-spinner"></div>
+    <span class="loading-text">正在加载套餐数据...</span>
+  `;
+  providerGridEl.append(loadingStatus);
+
+  // Create skeleton cards
+  const skeletonContainer = createElement("div", "skeleton-container");
   for (let i = 0; i < 3; i++) {
-    const card = createElement("article", "provider-card");
+    const card = createElement("article", "provider-card skeleton-card");
+    card.setAttribute("aria-busy", "true");
+    card.setAttribute("aria-label", "加载中");
+
     const head = createElement("header", "provider-head");
-    const title = createElement("h2", "provider-title skeleton-shimmer", "Loading Provider API");
+    const title = createElement("h2", "provider-title skeleton-shimmer", "正在加载厂商信息...");
     head.append(title);
 
     const planList = createElement("ul", "plan-list");
     for (let j = 0; j < 2; j++) {
-      const item = createElement("li", "plan-item");
-      const name = createElement("h3", "plan-name skeleton-shimmer", "Awesome Plan Title Here");
+      const item = createElement("li", "plan-item skeleton-item");
+      const name = createElement("h3", "plan-name skeleton-shimmer", "套餐名称加载中");
       const priceRow = createElement("p", "price-row");
-      priceRow.append(createElement("span", "price-now skeleton-shimmer", "¥999.00/月"));
+      const price = createElement("span", "price-now skeleton-shimmer", "价格计算中...");
+      const details = createElement("span", "plan-details skeleton-shimmer", "详情加载中");
+      priceRow.append(price, details);
       item.append(name, priceRow);
       planList.append(item);
     }
     card.append(head, planList);
-    providerGridEl.append(card);
+    skeletonContainer.append(card);
+  }
+  providerGridEl.append(skeletonContainer);
+}
+
+/**
+ * Shows a progress indicator for long loading operations
+ * @param {number} progress - Progress percentage (0-100)
+ * @param {string} message - Status message
+ */
+function showLoadingProgress(progress, message) {
+  const existingProgress = document.querySelector(".loading-progress");
+  if (existingProgress) {
+    existingProgress.remove();
+  }
+
+  const progressEl = createElement("div", "loading-progress");
+  progressEl.innerHTML = `
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: ${progress}%"></div>
+    </div>
+    <span class="progress-text">${message} (${progress}%)</span>
+  `;
+  providerGridEl.prepend(progressEl);
+}
+
+/**
+ * Hides the loading progress indicator
+ */
+function hideLoadingProgress() {
+  const progressEl = document.querySelector(".loading-progress");
+  if (progressEl) {
+    progressEl.remove();
   }
 }
 
@@ -1214,16 +1265,7 @@ async function loadData() {
     loadFeatureModules();
   } catch (error) {
     const isTimeout = error?.name === "AbortError";
-    providerGridEl.replaceChildren();
-    providerGridEl.append(createElement("article", "empty", "加载失败，请稍后重试。"));
-    generatedAtEl.textContent = "--";
-    providerCountEl.textContent = "0";
-    planCountEl.textContent = "0";
-    setError(
-      isTimeout
-        ? `加载超时（8 秒）：${DATA_PATH}`
-        : `无法读取 ${DATA_PATH}：${error.message}`,
-    );
+    renderErrorState(isTimeout, error);
   } finally {
     clearTimeout(timeoutHandle);
     reloadButtonEl.disabled = false;
@@ -1237,8 +1279,246 @@ reloadButtonEl.addEventListener("click", () => {
   if (priceFilterEl) {priceFilterEl.value = "";}
   if (sortFilterEl) {sortFilterEl.value = "";}
   originalData = null;
-  loadData();
+  // Keyboard shortcuts
+document.addEventListener("keydown", handleKeyboardShortcuts);
+
+function handleKeyboardShortcuts(event) {
+  // Ignore if user is typing in an input
+  if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") {
+    return;
+  }
+
+  const key = event.key.toLowerCase();
+
+  switch (key) {
+    case "/":
+      // Focus search
+      event.preventDefault();
+      searchInputEl?.focus();
+      break;
+
+    case "r":
+      // Reload data
+      if (event.ctrlKey || event.metaKey) {
+        event.preventDefault();
+        loadData();
+        showToast("数据已刷新", "success");
+      }
+      break;
+
+    case "escape":
+      // Close panels
+      comparePanelEl?.classList.add("hidden");
+      calculatorPanelEl?.classList.add("hidden");
+      // Close keyboard shortcuts panel if open
+      document.querySelector(".keyboard-shortcuts-panel")?.classList.remove("open");
+      break;
+
+    case "c":
+      // Toggle compare panel
+      if (!event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
+        compareButtonEl?.click();
+      }
+      break;
+
+    case "x":
+      // Toggle calculator panel
+      event.preventDefault();
+      calculatorButtonEl?.click();
+      break;
+
+    case "t":
+      // Toggle theme
+      event.preventDefault();
+      themeToggleEl?.click();
+      break;
+
+    case "?":
+      // Show keyboard shortcuts help
+      event.preventDefault();
+      toggleKeyboardShortcutsPanel();
+      break;
+
+    case "s":
+      // Scroll to top
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      break;
+
+    case "f":
+      // Focus price filter
+      event.preventDefault();
+      priceFilterEl?.focus();
+      break;
+  }
+}
+
+/**
+ * Toggle keyboard shortcuts help panel
+ */
+function toggleKeyboardShortcutsPanel() {
+  let panel = document.querySelector(".keyboard-shortcuts-panel");
+  let backdrop = document.querySelector(".shortcuts-backdrop");
+
+  if (panel?.classList.contains("open")) {
+    panel.classList.remove("open");
+    backdrop?.remove();
+  } else {
+    if (!panel) {
+      createKeyboardShortcutsPanel();
+      panel = document.querySelector(".keyboard-shortcuts-panel");
+    }
+
+    // Create backdrop
+    backdrop = createElement("div", "shortcuts-backdrop");
+    backdrop.style.cssText = `
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    `;
+    backdrop.addEventListener("click", toggleKeyboardShortcutsPanel);
+    document.body.append(backdrop);
+
+    panel.classList.add("open");
+  }
+}
+
+/**
+ * Create keyboard shortcuts help panel
+ */
+function createKeyboardShortcutsPanel() {
+  const container = createElement("div", "keyboard-shortcuts");
+
+  const toggle = createElement("button", "keyboard-shortcuts-toggle", "⌨️");
+  toggle.title = "键盘快捷键 (?)";
+  toggle.addEventListener("click", toggleKeyboardShortcutsPanel);
+
+  const panel = createElement("div", "keyboard-shortcuts-panel");
+  panel.innerHTML = `
+    <div class="keyboard-shortcuts-title">⌨️ 键盘快捷键</div>
+    <div class="keyboard-shortcut">
+      <span class="keyboard-shortcut-desc">搜索套餐</span>
+      <span class="keyboard-shortcut-key"><kbd>/</kbd></span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span class="keyboard-shortcut-desc">刷新数据</span>
+      <span class="keyboard-shortcut-key"><kbd>Ctrl</kbd>+<kbd>R</kbd></span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span class="keyboard-shortcut-desc">对比套餐</span>
+      <span class="keyboard-shortcut-key"><kbd>C</kbd></span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span class="keyboard-shortcut-desc">价格计算器</span>
+      <span class="keyboard-shortcut-key"><kbd>X</kbd></span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span class="keyboard-shortcut-desc">切换主题</span>
+      <span class="keyboard-shortcut-key"><kbd>T</kbd></span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span class="keyboard-shortcut-desc">回到顶部</span>
+      <span class="keyboard-shortcut-key"><kbd>S</kbd></span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span class="keyboard-shortcut-desc">价格筛选</span>
+      <span class="keyboard-shortcut-key"><kbd>F</kbd></span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span class="keyboard-shortcut-desc">关闭面板</span>
+      <span class="keyboard-shortcut-key"><kbd>Esc</kbd></span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span class="keyboard-shortcut-desc">显示快捷键帮助</span>
+      <span class="keyboard-shortcut-key"><kbd>?</kbd></span>
+    </div>
+  `;
+
+  container.append(toggle, panel);
+  document.body.append(container);
+}
+
+// Initialize keyboard shortcuts panel on load
+createKeyboardShortcutsPanel();
+
+// Initial data load
+loadData();
 });
+
+/**
+ * Renders an enhanced error state with retry options
+ * @param {boolean} isTimeout - Whether the error was a timeout
+ * @param {Error} error - The error object
+ */
+function renderErrorState(isTimeout, error) {
+  providerGridEl.replaceChildren();
+
+  const errorContainer = createElement("div", "error-container");
+
+  const errorIcon = createElement("div", "error-icon", isTimeout ? "⏱️" : "⚠️");
+
+  const errorTitle = createElement("h2", "error-title",
+    isTimeout ? "加载超时" : "加载失败"
+  );
+
+  const errorMessage = createElement("p", "error-message",
+    isTimeout
+      ? "数据加载时间超过 8 秒，可能是网络连接较慢或服务器响应延迟。"
+      : `无法读取数据：${error?.message || "未知错误"}`
+  );
+
+  const errorActions = createElement("div", "error-actions");
+
+  const retryButton = createElement("button", "error-button primary", "🔄 重新加载");
+  retryButton.addEventListener("click", () => {
+    loadData();
+  });
+
+  const reportButton = createElement("button", "error-button secondary", "🐛 报告问题");
+  reportButton.addEventListener("click", () => {
+    window.open("https://github.com/sandrewzq/coding-plans-for-copilot/issues/new", "_blank");
+  });
+
+  errorActions.append(retryButton, reportButton);
+  errorContainer.append(errorIcon, errorTitle, errorMessage, errorActions);
+  providerGridEl.append(errorContainer);
+
+  generatedAtEl.textContent = "--";
+  providerCountEl.textContent = "0";
+  planCountEl.textContent = "0";
+  setError(
+    isTimeout
+      ? `加载超时（8 秒）：${DATA_PATH}`
+      : `无法读取 ${DATA_PATH}：${error?.message || "未知错误"}`
+  );
+}
+
+/**
+ * Shows a toast notification
+ * @param {string} message - Message to display
+ * @param {string} type - Type: 'success', 'error', 'info'
+ * @param {number} duration - Duration in milliseconds
+ */
+function showToast(message, type = "info", duration = 3000) {
+  let container = document.querySelector(".toast-container");
+  if (!container) {
+    container = createElement("div", "toast-container");
+    document.body.append(container);
+  }
+
+  const toast = createElement("div", `toast ${type}`);
+  const icon = type === "success" ? "✓" : type === "error" ? "✗" : "ℹ";
+  toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+
+  container.append(toast);
+
+  setTimeout(() => {
+    toast.classList.add("hide");
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
 
 /**
  * Dynamically load feature modules on demand
