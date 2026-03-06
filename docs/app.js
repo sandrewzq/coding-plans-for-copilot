@@ -17,7 +17,7 @@ const PROVIDER_LABELS = {
 };
 
 const PROVIDER_BUY_URLS = {
-  "zhipu-ai": "https://www.bigmodel.cn/glm-coding",
+  "zhipu-ai": "https://www.bigmodel.cn/glm-coding?ic=BZRLCDAC1G",
   "kimi-ai": "https://www.kimi.com/code/zh",
   "minimax-ai": "https://platform.minimaxi.com/subscribe/coding-plan",
   "aliyun-ai": "https://www.aliyun.com/benefit/scene/codingplan",
