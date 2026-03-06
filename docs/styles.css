@@ -78,6 +78,262 @@
   color: #F8FAFC;
 }
 
+/* Smooth theme transitions */
+*,
+*::before,
+*::after {
+  transition: background-color 0.3s ease,
+              border-color 0.3s ease,
+              color 0.3s ease,
+              box-shadow 0.3s ease,
+              opacity 0.3s ease;
+}
+
+/* Dark mode specific enhancements */
+[data-theme="dark"] .provider-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .provider-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .plan-item {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .plan-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .sidebar-card {
+  background: rgba(55, 53, 51, 0.8);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .sidebar-link.active {
+  background: rgba(249, 115, 22, 0.15);
+  color: #F97316;
+}
+
+[data-theme="dark"] .hero-link {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .hero-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .filter-bar {
+  background: rgba(55, 53, 51, 0.8);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .search-input {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #F4F3F0;
+}
+
+[data-theme="dark"] .search-input:focus {
+  border-color: #F97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+}
+
+[data-theme="dark"] .price-filter {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #F4F3F0;
+}
+
+[data-theme="dark"] .stats {
+  color: #A8A29D;
+}
+
+[data-theme="dark"] .stats strong {
+  color: #F4F3F0;
+}
+
+[data-theme="dark"] .error-banner {
+  background: rgba(220, 38, 38, 0.15);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #FCA5A5;
+}
+
+[data-theme="dark"] .generated-at {
+  color: #A8A29D;
+}
+
+[data-theme="dark"] .capability-tag {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #D6D3D1;
+}
+
+[data-theme="dark"] .capability-tag:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .compare-panel,
+[data-theme="dark"] .calculator-panel {
+  background: #2B2A28;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .modal-header {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .compare-table th {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .compare-table td {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .highlight-best {
+  background: rgba(34, 197, 94, 0.15) !important;
+  color: #86EFAC !important;
+}
+
+[data-theme="dark"] .highlight-worst {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #FCA5A5 !important;
+}
+
+[data-theme="dark"] .calc-recommendation {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .calc-recommendation.best-match {
+  background: rgba(249, 115, 22, 0.1);
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+[data-theme="dark"] .back-to-top {
+  background: rgba(55, 53, 51, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #F4F3F0;
+}
+
+[data-theme="dark"] .back-to-top:hover {
+  background: rgba(69, 67, 64, 0.95);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .theme-toggle {
+  background: rgba(55, 53, 51, 0.8);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #F4F3F0;
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+  background: rgba(69, 67, 64, 0.9);
+}
+
+[data-theme="dark"] .loading-status {
+  background: rgba(55, 53, 51, 0.8);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .loading-text {
+  color: #A8A29D;
+}
+
+[data-theme="dark"] .error-container {
+  background: rgba(55, 53, 51, 0.8);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .error-title {
+  color: #F4F3F0;
+}
+
+[data-theme="dark"] .error-message {
+  color: #A8A29D;
+}
+
+[data-theme="dark"] .keyboard-shortcuts-toggle {
+  background: rgba(55, 53, 51, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #F4F3F0;
+}
+
+[data-theme="dark"] .keyboard-shortcuts-panel {
+  background: #373533;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .keyboard-shortcuts-title {
+  color: #F4F3F0;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] kbd {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #F4F3F0;
+}
+
+[data-theme="dark"] .toast {
+  background: #373533;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .toast.success {
+  border-left-color: #22C55E;
+}
+
+[data-theme="dark"] .toast.error {
+  border-left-color: #EF4444;
+}
+
+[data-theme="dark"] .toast.info {
+  border-left-color: #3B82F6;
+}
+
+/* Ensure images and icons adapt to dark mode */
+[data-theme="dark"] img {
+  opacity: 0.95;
+}
+
+[data-theme="dark"] svg {
+  fill: currentColor;
+}
+
+/* Scrollbar styling for dark mode */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -90,6 +346,284 @@ body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Page transition animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Apply animations to elements */
+.hero {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.filter-bar {
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+.provider-card {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.provider-card:nth-child(1) { animation-delay: 0.1s; }
+.provider-card:nth-child(2) { animation-delay: 0.15s; }
+.provider-card:nth-child(3) { animation-delay: 0.2s; }
+.provider-card:nth-child(4) { animation-delay: 0.25s; }
+.provider-card:nth-child(5) { animation-delay: 0.3s; }
+.provider-card:nth-child(6) { animation-delay: 0.35s; }
+.provider-card:nth-child(n+7) { animation-delay: 0.4s; }
+
+.sidebar-card {
+  animation: slideInLeft 0.5s ease-out both;
+}
+
+.sidebar-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+/* Modal and panel animations */
+.compare-panel,
+.calculator-panel {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.compare-panel.closing,
+.calculator-panel.closing {
+  animation: slideInRight 0.2s ease-in reverse;
+}
+
+/* Button hover animations */
+button,
+.hero-link,
+.sidebar-link {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+button:active,
+.hero-link:active,
+.sidebar-link:active {
+  transform: scale(0.98);
+}
+
+/* Card hover lift effect */
+.provider-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.provider-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Plan item hover effect */
+.plan-item {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.plan-item:hover {
+  transform: translateX(4px);
+}
+
+/* Tag hover effect */
+.capability-tag {
+  transition: all 0.2s ease;
+}
+
+.capability-tag:hover {
+  transform: translateY(-2px);
+}
+
+/* Back to top button animation */
+.back-to-top {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.back-to-top.hide {
+  animation: fadeIn 0.2s ease-in reverse forwards;
+}
+
+/* Toast notification animations */
+.toast {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.toast.hide {
+  animation: slideInRight 0.2s ease-in reverse forwards;
+}
+
+/* Loading spinner animation */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Skeleton shimmer animation */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-shine) 50%,
+    var(--skeleton-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Progress bar animation */
+.progress-fill {
+  transition: width 0.3s ease;
+  animation: progressPulse 2s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Search input focus animation */
+.search-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus {
+  animation: focusPulse 0.3s ease;
+}
+
+@keyframes focusPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+  }
+}
+
+/* Theme toggle animation */
+.theme-toggle {
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: rotate(15deg);
+}
+
+/* Price highlight animation */
+.price-now {
+  transition: color 0.2s ease;
+}
+
+.price-now:hover {
+  animation: priceGlow 0.5s ease;
+}
+
+@keyframes priceGlow {
+  0%, 100% {
+    text-shadow: none;
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+  }
+}
+
+/* Keyboard shortcuts panel animation */
+.keyboard-shortcuts-panel {
+  animation: scaleIn 0.2s ease-out;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 .backdrop {
