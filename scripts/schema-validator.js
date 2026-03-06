@@ -20,6 +20,7 @@ const PROVIDER_IDS = [
   "infini-ai",
   "mthreads-ai",
   "zenmux-ai",
+  "chutes-ai",
 ];
 
 /**

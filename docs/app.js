@@ -14,6 +14,7 @@ const PROVIDER_LABELS = {
   "mthreads-ai": "摩尔线程",
   "x-aio": "X-AIO",
   "zenmux-ai": "Zenmux",
+  "chutes-ai": "Chutes",
 };
 
 // Provider URLs - synced from README.md
@@ -31,6 +32,7 @@ const PROVIDER_BUY_URLS = {
   "mthreads-ai": "https://code.mthreads.com/",
   "x-aio": "https://code.x-aio.com/",
   "zenmux-ai": "https://zenmux.ai/pricing/subscription",
+  "chutes-ai": "https://chutes.ai/pricing",
 };
 
 const PROVIDER_ORDER = [
@@ -46,6 +48,7 @@ const PROVIDER_ORDER = [
   "mthreads-ai",
   "x-aio",
   "zenmux-ai",
+  "chutes-ai",
 ];
 
 // Capability keywords mapping
@@ -367,9 +370,15 @@ function renderCapabilityTags(capabilities) {
 /**
  * Check if plan has a limited time offer and calculate countdown
  * @param {Object} plan - The plan object
+ * @param {string} providerId - Provider ID
  * @returns {Object|null} Countdown info or null
  */
-function getOfferCountdown(plan) {
+function getOfferCountdown(plan, providerId) {
+  // Baidu and X-AIO don't have explicit offer end date, don't show countdown
+  if (providerId === "baidu-qianfan-ai" || providerId === "x-aio") {
+    return null;
+  }
+
   // If plan has explicit offer end date, use it
   if (plan.offerEndDate) {
     const endDate = new Date(plan.offerEndDate);
@@ -807,7 +816,7 @@ function renderProviders(data) {
       item.append(compareWrapper);
 
       // Add countdown timer for offers
-      const countdown = getOfferCountdown(plan);
+      const countdown = getOfferCountdown(plan, provider.provider);
       if (countdown) {
         item.append(renderCountdown(countdown, planKey));
       }

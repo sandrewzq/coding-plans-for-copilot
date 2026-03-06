@@ -76,6 +76,7 @@ const PROVIDER_IDS = {
   MTHREADS: "mthreads-ai",
   XAIO: "x-aio",
   ZENMUX: "zenmux-ai",
+  CHUTES: "chutes-ai",
 };
 
 /**
@@ -95,6 +96,7 @@ const PROVIDER_NAMES = {
   [PROVIDER_IDS.MTHREADS]: "摩尔线程",
   [PROVIDER_IDS.XAIO]: "X-AIO",
   [PROVIDER_IDS.ZENMUX]: "Zenmux",
+  [PROVIDER_IDS.CHUTES]: "Chutes",
 };
 
 /**
@@ -115,6 +117,7 @@ const PROVIDER_URLS = {
   [PROVIDER_IDS.MTHREADS]: "https://code.mthreads.com/",
   [PROVIDER_IDS.XAIO]: "https://code.x-aio.com/",
   [PROVIDER_IDS.ZENMUX]: "https://zenmux.ai/pricing/subscription",
+  [PROVIDER_IDS.CHUTES]: "https://chutes.ai/pricing",
 };
 
 /**

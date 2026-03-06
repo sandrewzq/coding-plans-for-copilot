@@ -20,6 +20,7 @@ const TASK_TIMEOUT_MS = 30_000;
 
 const parseAliyunCodingPlans = require("./providers/aliyun");
 const parseBaiduCodingPlans = require("./providers/baidu");
+const parseChutesCodingPlans = require("./providers/chutes");
 const parseCompshareCodingPlans = require("./providers/compshare");
 const parseInfiniCodingPlans = require("./providers/infini");
 const parseKimiCodingPlans = require("./providers/kimi");
@@ -73,6 +74,7 @@ async function main() {
     { provider: PROVIDER_IDS.MTHREADS, fn: parseMthreadsCodingPlans },
     { provider: PROVIDER_IDS.XAIO, fn: parseXaioCodingPlans },
     { provider: PROVIDER_IDS.ZENMUX, fn: parseZenmuxCodingPlans },
+    { provider: PROVIDER_IDS.CHUTES, fn: parseChutesCodingPlans },
   ];
 
   const results = await Promise.allSettled(tasks.map((task) => runTaskWithTimeout(task.fn)));

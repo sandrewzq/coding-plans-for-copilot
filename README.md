@@ -90,6 +90,7 @@ npm run pricing:serve
 | 摩尔线程 | https://code.mthreads.com/ |
 | X-AIO | https://code.x-aio.com/ |
 | Zenmux | https://zenmux.ai/pricing/subscription |
+| Chutes | https://chutes.ai/pricing |
 
 ## 致谢
 

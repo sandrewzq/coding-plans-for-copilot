@@ -2427,7 +2427,7 @@
       ]
     },
     {
-      "timestamp": "2026-03-06T17:39:02.844Z",
+      "timestamp": "2026-03-07T08:32:03.392Z",
       "providers": [
         {
           "provider": "zhipu-ai",
@@ -2464,6 +2464,15 @@
         {
           "provider": "kimi-ai",
           "plans": [
+            {
+              "name": "Adagio (月)",
+              "currentPrice": 0,
+              "currentPriceText": "¥0/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "试用计划"
+            },
             {
               "name": "Andante (月)",
               "currentPrice": 49,
@@ -2821,10 +2830,85 @@
               "notes": null
             }
           ]
+        },
+        {
+          "provider": "chutes-ai",
+          "plans": [
+            {
+              "name": "Base",
+              "currentPrice": 3,
+              "currentPriceText": "$3/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Plus",
+              "currentPrice": 10,
+              "currentPriceText": "$10/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Pro",
+              "currentPrice": 20,
+              "currentPriceText": "$20/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "Best Value"
+            }
+          ]
         }
       ]
     }
   ],
-  "updatedAt": "2026-03-07T02:10:07.620Z",
-  "lastChanges": []
+  "updatedAt": "2026-03-07T08:32:03.392Z",
+  "lastChanges": [
+    {
+      "timestamp": "2026-03-07T08:32:03.392Z",
+      "provider": "chutes-ai",
+      "planName": "Base",
+      "currentPrice": {
+        "currentPrice": 3,
+        "currentPriceText": "$3/月",
+        "originalPrice": null,
+        "originalPriceText": null,
+        "unit": "月",
+        "notes": null
+      },
+      "changeType": "new"
+    },
+    {
+      "timestamp": "2026-03-07T08:32:03.392Z",
+      "provider": "chutes-ai",
+      "planName": "Plus",
+      "currentPrice": {
+        "currentPrice": 10,
+        "currentPriceText": "$10/月",
+        "originalPrice": null,
+        "originalPriceText": null,
+        "unit": "月",
+        "notes": null
+      },
+      "changeType": "new"
+    },
+    {
+      "timestamp": "2026-03-07T08:32:03.392Z",
+      "provider": "chutes-ai",
+      "planName": "Pro",
+      "currentPrice": {
+        "currentPrice": 20,
+        "currentPriceText": "$20/月",
+        "originalPrice": null,
+        "originalPriceText": null,
+        "unit": "月",
+        "notes": "Best Value"
+      },
+      "changeType": "new"
+    }
+  ]
 }
