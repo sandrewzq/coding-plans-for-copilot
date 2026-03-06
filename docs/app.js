@@ -369,8 +369,8 @@ function renderCapabilityTags(capabilities) {
  */
 function getOfferCountdown(plan) {
   const notes = String(plan?.notes || "");
-  
-  // Check for various offer patterns
+
+  // Check for various offer patterns in notes
   const offerPatterns = [
     /(?:新客|新人|新用户)?\s*首月(?:特惠|优惠)?/i,
     /(?:首购优惠|首购特惠)/i,
@@ -378,15 +378,19 @@ function getOfferCountdown(plan) {
     /(?:官网折扣价|限时限购|限时特惠|限时抢购)/i,
   ];
 
-  const hasOffer = offerPatterns.some(pattern => pattern.test(notes));
-  
-  if (!hasOffer) {return null;}
+  const hasOfferInNotes = offerPatterns.some(pattern => pattern.test(notes));
+
+  // Check if plan has a discount (original price > current price)
+  const hasDiscount = plan.originalPrice && plan.currentPrice && plan.originalPrice > plan.currentPrice;
+
+  // Show countdown if either has offer keywords in notes or has a discount
+  if (!hasOfferInNotes && !hasDiscount) {return null;}
 
   // For demo purposes, assume offers end at end of current month
   // In production, this would come from actual offer end dates
   const now = new Date();
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-  
+
   return {
     endDate: endOfMonth,
     label: "限时优惠截止",
