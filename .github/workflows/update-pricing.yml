@@ -19,6 +19,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect workflow file changes
+        id: workflow_changes
+        run: |
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            if git diff --name-only HEAD^ HEAD | grep -q "^\.github/workflows/update-pricing\.yml$"; then
+              echo "has_workflow_change=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "has_workflow_change=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "has_workflow_change=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -140,7 +155,7 @@ jobs:
           git commit -m "chore: update provider pricing"
 
       - name: Create pull request for pricing updates
-        if: success()
+        if: success() && steps.workflow_changes.outputs.has_workflow_change != 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "chore: update provider pricing"
