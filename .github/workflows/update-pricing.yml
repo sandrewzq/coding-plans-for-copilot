@@ -152,6 +152,7 @@ jobs:
             exit 0
           fi
           git commit -m "chore: update provider pricing"
+          git push
 
       - name: Create pull request for pricing updates
         if: success() && steps.workflow_changes.outputs.has_workflow_change != 'true'
