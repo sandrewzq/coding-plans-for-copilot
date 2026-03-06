@@ -1182,57 +1182,6 @@ function createPriceStats(trend) {
   `;
 }
 
-// LocalStorage cache configuration
-const CACHE_KEY = "codingPlansData";
-const CACHE_TIMESTAMP_KEY = "codingPlansDataTimestamp";
-const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes cache
-
-/**
- * Load data from cache if available and not expired
- * @returns {Object|null} Cached data or null
- */
-function loadFromCache() {
-  try {
-    const cachedTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
-    if (!cachedTimestamp) return null;
-
-    const age = Date.now() - parseInt(cachedTimestamp, 10);
-    if (age > CACHE_DURATION_MS) return null;
-
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    if (!cachedData) return null;
-
-    return JSON.parse(cachedData);
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Save data to cache
- * @param {Object} data - Data to cache
- */
-function saveToCache(data) {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-    localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
-  } catch {
-    // Ignore cache errors (e.g., storage full)
-  }
-}
-
-/**
- * Clear cached data
- */
-function clearCache() {
-  try {
-    localStorage.removeItem(CACHE_KEY);
-    localStorage.removeItem(CACHE_TIMESTAMP_KEY);
-  } catch {
-    // Ignore errors
-  }
-}
-
 async function loadData() {
   setError("");
   reloadButtonEl.disabled = true;
@@ -1241,16 +1190,6 @@ async function loadData() {
 
   // Load price history in parallel
   priceHistoryData = await loadPriceHistory();
-
-  // Try to load from cache first for instant display
-  const cachedData = loadFromCache();
-  if (cachedData) {
-    generatedAtEl.textContent = formatDate(cachedData.generatedAt) + " (缓存)";
-    renderProviders(cachedData);
-    renderFailures(cachedData);
-    reloadButtonEl.disabled = false;
-    reloadButtonEl.textContent = "刷新数据";
-  }
 
   const controller = new AbortController();
   const timeoutHandle = setTimeout(() => controller.abort(), 8_000);
@@ -1263,36 +1202,21 @@ async function loadData() {
       throw new Error(`HTTP ${response.status}`);
     }
     const data = await response.json();
-
-    // Save to cache
-    saveToCache(data);
-
     generatedAtEl.textContent = formatDate(data.generatedAt);
     renderProviders(data);
     renderFailures(data);
   } catch (error) {
     const isTimeout = error?.name === "AbortError";
-
-    // If we have cached data, show it with error
-    if (cachedData) {
-      setError(
-        isTimeout
-          ? "加载超时，显示缓存数据"
-          : `加载失败：${error.message}，显示缓存数据`,
-      );
-    } else {
-      // No cache, show error
-      providerGridEl.replaceChildren();
-      providerGridEl.append(createElement("article", "empty", "加载失败，请稍后重试。"));
-      generatedAtEl.textContent = "--";
-      providerCountEl.textContent = "0";
-      planCountEl.textContent = "0";
-      setError(
-        isTimeout
-          ? `加载超时（8 秒）：${DATA_PATH}`
-          : `无法读取 ${DATA_PATH}：${error.message}`,
-      );
-    }
+    providerGridEl.replaceChildren();
+    providerGridEl.append(createElement("article", "empty", "加载失败，请稍后重试。"));
+    generatedAtEl.textContent = "--";
+    providerCountEl.textContent = "0";
+    planCountEl.textContent = "0";
+    setError(
+      isTimeout
+        ? `加载超时（8 秒）：${DATA_PATH}`
+        : `无法读取 ${DATA_PATH}：${error.message}`,
+    );
   } finally {
     clearTimeout(timeoutHandle);
     reloadButtonEl.disabled = false;
