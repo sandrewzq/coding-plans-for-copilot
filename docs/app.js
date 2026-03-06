@@ -1262,7 +1262,7 @@ async function loadData() {
     renderFailures(data);
 
     // Dynamically load feature modules
-    loadFeatureModules();
+
   } catch (error) {
     const isTimeout = error?.name === "AbortError";
     renderErrorState(isTimeout, error);
@@ -1520,42 +1520,7 @@ function showToast(message, type = "info", duration = 3000) {
   }, duration);
 }
 
-/**
- * Dynamically load feature modules on demand
- */
-async function loadFeatureModules() {
-  // Load calculator module when button is clicked
-  if (calculatorButtonEl) {
-    calculatorButtonEl.addEventListener("click", async () => {
-      if (!window.initCalculator) {
-        try {
-          await import("./js/calculator.js");
-        } catch (err) {
-          console.error("Failed to load calculator module:", err);
-        }
-      }
-      if (window.initCalculator) {
-        window.initCalculator();
-      }
-    }, { once: true });
-  }
 
-  // Load compare module when button is clicked
-  if (compareButtonEl) {
-    compareButtonEl.addEventListener("click", async () => {
-      if (!window.initCompare) {
-        try {
-          await import("./js/compare.js");
-        } catch (err) {
-          console.error("Failed to load compare module:", err);
-        }
-      }
-      if (window.initCompare) {
-        window.initCompare();
-      }
-    }, { once: true });
-  }
-}
 
 // Search and filter handling
 function applyFilters() {
