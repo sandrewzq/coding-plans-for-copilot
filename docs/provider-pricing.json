@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-03-06T13:03:13.900Z",
+  "generatedAt": "2026-03-06T15:23:28.653Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -10,7 +10,7 @@
         "https://bigmodel.cn/js/chunk-0d4f69d1.465ec58a.js",
         "https://docs.bigmodel.cn/cn/coding-plan/overview"
       ],
-      "fetchedAt": "2026-03-06T13:03:07.645Z",
+      "fetchedAt": "2026-03-06T15:23:22.307Z",
       "plans": [
         {
           "name": "GLM Coding Lite (月)",
@@ -23,7 +23,8 @@
           "serviceDetails": [
             "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 80 次 prompts",
             "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 400 次 prompts"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "GLM Coding Pro (月)",
@@ -36,7 +37,8 @@
           "serviceDetails": [
             "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 400 次 prompts",
             "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 2000 次 prompts"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "GLM Coding Max (月)",
@@ -49,7 +51,8 @@
           "serviceDetails": [
             "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 1600 次 prompts",
             "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 8000 次 prompts"
-          ]
+          ],
+          "offerEndDate": null
         }
       ]
     },
@@ -59,7 +62,7 @@
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods"
       ],
-      "fetchedAt": "2026-03-06T13:03:02.864Z",
+      "fetchedAt": "2026-03-06T15:23:20.768Z",
       "plans": [
         {
           "name": "Andante (月)",
@@ -71,7 +74,8 @@
           "notes": null,
           "serviceDetails": [
             "提供专属 Kimi Code 使用额度，旗舰模型抢先体验，支持多个编程会话"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Moderato (月)",
@@ -83,7 +87,8 @@
           "notes": null,
           "serviceDetails": [
             "每周更新的使用额度，允许多设备登录分享套餐额度，支持多项目高效工作"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Allegretto (月)",
@@ -95,7 +100,8 @@
           "notes": null,
           "serviceDetails": [
             "充足的每周额度，更高的并发上限，为高级用户提供超值选择"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Allegro (月)",
@@ -107,7 +113,8 @@
           "notes": null,
           "serviceDetails": [
             "尊享澎湃额度，完美适配日常办公与高强度开发需求"
-          ]
+          ],
+          "offerEndDate": null
         }
       ]
     },
@@ -117,7 +124,7 @@
         "https://platform.minimaxi.com/docs/guides/pricing-coding-plan",
         "https://platform.minimaxi.com/subscribe/coding-plan"
       ],
-      "fetchedAt": "2026-03-06T13:02:57.727Z",
+      "fetchedAt": "2026-03-06T15:23:19.175Z",
       "plans": [
         {
           "name": "Plus-极速版",
@@ -128,11 +135,24 @@
           "unit": "月",
           "notes": "用量: 100 prompts/每 5 小时",
           "serviceDetails": [
-            "用量: 100 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5-highspeed MiniMax M2.5 MiniMax M2.1 MiniMax M2",
             "套餐资源: 2.5 倍 Starter 套餐用量",
-            "适用场景: 适合专业开发场景 满足复杂开发任务需求"
-          ]
+            "适用场景: 适合专业开发场景 满足复杂开发任务需求",
+            "适用场景: 专业开发",
+            "on\\\"]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[\\\"guides/mcp-gui",
+            "de\\\"]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[\\\"coding-pl",
+            "n\\\"}]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[{\\\"title\\\":\\\"Min",
+            "iMax MCP\\\",\\\"description\\\":\\\"本文档介绍模型上下",
+            "文协议（MCP）的原理与应用，提供 Python 与 JS 版本工具说明，",
+            "tle\\\":\\\"Coding Plan MCP\\\",\\\"description\\\":\\\"Coding Pl",
+            "an MCP 提供了两个专属工具：**网络搜索** 和 **图片理解*",
+            "e\\\"}]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[{\\\"title\\\":",
+            "\\\"图片理解 & 网络搜索 MCP\\\",\\\"description\\\":\\\"**Coding",
+            "Plan MCP** 提供了两个专属工具：**网络搜索** 和 **图片理",
+            "MiniMax 文本模型 & MCP 视觉理解，构建一个能够理解自然语言指令并执行复杂机械臂操作",
+            "适用于代码助手、Agent 工具、AI IDE 等多种场景。\\\",\\\"href\\\":\\\"/guides/t"
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Max-极速版 超值之选",
@@ -143,11 +163,24 @@
           "unit": "月",
           "notes": "用量: 300 prompts/每 5 小时",
           "serviceDetails": [
-            "用量: 300 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5-highspeed MiniMax M2.5 MiniMax M2.1 MiniMax M2",
             "套餐资源: 7.5 倍 Starter 套餐用量",
-            "适用场景: 适合高级开发场景 满足大量编程辅助需求"
-          ]
+            "适用场景: 适合高级开发场景 满足大量编程辅助需求",
+            "适用场景: 专业开发",
+            "on\\\"]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[\\\"guides/mcp-gui",
+            "de\\\"]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[\\\"coding-pl",
+            "n\\\"}]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[{\\\"title\\\":\\\"Min",
+            "iMax MCP\\\",\\\"description\\\":\\\"本文档介绍模型上下",
+            "文协议（MCP）的原理与应用，提供 Python 与 JS 版本工具说明，",
+            "tle\\\":\\\"Coding Plan MCP\\\",\\\"description\\\":\\\"Coding Pl",
+            "an MCP 提供了两个专属工具：**网络搜索** 和 **图片理解*",
+            "e\\\"}]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[{\\\"title\\\":",
+            "\\\"图片理解 & 网络搜索 MCP\\\",\\\"description\\\":\\\"**Coding",
+            "Plan MCP** 提供了两个专属工具：**网络搜索** 和 **图片理",
+            "MiniMax 文本模型 & MCP 视觉理解，构建一个能够理解自然语言指令并执行复杂机械臂操作",
+            "适用于代码助手、Agent 工具、AI IDE 等多种场景。\\\",\\\"href\\\":\\\"/guides/t"
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Ultra-极速版 极速畅用",
@@ -158,11 +191,24 @@
           "unit": "月",
           "notes": "用量: 2000 prompts/每 5 小时",
           "serviceDetails": [
-            "用量: 2000 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5-highspeed MiniMax M2.5 MiniMax M2.1 MiniMax M2",
             "套餐资源: 50 倍 Starter 套餐用量",
-            "适用场景: 适合硬核开发者 超大量编程辅助需求"
-          ]
+            "适用场景: 适合硬核开发者 超大量编程辅助需求",
+            "适用场景: 专业开发",
+            "on\\\"]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[\\\"guides/mcp-gui",
+            "de\\\"]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[\\\"coding-pl",
+            "n\\\"}]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[{\\\"title\\\":\\\"Min",
+            "iMax MCP\\\",\\\"description\\\":\\\"本文档介绍模型上下",
+            "文协议（MCP）的原理与应用，提供 Python 与 JS 版本工具说明，",
+            "tle\\\":\\\"Coding Plan MCP\\\",\\\"description\\\":\\\"Coding Pl",
+            "an MCP 提供了两个专属工具：**网络搜索** 和 **图片理解*",
+            "e\\\"}]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[{\\\"title\\\":",
+            "\\\"图片理解 & 网络搜索 MCP\\\",\\\"description\\\":\\\"**Coding",
+            "Plan MCP** 提供了两个专属工具：**网络搜索** 和 **图片理",
+            "MiniMax 文本模型 & MCP 视觉理解，构建一个能够理解自然语言指令并执行复杂机械臂操作",
+            "适用于代码助手、Agent 工具、AI IDE 等多种场景。\\\",\\\"href\\\":\\\"/guides/t"
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Starter",
@@ -173,11 +219,24 @@
           "unit": "月",
           "notes": "用量: 40 prompts/每 5 小时",
           "serviceDetails": [
-            "用量: 40 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5 MiniMax M2.1 MiniMax M2",
             "套餐资源: 基础用量",
-            "适用场景: 适合入门级开发场景 满足基础开发需求"
-          ]
+            "适用场景: 适合入门级开发场景 满足基础开发需求",
+            "适用场景: 专业开发",
+            "on\\\"]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[\\\"guides/mcp-gui",
+            "de\\\"]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[\\\"coding-pl",
+            "n\\\"}]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[{\\\"title\\\":\\\"Min",
+            "iMax MCP\\\",\\\"description\\\":\\\"本文档介绍模型上下",
+            "文协议（MCP）的原理与应用，提供 Python 与 JS 版本工具说明，",
+            "tle\\\":\\\"Coding Plan MCP\\\",\\\"description\\\":\\\"Coding Pl",
+            "an MCP 提供了两个专属工具：**网络搜索** 和 **图片理解*",
+            "e\\\"}]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[{\\\"title\\\":",
+            "\\\"图片理解 & 网络搜索 MCP\\\",\\\"description\\\":\\\"**Coding",
+            "Plan MCP** 提供了两个专属工具：**网络搜索** 和 **图片理",
+            "MiniMax 文本模型 & MCP 视觉理解，构建一个能够理解自然语言指令并执行复杂机械臂操作",
+            "适用于代码助手、Agent 工具、AI IDE 等多种场景。\\\",\\\"href\\\":\\\"/guides/t"
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Plus 高性价比",
@@ -188,11 +247,24 @@
           "unit": "月",
           "notes": "用量: 100 prompts/每 5 小时",
           "serviceDetails": [
-            "用量: 100 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5 MiniMax M2.1 MiniMax M2",
             "套餐资源: 2.5 倍 Starter 套餐用量",
-            "适用场景: 适合专业开发场景 满足复杂开发任务需求"
-          ]
+            "适用场景: 适合专业开发场景 满足复杂开发任务需求",
+            "适用场景: 专业开发",
+            "on\\\"]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[\\\"guides/mcp-gui",
+            "de\\\"]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[\\\"coding-pl",
+            "n\\\"}]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[{\\\"title\\\":\\\"Min",
+            "iMax MCP\\\",\\\"description\\\":\\\"本文档介绍模型上下",
+            "文协议（MCP）的原理与应用，提供 Python 与 JS 版本工具说明，",
+            "tle\\\":\\\"Coding Plan MCP\\\",\\\"description\\\":\\\"Coding Pl",
+            "an MCP 提供了两个专属工具：**网络搜索** 和 **图片理解*",
+            "e\\\"}]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[{\\\"title\\\":",
+            "\\\"图片理解 & 网络搜索 MCP\\\",\\\"description\\\":\\\"**Coding",
+            "Plan MCP** 提供了两个专属工具：**网络搜索** 和 **图片理",
+            "MiniMax 文本模型 & MCP 视觉理解，构建一个能够理解自然语言指令并执行复杂机械臂操作",
+            "适用于代码助手、Agent 工具、AI IDE 等多种场景。\\\",\\\"href\\\":\\\"/guides/t"
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Max 超大份量",
@@ -203,11 +275,24 @@
           "unit": "月",
           "notes": "用量: 300 prompts/每 5 小时",
           "serviceDetails": [
-            "用量: 300 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5 MiniMax M2.1 MiniMax M2",
             "套餐资源: 7.5 倍 Starter 套餐用量",
-            "适用场景: 适合专业开发场景 满足复杂开发任务需求"
-          ]
+            "适用场景: 适合专业开发场景 满足复杂开发任务需求",
+            "适用场景: 专业开发",
+            "on\\\"]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[\\\"guides/mcp-gui",
+            "de\\\"]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[\\\"coding-pl",
+            "n\\\"}]},{\\\"group\\\":\\\"MCP\\\",\\\"pages\\\":[{\\\"title\\\":\\\"Min",
+            "iMax MCP\\\",\\\"description\\\":\\\"本文档介绍模型上下",
+            "文协议（MCP）的原理与应用，提供 Python 与 JS 版本工具说明，",
+            "tle\\\":\\\"Coding Plan MCP\\\",\\\"description\\\":\\\"Coding Pl",
+            "an MCP 提供了两个专属工具：**网络搜索** 和 **图片理解*",
+            "e\\\"}]},{\\\"group\\\":\\\"MCP 使用指南\\\",\\\"pages\\\":[{\\\"title\\\":",
+            "\\\"图片理解 & 网络搜索 MCP\\\",\\\"description\\\":\\\"**Coding",
+            "Plan MCP** 提供了两个专属工具：**网络搜索** 和 **图片理",
+            "MiniMax 文本模型 & MCP 视觉理解，构建一个能够理解自然语言指令并执行复杂机械臂操作",
+            "适用于代码助手、Agent 工具、AI IDE 等多种场景。\\\",\\\"href\\\":\\\"/guides/t"
+          ],
+          "offerEndDate": null
         }
       ]
     },
@@ -216,7 +301,7 @@
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan"
       ],
-      "fetchedAt": "2026-03-06T13:03:08.335Z",
+      "fetchedAt": "2026-03-06T15:23:22.747Z",
       "plans": [
         {
           "name": "Coding Plan Lite",
@@ -230,7 +315,8 @@
             "能力: 支持 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus、MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等模型",
             "场景: 面向处理轻量级工作负载的个人开发者",
             "工具: Qwen Code、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Coding Plan Pro",
@@ -244,7 +330,8 @@
             "权益: 享受 Lite 套餐的全部能力与权益",
             "额度: 用量是 Lite 版的 5 倍",
             "场景: 适合大型开发任务，专业级 AI 编程体验"
-          ]
+          ],
+          "offerEndDate": null
         }
       ]
     },
@@ -254,7 +341,7 @@
         "https://www.volcengine.com/activity/codingplan",
         "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.177/index.js"
       ],
-      "fetchedAt": "2026-03-06T13:03:04.119Z",
+      "fetchedAt": "2026-03-06T15:23:21.080Z",
       "plans": [
         {
           "name": "Coding Plan Lite 月套餐",
@@ -268,7 +355,8 @@
             "能力: 支持 Doubao、GLM、DeepSeek、Kimi等模型",
             "适配: 支持自由切换模型，或开启Auto模式",
             "工具: 支持 Claude Code、Cursor等主流编程工具"
-          ]
+          ],
+          "offerEndDate": "2026-07-09T23:59:59+08:00"
         },
         {
           "name": "Coding Plan Pro 月套餐",
@@ -282,7 +370,8 @@
             "能力: 包含lite套餐全部权益",
             "适配: 满足高阶用户的大规模编程需求",
             "用量: 用量达 Claude Max（5x）的 3 倍，lite 套餐用量的5倍"
-          ]
+          ],
+          "offerEndDate": "2026-07-09T23:59:59+08:00"
         }
       ]
     },
@@ -293,7 +382,7 @@
         "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
         "https://console.streamlake.com/api/common/describe-product-detail"
       ],
-      "fetchedAt": "2026-03-06T13:03:04.440Z",
+      "fetchedAt": "2026-03-06T15:23:21.100Z",
       "plans": [
         {
           "name": "KAT Coding Mini",
@@ -308,7 +397,8 @@
             "最低成本体验 KAT-Coder-Pro V1",
             "覆盖日常编码场景",
             "40 Prompts / 5小时"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "KAT Coding Starter",
@@ -323,7 +413,8 @@
             "由最新旗舰模型 KAT-Coder-Pro V1 驱动",
             "适配Claude Code等主流编程工具",
             "100 Prompts / 5小时"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "KAT Coding Pro",
@@ -338,7 +429,8 @@
             "包含Starter套餐全部权益，性能全面提升",
             "Starter套餐用量的3倍",
             "300 Prompts / 5小时"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "KAT Coding Max",
@@ -353,7 +445,8 @@
             "卓越的跨文件/仓库级代码深度理解",
             "Pro套餐用量的3倍以上",
             "1000 Prompts / 5小时"
-          ]
+          ],
+          "offerEndDate": null
         }
       ]
     },
@@ -362,7 +455,7 @@
       "sourceUrls": [
         "https://cloud.baidu.com/product/codingplan.html"
       ],
-      "fetchedAt": "2026-03-06T13:03:00.764Z",
+      "fetchedAt": "2026-03-06T15:23:21.162Z",
       "plans": [
         {
           "name": "Coding Plan Lite",
@@ -377,7 +470,8 @@
             "每周限额: 最多9000次请求",
             "每月限额: 最多18000次请求",
             "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Coding Plan Pro",
@@ -392,7 +486,8 @@
             "每周限额: 最多45000次请求",
             "每月限额: 最多90000次请求",
             "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等"
-          ]
+          ],
+          "offerEndDate": null
         }
       ]
     },
@@ -404,7 +499,7 @@
         "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.8ada9e79.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
-      "fetchedAt": "2026-03-06T13:03:13.899Z",
+      "fetchedAt": "2026-03-06T15:23:28.652Z",
       "plans": [
         {
           "name": "Infini Coding Lite",
@@ -416,7 +511,8 @@
           "notes": null,
           "serviceDetails": [
             "1,000次/5小时、6,000次/7天、12,000次/1个月"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Infini Coding Pro",
@@ -428,7 +524,8 @@
           "notes": null,
           "serviceDetails": [
             "5,000次/5小时、30,000次/7天、60,000次/1个月"
-          ]
+          ],
+          "offerEndDate": null
         }
       ]
     },
@@ -437,7 +534,7 @@
       "sourceUrls": [
         "https://www.compshare.cn/docs/modelverse/package_plan/package"
       ],
-      "fetchedAt": "2026-03-06T13:03:01.085Z",
+      "fetchedAt": "2026-03-06T15:23:19.677Z",
       "plans": [
         {
           "name": "包月畅享包 Lite",
@@ -451,7 +548,8 @@
             "计费模式/有效期: 包月计费 (30天)",
             "积分额度: 7,000,000 积分/日",
             "核心权益: 每日刷新，适合日常低频使用"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "包月畅享包 Plus",
@@ -465,7 +563,8 @@
             "计费模式/有效期: 包月计费 (30天)",
             "积分额度: 28,000,000 积分/日",
             "核心权益: 每日刷新，适合高频开发者"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "包月畅享包 Pro",
@@ -479,7 +578,8 @@
             "计费模式/有效期: 包月计费 (30天)",
             "积分额度: 70,000,000 积分/日",
             "核心权益: 每日刷新，适合高频开发者"
-          ]
+          ],
+          "offerEndDate": null
         }
       ]
     },
@@ -488,7 +588,7 @@
       "sourceUrls": [
         "https://code.mthreads.com/"
       ],
-      "fetchedAt": "2026-03-06T13:02:55.018Z",
+      "fetchedAt": "2026-03-06T15:23:16.882Z",
       "plans": [
         {
           "name": "Lite Plan",
@@ -503,7 +603,8 @@
             "GLM-4.7 最新开源模型，持续更新",
             "支持 Claude Code、Cursor、Cline、Kilo Code 等主流工具",
             "摩尔线程 MTT S5000 算力支持"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Pro Plan",
@@ -518,7 +619,8 @@
             "更快的生成速度，响应保障",
             "最新开源模型持续更新",
             "支持主流 AI 编码工具"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Max Plan",
@@ -533,7 +635,8 @@
             "峰值期优先访问，抢先体验新功能",
             "最新开源模型持续更新",
             "支持主流 AI 编码工具"
-          ]
+          ],
+          "offerEndDate": null
         }
       ]
     },
@@ -543,7 +646,7 @@
         "https://code.x-aio.com/",
         "https://code.x-aio.com/assets/index-JODhdn8F.js"
       ],
-      "fetchedAt": "2026-03-06T13:03:01.723Z",
+      "fetchedAt": "2026-03-06T15:23:19.569Z",
       "plans": [
         {
           "name": "Lite（入门版）",
@@ -561,7 +664,8 @@
             "兼容 10+ 主流 AI 编码工具",
             "模型能力持续更新，长期可用",
             "资源包折扣权益：9 折"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Pro（专业版）",
@@ -580,7 +684,8 @@
             "兼容 10+ 主流 AI 编码工具",
             "模型能力持续更新，长期可用",
             "资源包折扣权益：8 折"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Max（旗舰版）",
@@ -599,7 +704,8 @@
             "兼容 10+ 主流 AI 编码工具",
             "模型能力持续更新，长期可用",
             "资源包折扣权益：6 折"
-          ]
+          ],
+          "offerEndDate": null
         }
       ]
     },
@@ -608,7 +714,7 @@
       "sourceUrls": [
         "https://zenmux.ai/pricing/subscription"
       ],
-      "fetchedAt": "2026-03-06T13:02:55.021Z",
+      "fetchedAt": "2026-03-06T15:23:16.884Z",
       "plans": [
         {
           "name": "Pro",
@@ -623,7 +729,8 @@
             "100+ Coding | ImageGen | LLM 模型",
             "Studio Chat + API Request",
             "优先技术支持"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Max",
@@ -637,7 +744,8 @@
             "300 Flows/5h（6x Pro 用量）",
             "GPT-5.2 Pro 及视频模型",
             "优先体验新功能"
-          ]
+          ],
+          "offerEndDate": null
         },
         {
           "name": "Ultra",
@@ -651,7 +759,8 @@
             "800 Flows/5h（16x Pro 用量）",
             "所有模型支持",
             "专为高强度 Vibe Coding 和专业开发打造"
-          ]
+          ],
+          "offerEndDate": null
         }
       ]
     }
