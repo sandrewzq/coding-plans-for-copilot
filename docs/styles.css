@@ -629,6 +629,8 @@ html {
 
 .page-content {
   min-width: 0;
+  flex: 1;
+  max-width: 100%;
 }
 
 .sidebar {
@@ -687,6 +689,7 @@ html {
   .page-layout {
     display: flex;
     gap: 1.5rem;
+    justify-content: center;
   }
 
   .sidebar {
