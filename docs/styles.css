@@ -1027,21 +1027,13 @@ select.price-filter {
 
 .provider-head {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.5rem;
   margin-bottom: 1rem;
 }
 
-/* X-AIO special layout */
-.provider-head:has(.provider-title-row) {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.5rem;
-}
-
-.provider-title-row {
+/* Header top row: title on left, buy link on right */
+.provider-header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;

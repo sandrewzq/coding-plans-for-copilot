@@ -649,23 +649,24 @@ function renderProviders(data) {
     const card = createElement("article", "provider-card");
     card.id = providerId;
     const head = createElement("header", "provider-head");
-    
-    // For X-AIO, use special layout with invite code
+
+    // Create header top row with title and buy link
+    const headerTopRow = createElement("div", "provider-header-top");
+    const title = createElement("h2", "provider-title", providerName);
+    headerTopRow.append(title);
+
+    const providerBuyUrl = getProviderPurchaseUrl(provider);
+    if (providerBuyUrl) {
+      const buyLink = createElement("a", "buy-link", "前往了解");
+      buyLink.href = providerBuyUrl;
+      buyLink.target = "_blank";
+      buyLink.rel = "noopener noreferrer";
+      headerTopRow.append(buyLink);
+    }
+    head.append(headerTopRow);
+
+    // For X-AIO, add invite code row below header
     if (provider.provider === "x-aio") {
-      const titleRow = createElement("div", "provider-title-row");
-      const title = createElement("h2", "provider-title", providerName);
-      titleRow.append(title);
-      
-      const providerBuyUrl = getProviderPurchaseUrl(provider);
-      if (providerBuyUrl) {
-        const buyLink = createElement("a", "buy-link", "前往了解");
-        buyLink.href = providerBuyUrl;
-        buyLink.target = "_blank";
-        buyLink.rel = "noopener noreferrer";
-        titleRow.append(buyLink);
-      }
-      head.append(titleRow);
-      
       const inviteRow = createElement("div", "provider-invite-row");
       const inviteCodeEl = createElement("div", "invite-code");
       inviteCodeEl.innerHTML = `
@@ -675,19 +676,6 @@ function renderProviders(data) {
       `;
       inviteRow.append(inviteCodeEl);
       head.append(inviteRow);
-    } else {
-      // Normal layout for other providers
-      const title = createElement("h2", "provider-title", providerName);
-      head.append(title);
-      
-      const providerBuyUrl = getProviderPurchaseUrl(provider);
-      if (providerBuyUrl) {
-        const buyLink = createElement("a", "buy-link", "前往了解");
-        buyLink.href = providerBuyUrl;
-        buyLink.target = "_blank";
-        buyLink.rel = "noopener noreferrer";
-        head.append(buyLink);
-      }
     }
 
     // Add provider-level capability tags (aggregated from all plans)
