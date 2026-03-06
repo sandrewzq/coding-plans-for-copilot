@@ -772,6 +772,59 @@ h1 {
   background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
 }
 
+/* Invite code styles */
+.invite-code {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(249, 115, 22, 0.1);
+  border: 1px dashed rgba(249, 115, 22, 0.4);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+
+.invite-code-label {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.invite-code-value {
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(249, 115, 22, 0.15);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.invite-code-value:hover {
+  background: rgba(249, 115, 22, 0.25);
+  transform: scale(1.02);
+}
+
+.invite-code-hint {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+[data-theme="dark"] .invite-code {
+  background: rgba(249, 115, 22, 0.15);
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+[data-theme="dark"] .invite-code-value {
+  background: rgba(249, 115, 22, 0.2);
+  color: #FDBA74;
+}
+
+[data-theme="dark"] .invite-code-value:hover {
+  background: rgba(249, 115, 22, 0.3);
+}
+
 .stats {
   margin-top: 1.5rem;
   display: flex;

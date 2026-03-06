@@ -27,7 +27,7 @@ const PROVIDER_BUY_URLS = {
   "infini-ai": "https://cloud.infini-ai.com/platform/ai",
   "compshare-ai": "https://www.compshare.cn/docs/modelverse/package_plan/package",
   "mthreads-ai": "https://code.mthreads.com/",
-  "x-aio": "https://code.x-aio.com/register?ref=b3d7ebff9c11472eb4f4",
+  "x-aio": "https://code.x-aio.com/",
   "zenmux-ai": "https://zenmux.ai/pricing/subscription",
 };
 
@@ -640,6 +640,17 @@ function renderProviders(data) {
       buyLink.target = "_blank";
       buyLink.rel = "noopener noreferrer";
       head.append(buyLink);
+    }
+
+    // Show invite code for X-AIO
+    if (provider.provider === "x-aio") {
+      const inviteCodeEl = createElement("div", "invite-code");
+      inviteCodeEl.innerHTML = `
+        <span class="invite-code-label">邀请码：</span>
+        <code class="invite-code-value" onclick="navigator.clipboard.writeText('b3d7ebff9c11472eb4f4').then(() => alert('邀请码已复制！'))">b3d7ebff9c11472eb4f4</code>
+        <span class="invite-code-hint">（点击复制）</span>
+      `;
+      head.append(inviteCodeEl);
     }
 
     const planList = createElement("ul", "plan-list");
