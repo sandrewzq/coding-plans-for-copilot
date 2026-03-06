@@ -368,6 +368,19 @@ function renderCapabilityTags(capabilities) {
  * @returns {Object|null} Countdown info or null
  */
 function getOfferCountdown(plan) {
+  // If plan has explicit offer end date, use it
+  if (plan.offerEndDate) {
+    const endDate = new Date(plan.offerEndDate);
+    const now = new Date();
+    if (endDate > now) {
+      return {
+        endDate: endDate,
+        label: "限时优惠截止",
+      };
+    }
+    return null;
+  }
+
   const notes = String(plan?.notes || "");
 
   // Check for various offer patterns in notes
@@ -386,8 +399,7 @@ function getOfferCountdown(plan) {
   // Show countdown if either has offer keywords in notes or has a discount
   if (!hasOfferInNotes && !hasDiscount) {return null;}
 
-  // For demo purposes, assume offers end at end of current month
-  // In production, this would come from actual offer end dates
+  // For plans without explicit end date, assume offers end at end of current month
   const now = new Date();
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 

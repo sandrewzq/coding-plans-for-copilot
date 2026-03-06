@@ -38,6 +38,7 @@ function getFallbackData() {
           "场景: 适合轻量级开发任务",
           "续费: ¥99/月",
         ],
+        offerEndDate: "2026-07-09T23:59:59+08:00",
       }),
       asPlan({
         name: "Coding Plan Pro 月套餐",
@@ -53,6 +54,7 @@ function getFallbackData() {
           "升级: 用量是 Lite 版的 5 倍",
           "续费: ¥399/月",
         ],
+        offerEndDate: "2026-07-09T23:59:59+08:00",
       }),
     ],
   };
@@ -183,6 +185,7 @@ function parseVolcPlanFromBundle(bundleText, configurationCode) {
       unit: "月",
       notes: null,
       serviceDetails,
+      offerEndDate: "2026-07-09T23:59:59+08:00",
     });
     const score =
       (plan.currentPriceText ? 4 : 0) +

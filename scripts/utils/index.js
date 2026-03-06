@@ -505,6 +505,7 @@ function buildServiceDetailsFromRows(rows, column, options = {}) {
  * @param {string} [params.unit=null] - Time unit
  * @param {string} [params.notes=null] - Additional notes
  * @param {string[]} [params.serviceDetails=null] - Service details
+ * @param {string} [params.offerEndDate=null] - Offer end date (ISO 8601 format)
  * @returns {Object} Standardized plan object
  */
 function asPlan({
@@ -516,6 +517,7 @@ function asPlan({
   unit = null,
   notes = null,
   serviceDetails = null,
+  offerEndDate = null,
 }) {
   const current = parsePriceText(currentPriceText);
   const original = parsePriceText(originalPriceText);
@@ -528,6 +530,7 @@ function asPlan({
     unit: unit || current.unit || original.unit || null,
     notes: normalizeText(notes) || null,
     serviceDetails: normalizeServiceDetails(serviceDetails),
+    offerEndDate: offerEndDate || null,
   };
 }
 
