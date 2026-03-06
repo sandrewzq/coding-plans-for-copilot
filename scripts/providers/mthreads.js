@@ -1,5 +1,6 @@
 "use strict";
 
+const path = require("path");
 const {
   HTML_ENTITIES,
   CNY_CURRENCY_HINT,
@@ -8,6 +9,7 @@ const {
   REQUEST_CONTEXT,
   REQUEST_TIMEOUT_MS,
   PROVIDER_IDS,
+  getProviderUrl,
   decodeHtml,
   stripTags,
   normalizeText,
@@ -38,7 +40,8 @@ const {
 } = require("../utils");
 
 async function parseMthreadsCodingPlans() {
-  const pageUrl = "https://code.mthreads.com/";
+  const readmePath = path.resolve(__dirname, "../../README.md");
+  const pageUrl = getProviderUrl(PROVIDER_IDS.MTHREADS, readmePath);
   // Prices are hardcoded in the frontend JS bundle; use known verified values as the primary data.
   // Last verified 2026-03 from https://code.mthreads.com/:
   // Lite ¥120/季度, Pro ¥600/季度, Max ¥1200/季度

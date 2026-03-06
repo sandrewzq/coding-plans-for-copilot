@@ -27,7 +27,7 @@ const parseKwaikatCodingPlans = require("./providers/kwaikat");
 const parseMinimaxCodingPlans = require("./providers/minimax");
 const parseMthreadsCodingPlans = require("./providers/mthreads");
 const parseVolcengineCodingPlans = require("./providers/volcengine");
-const parseXAioCodingPlans = require("./providers/xaio");
+const parseXaioCodingPlans = require("./providers/xaio");
 const parseZenmuxCodingPlans = require("./providers/zenmux");
 const parseZhipuCodingPlans = require("./providers/zhipu");
 
@@ -71,7 +71,7 @@ async function main() {
     { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
     { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans },
     { provider: PROVIDER_IDS.MTHREADS, fn: parseMthreadsCodingPlans },
-    { provider: PROVIDER_IDS.XAIO, fn: parseXAioCodingPlans },
+    { provider: PROVIDER_IDS.XAIO, fn: parseXaioCodingPlans },
     { provider: PROVIDER_IDS.ZENMUX, fn: parseZenmuxCodingPlans },
   ];
 

@@ -16,12 +16,14 @@ const PROVIDER_LABELS = {
   "zenmux-ai": "Zenmux",
 };
 
+// Provider URLs - synced from README.md
+// These should match the URLs in the README.md table
 const PROVIDER_BUY_URLS = {
   "zhipu-ai": "https://www.bigmodel.cn/glm-coding?ic=BZRLCDAC1G",
   "kimi-ai": "https://www.kimi.com/code/zh",
   "minimax-ai": "https://platform.minimaxi.com/subscribe/coding-plan",
   "aliyun-ai": "https://www.aliyun.com/benefit/scene/codingplan",
-  "volcengine-ai": "https://volcengine.com/L/RUFlYNIKjD4/",
+  "volcengine-ai": "https://volcengine.com/L/AJgcLIP_-o4/",
   "kwaikat-ai": "https://www.streamlake.com/marketing/coding-plan",
   "baidu-qianfan-ai": "https://cloud.baidu.com/product/codingplan.html",
   "infini-ai": "https://cloud.infini-ai.com/platform/ai",
@@ -705,7 +707,7 @@ function renderProviders(data) {
 
     // Special handling for MiniMax: group plans by highspeed vs normal
     const isMinimax = provider.provider === "minimax-ai";
-    let plansToRender = provider.plans;
+    const plansToRender = provider.plans;
     let highspeedPlans = [];
     let normalPlans = [];
 
@@ -827,7 +829,46 @@ function renderProviders(data) {
         item.append(offerCard);
       }
 
-      const serviceItems = getPlanServices(plan);
+      // Add usage limit card for MiniMax, Zhipu, Aliyun, and Volcengine plans
+      const isZhipu = provider.provider === "zhipu-ai";
+      const isAliyun = provider.provider === "aliyun-ai";
+      const isVolcengine = provider.provider === "volcengine-ai";
+      if (isMinimax && plan.notes && plan.notes.includes("用量:")) {
+        const usageMatch = plan.notes.match(/用量:\s*(.+)/);
+        if (usageMatch) {
+          const usageCard = createElement("div", "usage-limit-card");
+          usageCard.append(
+            createElement("span", "usage-limit-icon", "📊"),
+            createElement("span", "usage-limit-text", usageMatch[1]),
+          );
+          item.append(usageCard);
+        }
+      } else if ((isZhipu || isAliyun || isVolcengine) && plan.serviceDetails && plan.serviceDetails.length > 0) {
+        // Extract usage info from service details for Zhipu, Aliyun, and Volcengine and show as separate card
+        const usageDetails = plan.serviceDetails.filter(d =>
+          d.includes("每 5 小时限额") || d.includes("每周限额") || d.includes("每月限额")
+        );
+        if (usageDetails.length > 0) {
+          const usageCard = createElement("div", "usage-limit-card");
+          const usageList = createElement("ul", "usage-limit-list");
+          for (const usageText of usageDetails) {
+            usageList.append(createElement("li", "usage-limit-item", usageText));
+          }
+          usageCard.append(
+            createElement("span", "usage-limit-title", "📊"),
+            usageList,
+          );
+          item.append(usageCard);
+        }
+      }
+
+      // Get service items, excluding usage-related items for Zhipu, Aliyun, and Volcengine
+      let serviceItems = getPlanServices(plan);
+      if (isZhipu || isAliyun || isVolcengine) {
+        serviceItems = serviceItems.filter(d =>
+          !d.includes("每 5 小时限额") && !d.includes("每周限额") && !d.includes("每月限额")
+        );
+      }
       if (serviceItems.length > 0) {
         const serviceBlock = createElement("section", "plan-services");
         serviceBlock.append(createElement("p", "plan-services-title", "服务内容"));
@@ -837,10 +878,6 @@ function renderProviders(data) {
         }
         serviceBlock.append(serviceList);
         item.append(serviceBlock);
-      }
-
-      if (plan.notes) {
-        item.append(createElement("p", "plan-notes", plan.notes));
       }
 
       return item;
@@ -1114,8 +1151,14 @@ function renderPriceTrend(trend, providerId, planName) {
   const sparklineContainer = createElement("span", "sparkline-container");
   sparklineContainer.innerHTML = createSparkline(trend);
 
+  // Filter trend to only show price change points (remove consecutive duplicates)
+  const filteredTrend = trend.filter((item, index, arr) => {
+    if (index === 0) {return true;}
+    return item.currentPrice !== arr[index - 1].currentPrice;
+  });
+  
   const trendTooltip = createElement("span", "trend-tooltip");
-  trendTooltip.textContent = `历史价格: ${trend.map((t) => t.currentPriceText || t.currentPrice).join(" → ")}`;
+  trendTooltip.textContent = `历史价格: ${filteredTrend.map((t) => t.currentPriceText || t.currentPrice).join(" → ")}`;
 
   // Add click handler to show detailed chart
   container.style.cursor = 'pointer';

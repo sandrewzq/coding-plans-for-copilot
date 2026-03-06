@@ -1,7 +1,9 @@
 "use strict";
 
+const path = require("path");
 const {
   PROVIDER_IDS,
+  getProviderUrl,
   fetchText,
   normalizeText,
   decodeUnicodeLiteral,
@@ -13,6 +15,83 @@ const {
 } = require("../utils");
 
 /**
+ * Fetches usage limits from Volcengine help documentation
+ * @returns {Map<string, string[]>} Map of tier to usage limit details
+ */
+async function fetchVolcUsageLimitsFromHelpDoc() {
+  const helpUrl = "https://www.volcengine.com/docs/82379/2165245";
+  const usageLimitsByTier = new Map();
+
+  try {
+    const helpHtml = await fetchText(helpUrl);
+
+    // The page uses a rich text editor format with JSON-encoded content
+    // Look for the usage limits section in the HTML table structure
+    // The table has: Lite 套餐 row, then Pro 套餐 row
+    // We need to extract the numbers that appear AFTER each tier name
+
+    // Find Lite 套餐 section and extract the first set of numbers after it
+    const liteSectionMatch = helpHtml.match(/Lite\s*套餐[\s\S]{0,800}/i);
+    const proSectionMatch = helpHtml.match(/Pro\s*套餐[\s\S]{0,800}/i);
+
+    if (liteSectionMatch && proSectionMatch) {
+      const liteSection = liteSectionMatch[0];
+      const proSection = proSectionMatch[0];
+
+      // Extract Lite limits from its section (first occurrence of each pattern)
+      const liteHourly = liteSection.match(/每\s*5\s*小时[\s\S]{0,50}?([\d,]+)[\s\S]{0,20}?次请求/i);
+      const liteWeekly = liteSection.match(/每周[\s\S]{0,50}?([\d,]+)[\s\S]{0,20}?次请求/i);
+      const liteMonthly = liteSection.match(/每(?:订阅)?月[\s\S]{0,50}?([\d,]+)[\s\S]{0,20}?次请求/i);
+
+      if (liteHourly && liteWeekly && liteMonthly) {
+        usageLimitsByTier.set("Lite", [
+          `每 5 小时限额: ${liteHourly[1].replace(/,/g, "")} 次请求`,
+          `每周限额: ${liteWeekly[1].replace(/,/g, "")} 次请求`,
+          `每月限额: ${liteMonthly[1].replace(/,/g, "")} 次请求`,
+        ]);
+      }
+
+      // Extract Pro limits from its section (first occurrence of each pattern)
+      const proHourly = proSection.match(/每\s*5\s*小时[\s\S]{0,50}?([\d,]+)[\s\S]{0,20}?次请求/i);
+      const proWeekly = proSection.match(/每周[\s\S]{0,50}?([\d,]+)[\s\S]{0,20}?次请求/i);
+      const proMonthly = proSection.match(/每(?:订阅)?月[\s\S]{0,50}?([\d,]+)[\s\S]{0,20}?次请求/i);
+
+      if (proHourly && proWeekly && proMonthly) {
+        usageLimitsByTier.set("Pro", [
+          `每 5 小时限额: ${proHourly[1].replace(/,/g, "")} 次请求`,
+          `每周限额: ${proWeekly[1].replace(/,/g, "")} 次请求`,
+          `每月限额: ${proMonthly[1].replace(/,/g, "")} 次请求`,
+        ]);
+      }
+    }
+
+    // Fallback: extract all numbers after "每 5 小时", "每周", "每订阅月" patterns
+    if (usageLimitsByTier.size === 0) {
+      const hourlyMatches = [...helpHtml.matchAll(/每\s*5\s*小时[\s\S]{0,100}?([\d,]+)[\s\S]{0,50}?次请求/gi)];
+      const weeklyMatches = [...helpHtml.matchAll(/每周[\s\S]{0,100}?([\d,]+)[\s\S]{0,50}?次请求/gi)];
+      const monthlyMatches = [...helpHtml.matchAll(/每(?:订阅)?月[\s\S]{0,100}?([\d,]+)[\s\S]{0,50}?次请求/gi)];
+
+      if (hourlyMatches.length >= 2 && weeklyMatches.length >= 2 && monthlyMatches.length >= 2) {
+        usageLimitsByTier.set("Lite", [
+          `每 5 小时限额: ${hourlyMatches[0][1].replace(/,/g, "")} 次请求`,
+          `每周限额: ${weeklyMatches[0][1].replace(/,/g, "")} 次请求`,
+          `每月限额: ${monthlyMatches[0][1].replace(/,/g, "")} 次请求`,
+        ]);
+        usageLimitsByTier.set("Pro", [
+          `每 5 小时限额: ${hourlyMatches[1][1].replace(/,/g, "")} 次请求`,
+          `每周限额: ${weeklyMatches[1][1].replace(/,/g, "")} 次请求`,
+          `每月限额: ${monthlyMatches[1][1].replace(/,/g, "")} 次请求`,
+        ]);
+      }
+    }
+  } catch (error) {
+    console.warn(`[pricing] Failed to fetch usage limits from help doc: ${error.message}`);
+  }
+
+  return usageLimitsByTier;
+}
+
+/**
  * Fallback data for Volcengine when parsing fails
  * @returns {Object} Fallback provider data
  */
@@ -22,6 +101,7 @@ function getFallbackData() {
     sourceUrls: [
       "https://www.volcengine.com/activity/codingplan",
       "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.156/index.js",
+      "https://www.volcengine.com/docs/82379/2165245",
     ],
     fetchedAt: new Date().toISOString(),
     plans: [
@@ -37,6 +117,9 @@ function getFallbackData() {
           "能力: 支持 Doubao-1.5-pro、GLM-4、DeepSeek-V3、Kimi-k2.5 等",
           "场景: 适合轻量级开发任务",
           "续费: ¥99/月",
+          "每 5 小时限额: 1200 次请求",
+          "每周限额: 9000 次请求",
+          "每月限额: 18000 次请求",
         ],
         offerEndDate: "2026-07-09T23:59:59+08:00",
       }),
@@ -53,6 +136,9 @@ function getFallbackData() {
           "适配: 高阶开发场景",
           "升级: 用量是 Lite 版的 5 倍",
           "续费: ¥399/月",
+          "每 5 小时限额: 6000 次请求",
+          "每周限额: 45000 次请求",
+          "每月限额: 90000 次请求",
         ],
         offerEndDate: "2026-07-09T23:59:59+08:00",
       }),
@@ -61,7 +147,8 @@ function getFallbackData() {
 }
 
 async function parseVolcengineCodingPlans() {
-  const pageUrl = "https://www.volcengine.com/activity/codingplan";
+  const readmePath = path.resolve(__dirname, "../../README.md");
+  const pageUrl = getProviderUrl(PROVIDER_IDS.VOLCENGINE, readmePath);
   try {
     const html = await fetchText(pageUrl);
     const candidates = extractVolcBundleCandidatesFromHtml(html, pageUrl);
@@ -98,9 +185,21 @@ async function parseVolcengineCodingPlans() {
       throw new Error("Unable to parse Volcengine coding plan bundle");
     }
 
+    // Fetch usage limits from help documentation
+    const usageLimitsByTier = await fetchVolcUsageLimitsFromHelpDoc();
+
+    // Merge usage limits into plans
+    for (const plan of selectedPlans) {
+      const tier = plan.name.includes("Lite") ? "Lite" : "Pro";
+      const usageLimits = usageLimitsByTier.get(tier);
+      if (usageLimits && usageLimits.length > 0) {
+        plan.serviceDetails = [...(plan.serviceDetails || []), ...usageLimits];
+      }
+    }
+
     return {
       provider: PROVIDER_IDS.VOLCENGINE,
-      sourceUrls: unique([pageUrl, selectedSourceUrl]),
+      sourceUrls: unique([pageUrl, selectedSourceUrl, "https://www.volcengine.com/docs/82379/2165245"]),
       fetchedAt: new Date().toISOString(),
       plans: dedupePlans(selectedPlans),
     };

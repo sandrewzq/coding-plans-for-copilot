@@ -1,7 +1,9 @@
 "use strict";
 
+const path = require("path");
 const {
   PROVIDER_IDS,
+  getProviderUrl,
   fetchText,
   normalizeText,
   normalizeServiceDetails,
@@ -110,7 +112,8 @@ function extractArrayItems(block, key) {
 }
 
 async function parseXAioCodingPlans() {
-  const pageUrl = "https://code.x-aio.com/";
+  const readmePath = path.resolve(__dirname, "../../README.md");
+  const pageUrl = getProviderUrl(PROVIDER_IDS.XAIO, readmePath);
   const html = await fetchText(pageUrl);
   const appPath = html.match(/\/assets\/index-[^"'\s]+\.js/i)?.[0];
   if (!appPath) {

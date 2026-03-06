@@ -1,8 +1,10 @@
 "use strict";
 
+const path = require("path");
 const {
   COMMON_HEADERS,
   PROVIDER_IDS,
+  getProviderUrl,
   fetchText,
   fetchJson,
   formatAmount,
@@ -24,7 +26,8 @@ const KIMI_MEMBERSHIP_LEVEL_LABELS = {
 };
 
 async function parseKimiCodingPlans() {
-  const pageUrl = "https://www.kimi.com/code/zh";
+  const readmePath = path.resolve(__dirname, "../../README.md");
+  const pageUrl = getProviderUrl(PROVIDER_IDS.KIMI, readmePath);
   const apiUrl = "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods";
   const pageHtml = await fetchText(pageUrl);
   const commonScriptRaw =

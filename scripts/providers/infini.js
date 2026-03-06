@@ -1,5 +1,6 @@
 "use strict";
 
+const path = require("path");
 const {
   HTML_ENTITIES,
   CNY_CURRENCY_HINT,
@@ -8,6 +9,7 @@ const {
   REQUEST_CONTEXT,
   REQUEST_TIMEOUT_MS,
   PROVIDER_IDS,
+  getProviderUrl,
   decodeHtml,
   stripTags,
   normalizeText,
@@ -38,7 +40,8 @@ const {
 } = require("../utils");
 
 async function parseInfiniCodingPlans() {
-  const pageUrl = "https://cloud.infini-ai.com/platform/ai";
+  const readmePath = path.resolve(__dirname, "../../README.md");
+  const pageUrl = getProviderUrl(PROVIDER_IDS.INFINI, readmePath);
   const html = await fetchText(pageUrl);
   const mainScriptUrl =
     html.match(/https:\/\/content\.cloud\.infini-ai\.com\/platform-web-prod\/assets\/js\/main\.[^"'\s]+\.js/i)?.[0] ||

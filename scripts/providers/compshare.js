@@ -1,5 +1,6 @@
 "use strict";
 
+const path = require("path");
 const {
   HTML_ENTITIES,
   CNY_CURRENCY_HINT,
@@ -8,6 +9,7 @@ const {
   REQUEST_CONTEXT,
   REQUEST_TIMEOUT_MS,
   PROVIDER_IDS,
+  getProviderUrl,
   decodeHtml,
   stripTags,
   normalizeText,
@@ -38,7 +40,8 @@ const {
 } = require("../utils");
 
 async function parseCompshareCodingPlans() {
-  const pageUrl = "https://www.compshare.cn/docs/modelverse/package_plan/package";
+  const readmePath = path.resolve(__dirname, "../../README.md");
+  const pageUrl = getProviderUrl(PROVIDER_IDS.COMPSHARE, readmePath);
   const html = await fetchText(pageUrl);
   const rows = extractRows(html);
   const headerRow = rows.find((row) => normalizeText(row?.[0] || "") === "套餐名称" && row.length >= 5) || null;

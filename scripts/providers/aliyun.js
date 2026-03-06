@@ -1,5 +1,6 @@
 "use strict";
 
+const path = require("path");
 const {
   HTML_ENTITIES,
   CNY_CURRENCY_HINT,
@@ -8,6 +9,7 @@ const {
   REQUEST_CONTEXT,
   REQUEST_TIMEOUT_MS,
   PROVIDER_IDS,
+  getProviderUrl,
   decodeHtml,
   stripTags,
   normalizeText,
@@ -37,11 +39,104 @@ const {
   stripSimpleMarkdown
 } = require("../utils");
 
+/**
+ * Fetches usage limits from Aliyun help documentation
+ * @returns {Map<string, string[]>} Map of tier to usage limit details
+ */
+async function fetchUsageLimitsFromHelpDoc() {
+  const helpUrl = "https://help.aliyun.com/zh/model-studio/coding-plan";
+  const usageLimitsByTier = new Map();
+
+  try {
+    const helpHtml = await fetchText(helpUrl);
+
+    // Parse usage limits from the help page HTML table
+    // The structure is: 用量限制 -> Lite column, Pro column
+    const usageSectionMatch = helpHtml.match(/用量限制[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i);
+    if (usageSectionMatch) {
+      const liteCell = usageSectionMatch[1];
+      const proCell = usageSectionMatch[2];
+
+      // Extract limits from Lite cell
+      const liteLimits = [];
+      const liteMatches = [...liteCell.matchAll(/每\s*5\s*小时[\s\S]*?<b>([\d,]+)<\/b>[\s\S]*?次请求/gi)];
+      const liteWeekly = liteCell.match(/每周[\s\S]*?<b>([\d,]+)<\/b>[\s\S]*?次请求/i);
+      const liteMonthly = liteCell.match(/每月[\s\S]*?<b>([\d,]+)<\/b>[\s\S]*?次请求/i);
+
+      if (liteMatches.length > 0) {
+        liteLimits.push(`每 5 小时限额: ${liteMatches[0][1].replace(/,/g, "")} 次请求`);
+      }
+      if (liteWeekly) {
+        liteLimits.push(`每周限额: ${liteWeekly[1].replace(/,/g, "")} 次请求`);
+      }
+      if (liteMonthly) {
+        liteLimits.push(`每月限额: ${liteMonthly[1].replace(/,/g, "")} 次请求`);
+      }
+      if (liteLimits.length > 0) {
+        usageLimitsByTier.set("Lite", liteLimits);
+      }
+
+      // Extract limits from Pro cell
+      const proLimits = [];
+      const proMatches = [...proCell.matchAll(/每\s*5\s*小时[\s\S]*?<b>([\d,]+)<\/b>[\s\S]*?次请求/gi)];
+      const proWeekly = proCell.match(/每周[\s\S]*?<b>([\d,]+)<\/b>[\s\S]*?次请求/i);
+      const proMonthly = proCell.match(/每月[\s\S]*?<b>([\d,]+)<\/b>[\s\S]*?次请求/i);
+
+      if (proMatches.length > 0) {
+        proLimits.push(`每 5 小时限额: ${proMatches[0][1].replace(/,/g, "")} 次请求`);
+      }
+      if (proWeekly) {
+        proLimits.push(`每周限额: ${proWeekly[1].replace(/,/g, "")} 次请求`);
+      }
+      if (proMonthly) {
+        proLimits.push(`每月限额: ${proMonthly[1].replace(/,/g, "")} 次请求`);
+      }
+      if (proLimits.length > 0) {
+        usageLimitsByTier.set("Pro", proLimits);
+      }
+    }
+
+    // Fallback: try to extract from the entire HTML using more flexible patterns
+    if (usageLimitsByTier.size === 0) {
+      // Look for the pattern: 每 5 小时 <b>X</b> 次请求
+      const allMatches = [...helpHtml.matchAll(/每\s*5\s*小时[\s\S]*?<b>([\d,]+)<\/b>[\s\S]*?次请求/gi)];
+      const weeklyMatches = [...helpHtml.matchAll(/每周[\s\S]*?<b>([\d,]+)<\/b>[\s\S]*?次请求/gi)];
+      const monthlyMatches = [...helpHtml.matchAll(/每月[\s\S]*?<b>([\d,]+)<\/b>[\s\S]*?次请求/gi)];
+
+      if (allMatches.length >= 2 && weeklyMatches.length >= 2 && monthlyMatches.length >= 2) {
+        usageLimitsByTier.set("Lite", [
+          `每 5 小时限额: ${allMatches[0][1].replace(/,/g, "")} 次请求`,
+          `每周限额: ${weeklyMatches[0][1].replace(/,/g, "")} 次请求`,
+          `每月限额: ${monthlyMatches[0][1].replace(/,/g, "")} 次请求`,
+        ]);
+        usageLimitsByTier.set("Pro", [
+          `每 5 小时限额: ${allMatches[1][1].replace(/,/g, "")} 次请求`,
+          `每周限额: ${weeklyMatches[1][1].replace(/,/g, "")} 次请求`,
+          `每月限额: ${monthlyMatches[1][1].replace(/,/g, "")} 次请求`,
+        ]);
+      }
+    }
+  } catch (error) {
+    console.warn(`[pricing] Failed to fetch usage limits from help doc: ${error.message}`);
+  }
+
+  return usageLimitsByTier;
+}
+
 async function parseAliyunCodingPlans() {
-  const pageUrl = "https://www.aliyun.com/benefit/scene/codingplan";
+  const readmePath = path.resolve(__dirname, "../../README.md");
+  const pageUrl = getProviderUrl(PROVIDER_IDS.ALIYUN, readmePath);
   try {
     const html = await fetchText(pageUrl);
     const serviceDetailsByTier = parseAliyunServiceDetailsFromPageHtml(html);
+
+    // Fetch usage limits from help documentation
+    const usageLimitsByTier = await fetchUsageLimitsFromHelpDoc();
+    // Merge usage limits into service details
+    for (const [tier, usageLimits] of usageLimitsByTier) {
+      const existingDetails = serviceDetailsByTier.get(tier) || [];
+      serviceDetailsByTier.set(tier, [...existingDetails, ...usageLimits]);
+    }
     const rawEntryUrl = html.match(/(?:https?:)?\/\/cloud-assets\.alicdn\.com\/lowcode\/entry\/prod\/[^"'\s]+\.js/i)?.[0];
     const entryUrl = rawEntryUrl
       ? absoluteUrl(rawEntryUrl.startsWith("//") ? `https:${rawEntryUrl}` : rawEntryUrl, pageUrl)
@@ -217,7 +312,7 @@ async function parseAliyunCodingPlans() {
     if (plans.length > 0) {
       return {
         provider: PROVIDER_IDS.ALIYUN,
-        sourceUrls: [pageUrl],
+        sourceUrls: unique([pageUrl, "https://help.aliyun.com/zh/model-studio/coding-plan"]),
         fetchedAt: new Date().toISOString(),
         plans,
       };
@@ -227,7 +322,7 @@ async function parseAliyunCodingPlans() {
     console.warn(`[pricing] aliyun fetch failed: ${error.message}. Returning fallback.`);
     return {
       provider: PROVIDER_IDS.ALIYUN,
-      sourceUrls: [pageUrl],
+      sourceUrls: unique([pageUrl, "https://help.aliyun.com/zh/model-studio/coding-plan"]),
       fetchedAt: new Date().toISOString(),
       plans: [
         asPlan({
@@ -242,6 +337,9 @@ async function parseAliyunCodingPlans() {
             "能力: 支持 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 等级",
             "场景: 面向处理轻量级工作负载的个人开发者",
             "工具: Qwen Code、OpenClaw、OpenCode、Claude Code插件、Codex、Cline、Cursor等",
+            "每 5 小时限额: 1200 次请求",
+            "每周限额: 9000 次请求",
+            "每月限额: 18000 次请求",
           ],
         }),
         asPlan({
@@ -256,6 +354,9 @@ async function parseAliyunCodingPlans() {
             "能力: 包含 Lite 套餐的全部能力与权益",
             "额度: 用量是 Lite 版的 5 倍",
             "场景: 适合大型开发任务，专业级 AI 编程体验",
+            "每 5 小时限额: 6000 次请求",
+            "每周限额: 45000 次请求",
+            "每月限额: 90000 次请求",
           ],
         }),
       ],

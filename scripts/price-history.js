@@ -165,7 +165,58 @@ function detectPriceChanges(currentData, previousData) {
 }
 
 /**
+ * Checks if any price has changed between current and previous data
+ * @param {Object} currentData - Current pricing data
+ * @param {Object} previousData - Previous pricing data
+ * @returns {boolean} True if any price has changed
+ */
+function hasAnyPriceChanged(currentData, previousData) {
+  if (!previousData || !previousData.providers) {
+    return true; // No previous data, consider as changed
+  }
+  
+  // Build map of previous prices
+  const previousPrices = new Map();
+  for (const provider of previousData.providers) {
+    for (const plan of provider.plans || []) {
+      const key = getPlanKey(provider.provider, plan.name);
+      previousPrices.set(key, extractPriceInfo(plan));
+    }
+  }
+  
+  // Check current prices
+  for (const provider of currentData.providers || []) {
+    for (const plan of provider.plans || []) {
+      const key = getPlanKey(provider.provider, plan.name);
+      const currentPrice = extractPriceInfo(plan);
+      const previousPrice = previousPrices.get(key);
+      
+      if (hasPriceChanged(previousPrice, currentPrice)) {
+        return true;
+      }
+    }
+  }
+  
+  // Check for removed plans
+  const currentPlanKeys = new Set();
+  for (const provider of currentData.providers || []) {
+    for (const plan of provider.plans || []) {
+      currentPlanKeys.add(getPlanKey(provider.provider, plan.name));
+    }
+  }
+  
+  for (const key of previousPrices.keys()) {
+    if (!currentPlanKeys.has(key)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+/**
  * Updates the price history with new data
+ * Only adds a new snapshot if prices have changed
  * @param {Object} currentData - Current pricing data
  * @returns {Array} Array of detected changes
  */
@@ -181,29 +232,38 @@ function updateHistory(currentData) {
   // Detect changes
   const changes = detectPriceChanges(currentData, previousData);
   
-  // Create new snapshot
-  const snapshot = {
-    timestamp: new Date().toISOString(),
-    providers: (currentData.providers || []).map((provider) => ({
-      provider: provider.provider,
-      plans: (provider.plans || []).map((plan) => ({
-        name: plan.name,
-        ...extractPriceInfo(plan),
+  // Only add new snapshot if prices have changed
+  const shouldAddSnapshot = hasAnyPriceChanged(currentData, previousData);
+  
+  if (shouldAddSnapshot) {
+    // Create new snapshot
+    const snapshot = {
+      timestamp: new Date().toISOString(),
+      providers: (currentData.providers || []).map((provider) => ({
+        provider: provider.provider,
+        plans: (provider.plans || []).map((plan) => ({
+          name: plan.name,
+          ...extractPriceInfo(plan),
+        })),
       })),
-    })),
-  };
-  
-  // Add to history
-  history.history.push(snapshot);
-  
-  // Keep only recent history
-  const cutoffDate = new Date();
-  cutoffDate.setDate(cutoffDate.getDate() - MAX_HISTORY_DAYS);
-  
-  history.history = history.history.filter((entry) => {
-    const entryDate = new Date(entry.timestamp);
-    return entryDate >= cutoffDate;
-  });
+    };
+    
+    // Add to history
+    history.history.push(snapshot);
+    
+    // Keep only recent history
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - MAX_HISTORY_DAYS);
+    
+    history.history = history.history.filter((entry) => {
+      const entryDate = new Date(entry.timestamp);
+      return entryDate >= cutoffDate;
+    });
+    
+    console.log(`[history] Added new snapshot with ${changes.length} changes`);
+  } else {
+    console.log("[history] No price changes detected, skipping snapshot");
+  }
   
   // Update metadata
   history.updatedAt = new Date().toISOString();

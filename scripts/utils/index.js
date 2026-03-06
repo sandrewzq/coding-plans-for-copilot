@@ -79,6 +79,75 @@ const PROVIDER_IDS = {
 };
 
 /**
+ * Provider display names mapping
+ * @constant {Object.<string, string>}
+ */
+const PROVIDER_NAMES = {
+  [PROVIDER_IDS.ZHIPU]: "智谱",
+  [PROVIDER_IDS.KIMI]: "Kimi",
+  [PROVIDER_IDS.MINIMAX]: "MiniMax",
+  [PROVIDER_IDS.ALIYUN]: "阿里云百炼",
+  [PROVIDER_IDS.VOLCENGINE]: "火山引擎",
+  [PROVIDER_IDS.KWAIKAT]: "快手 KwaiKAT",
+  [PROVIDER_IDS.BAIDU]: "百度智能云千帆",
+  [PROVIDER_IDS.INFINI]: "无问芯穹",
+  [PROVIDER_IDS.COMPSHARE]: "优云智算",
+  [PROVIDER_IDS.MTHREADS]: "摩尔线程",
+  [PROVIDER_IDS.XAIO]: "X-AIO",
+  [PROVIDER_IDS.ZENMUX]: "Zenmux",
+};
+
+/**
+ * Default provider URLs - used as fallback when README parsing fails
+ * These should match the URLs in README.md
+ * @constant {Object.<string, string>}
+ */
+const PROVIDER_URLS = {
+  [PROVIDER_IDS.ZHIPU]: "https://www.bigmodel.cn/glm-coding?ic=BZRLCDAC1G",
+  [PROVIDER_IDS.KIMI]: "https://www.kimi.com/code/zh",
+  [PROVIDER_IDS.MINIMAX]: "https://platform.minimaxi.com/subscribe/coding-plan",
+  [PROVIDER_IDS.ALIYUN]: "https://www.aliyun.com/benefit/scene/codingplan",
+  [PROVIDER_IDS.VOLCENGINE]: "https://volcengine.com/L/AJgcLIP_-o4/",
+  [PROVIDER_IDS.KWAIKAT]: "https://www.streamlake.com/marketing/coding-plan",
+  [PROVIDER_IDS.BAIDU]: "https://cloud.baidu.com/product/codingplan.html",
+  [PROVIDER_IDS.INFINI]: "https://cloud.infini-ai.com/platform/ai",
+  [PROVIDER_IDS.COMPSHARE]: "https://www.compshare.cn/docs/modelverse/package_plan/package",
+  [PROVIDER_IDS.MTHREADS]: "https://code.mthreads.com/",
+  [PROVIDER_IDS.XAIO]: "https://code.x-aio.com/",
+  [PROVIDER_IDS.ZENMUX]: "https://zenmux.ai/pricing/subscription",
+};
+
+/**
+ * Gets the URL for a provider
+ * First tries to parse from README.md, falls back to PROVIDER_URLS
+ * @param {string} providerId - The provider ID
+ * @param {string} [readmePath] - Path to README.md (for Node.js environment)
+ * @returns {string} The provider URL
+ */
+function getProviderUrl(providerId, readmePath = null) {
+  // If readmePath is provided, try to parse from README
+  if (readmePath && typeof require !== "undefined") {
+    try {
+      const fs = require("fs");
+      const path = require("path");
+      const readmeContent = fs.readFileSync(readmePath, "utf-8");
+      const providerName = PROVIDER_NAMES[providerId];
+      if (providerName) {
+        // Match table row: | 智谱 | https://... |
+        const regex = new RegExp(`\\|\\s*${providerName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*\\|\\s*(https?://[^\\s|]+)\\s*\\|`, "i");
+        const match = readmeContent.match(regex);
+        if (match) {
+          return match[1].trim();
+        }
+      }
+    } catch {
+      // Fall through to default
+    }
+  }
+  return PROVIDER_URLS[providerId] || "";
+}
+
+/**
  * Decodes HTML entities in a string
  * @param {string} value - The string to decode
  * @returns {string} The decoded string
@@ -663,6 +732,9 @@ module.exports = {
   REQUEST_CONTEXT,
   REQUEST_TIMEOUT_MS,
   PROVIDER_IDS,
+  PROVIDER_NAMES,
+  PROVIDER_URLS,
+  getProviderUrl,
   decodeHtml,
   stripTags,
   normalizeText,

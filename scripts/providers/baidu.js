@@ -1,7 +1,9 @@
 "use strict";
 
+const path = require("path");
 const {
   PROVIDER_IDS,
+  getProviderUrl,
   fetchText,
   extractRows,
   formatAmount,
@@ -23,53 +25,109 @@ function getFallbackData() {
     plans: [
       asPlan({
         name: "Coding Plan Lite",
-        currentPriceText: "40元/月",
-        currentPrice: 40,
+        currentPriceText: "¥7.9/月",
+        currentPrice: 7.9,
+        originalPriceText: "¥40/月",
+        originalPrice: 40,
         unit: "月",
-        notes: "新客首月 7.9元",
+        notes: "新客首月 7.9",
         serviceDetails: [
-          "每 5 小时限额: 最多1200次请求",
-          "每周限额: 最多9000次请求",
-          "每月限额: 最多18000次请求",
-          "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.1、DeepSeek-V3.2等",
+          "每月最多18,000次请求",
+          "适配Claude Code等AI开发工具",
+          "GLM-5、MiniMax-M2.5等模型",
         ],
       }),
       asPlan({
         name: "Coding Plan Pro",
-        currentPriceText: "200元/月",
-        currentPrice: 200,
+        currentPriceText: "¥39.9/月",
+        currentPrice: 39.9,
+        originalPriceText: "¥200/月",
+        originalPrice: 200,
         unit: "月",
-        notes: "新客首月 39.9元",
+        notes: "新客首月 39.9",
         serviceDetails: [
-          "每 5 小时限额: 最多6000次请求",
-          "每周限额: 最多45000次请求",
-          "每月限额: 最多90000次请求",
-          "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.1、DeepSeek-V3.2等",
+          "每月最多90,000次请求",
+          "适配Claude Code等AI开发工具",
+          "GLM-5、MiniMax-M2.5等模型",
         ],
       }),
     ],
   };
 }
 
+/**
+ * Parse prices from HTML using the specific class pattern
+ * @param {string} html - Page HTML content
+ * @returns {Map<string, {firstMonth: number, renewal: number}>} Price info by tier
+ */
+function parsePricesFromHtml(html) {
+  const priceInfoByTier = new Map();
+  
+  // Find prices using the specific class pattern from browser inspection
+  // Pattern: class="NTV6xJko">7.9</span>
+  const pricePattern = /class="[^"]*NTV6xJko[^"]*">([0-9]+(?:\.[0-9]+)?)</g;
+  const prices = [];
+  let match;
+  while ((match = pricePattern.exec(html)) !== null) {
+    prices.push(Number(match[1]));
+  }
+  
+  // Also try to find renewal prices
+  // Look for prices in the context of "续费" or near the original price display
+  const renewalPattern = /续费\s*([0-9]+(?:\.[0-9]+)?)\s*元/g;
+  const renewalPrices = [];
+  while ((match = renewalPattern.exec(html)) !== null) {
+    renewalPrices.push(Number(match[1]));
+  }
+  
+  // If we found prices with the class pattern, assign them to tiers
+  if (prices.length >= 2) {
+    // First price is Lite, second is Pro
+    priceInfoByTier.set("Lite", {
+      firstMonth: prices[0],
+      renewal: renewalPrices[0] || 40,
+    });
+    priceInfoByTier.set("Pro", {
+      firstMonth: prices[1],
+      renewal: renewalPrices[1] || 200,
+    });
+  }
+  
+  return priceInfoByTier;
+}
+
 async function parseBaiduCodingPlans() {
-  const pageUrl = "https://cloud.baidu.com/product/codingplan.html";
+  const readmePath = path.resolve(__dirname, "../../README.md");
+  const pageUrl = getProviderUrl(PROVIDER_IDS.BAIDU, readmePath);
   try {
     const html = await fetchText(pageUrl);
 
-    const firstMonthByTier = new Map();
-    const firstMonthRegex =
-      /Coding\s*Plan\s*(Lite|Pro)[\s\S]{0,500}?<span[^>]*>\s*([0-9]+(?:\.[0-9]+)?)\s*<\/span>[\s\S]{0,120}?\/首月/gi;
-    let firstMonthMatch;
-    while ((firstMonthMatch = firstMonthRegex.exec(html)) !== null) {
-      firstMonthByTier.set(firstMonthMatch[1], firstMonthMatch[2]);
+    // Parse prices from HTML
+    const priceInfoByTier = parsePricesFromHtml(html);
+    
+    // If HTML parsing didn't work, try the old pattern
+    if (priceInfoByTier.size === 0) {
+      // Fallback: Look for "新客 XX 元 / 首月 ， 续费 YY 元 / 月" pattern
+      const priceRegex = /新客\s*([0-9]+(?:\.[0-9]+)?)\s*元\s*\/\s*首月\s*，\s*续费\s*([0-9]+(?:\.[0-9]+)?)\s*元\s*\/\s*月/gi;
+      let priceMatch;
+      const pricePairs = [];
+      while ((priceMatch = priceRegex.exec(html)) !== null) {
+        pricePairs.push({
+          firstMonth: Number(priceMatch[1]),
+          renewal: Number(priceMatch[2]),
+        });
+      }
+
+      // Assign price pairs to tiers (Lite first, then Pro)
+      if (pricePairs.length >= 2) {
+        priceInfoByTier.set("Lite", pricePairs[0]);
+        priceInfoByTier.set("Pro", pricePairs[1]);
+      } else if (pricePairs.length === 1) {
+        priceInfoByTier.set("Lite", pricePairs[0]);
+      }
     }
 
-    const renewalByFirstMonth = new Map();
-    const renewalRegex = /新客\s*([0-9]+(?:\.[0-9]+)?)\s*元\s*\/\s*首月\s*，\s*续费\s*([0-9]+(?:\.[0-9]+)?)\s*元\s*\/\s*月/gi;
-    let renewalMatch;
-    while ((renewalMatch = renewalRegex.exec(html)) !== null) {
-      renewalByFirstMonth.set(renewalMatch[1], renewalMatch[2]);
-    }
+    // Parse service details from table
     const serviceDetailsByTier = new Map();
     const rows = extractRows(html);
     const planHeaderIndex = rows.findIndex(
@@ -106,38 +164,35 @@ async function parseBaiduCodingPlans() {
       }
     }
 
+    // If we couldn't parse prices from HTML, use fallback
+    if (priceInfoByTier.size === 0) {
+      console.warn("[pricing] Baidu: Could not parse prices from HTML, using fallback");
+      return getFallbackData();
+    }
+
     const plans = [];
     for (const tier of ["Lite", "Pro"]) {
-      const firstMonth = firstMonthByTier.get(tier) || null;
-      let renewal = firstMonth ? renewalByFirstMonth.get(firstMonth) || null : null;
-      if (!renewal) {
-        const tierRenewal = html.match(
-          new RegExp(
-            `Coding\\s*Plan\\s*${tier}[\\s\\S]{0,2400}?续费\\s*([0-9]+(?:\\.[0-9]+)?)\\s*元\\s*\\/\\s*月`,
-            "i",
-          ),
-        );
-        renewal = tierRenewal?.[1] || null;
-      }
-      const renewalAmount = renewal ? Number(renewal) : null;
-      if (!Number.isFinite(renewalAmount)) {
+      const priceInfo = priceInfoByTier.get(tier);
+      if (!priceInfo) {
         continue;
       }
 
       plans.push(
         asPlan({
           name: `Coding Plan ${tier}`,
-          currentPriceText: `${formatAmount(renewalAmount)}元/月`,
-          currentPrice: renewalAmount,
+          currentPriceText: `¥${formatAmount(priceInfo.firstMonth)}/月`,
+          currentPrice: priceInfo.firstMonth,
+          originalPriceText: `¥${formatAmount(priceInfo.renewal)}/月`,
+          originalPrice: priceInfo.renewal,
           unit: "月",
-          notes: firstMonth ? `新客首月 ${firstMonth}元` : null,
+          notes: `新客首月 ${priceInfo.firstMonth}`,
           serviceDetails: serviceDetailsByTier.get(tier) || null,
         }),
       );
     }
 
     if (plans.length === 0) {
-      throw new Error("Unable to parse Baidu coding plan standard monthly prices");
+      throw new Error("Unable to parse Baidu coding plan prices");
     }
 
     return {
