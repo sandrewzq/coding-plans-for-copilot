@@ -2,7 +2,8 @@ name: Update Provider Pricing
 
 on:
   schedule:
-    - cron: "0 * * * *"
+    # 北京时间 8:00 和 20:00 (UTC 0:00 和 12:00)
+    - cron: "0 0,12 * * *"
   push:
     paths:
       - "scripts/**"
