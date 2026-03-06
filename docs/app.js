@@ -687,8 +687,21 @@ function renderProviders(data) {
       head.append(renderCapabilityTags(providerCapabilities));
     }
 
+    // Special handling for MiniMax: group plans by highspeed vs normal
+    const isMinimax = provider.provider === "minimax-ai";
+    let plansToRender = provider.plans;
+    let highspeedPlans = [];
+    let normalPlans = [];
+
+    if (isMinimax) {
+      highspeedPlans = provider.plans.filter(p => p.name.includes("极速版"));
+      normalPlans = provider.plans.filter(p => !p.name.includes("极速版"));
+    }
+
     const planList = createElement("ul", "plan-list");
-    for (const plan of provider.plans) {
+
+    // Helper function to render a single plan item
+    const renderPlanItem = (plan) => {
       const item = createElement("li", "plan-item");
       const name = createElement("h3", "plan-name", plan.name || "未命名套餐");
       const priceRow = createElement("p", "price-row");
@@ -814,7 +827,31 @@ function renderProviders(data) {
         item.append(createElement("p", "plan-notes", plan.notes));
       }
 
-      planList.append(item);
+      return item;
+    };
+
+    if (isMinimax && (highspeedPlans.length > 0 || normalPlans.length > 0)) {
+      // Render MiniMax plans in two rows with labels
+      if (highspeedPlans.length > 0) {
+        const highspeedLabel = createElement("div", "plan-group-label", "⚡ 极速版");
+        planList.append(highspeedLabel);
+        for (const plan of highspeedPlans) {
+          planList.append(renderPlanItem(plan));
+        }
+      }
+
+      if (normalPlans.length > 0) {
+        const normalLabel = createElement("div", "plan-group-label", "🚀 普通版");
+        planList.append(normalLabel);
+        for (const plan of normalPlans) {
+          planList.append(renderPlanItem(plan));
+        }
+      }
+    } else {
+      // Normal rendering for other providers
+      for (const plan of plansToRender) {
+        planList.append(renderPlanItem(plan));
+      }
     }
 
     card.append(head, planList);
