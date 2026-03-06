@@ -21,7 +21,7 @@ const PROVIDER_BUY_URLS = {
   "kimi-ai": "https://www.kimi.com/code/zh",
   "minimax-ai": "https://platform.minimaxi.com/subscribe/coding-plan",
   "aliyun-ai": "https://www.aliyun.com/benefit/scene/codingplan",
-  "volcengine-ai": "https://www.volcengine.com/activity/codingplan",
+  "volcengine-ai": "https://volcengine.com/L/RUFlYNIKjD4/",
   "kwaikat-ai": "https://www.streamlake.com/marketing/coding-plan",
   "baidu-qianfan-ai": "https://cloud.baidu.com/product/codingplan.html",
   "infini-ai": "https://cloud.infini-ai.com/platform/ai",
