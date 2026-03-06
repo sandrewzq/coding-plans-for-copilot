@@ -630,27 +630,45 @@ function renderProviders(data) {
     const card = createElement("article", "provider-card");
     card.id = providerId;
     const head = createElement("header", "provider-head");
-    const title = createElement("h2", "provider-title", providerName);
-    head.append(title);
-
-    const providerBuyUrl = getProviderPurchaseUrl(provider);
-    if (providerBuyUrl) {
-      const buyLink = createElement("a", "buy-link", "前往了解");
-      buyLink.href = providerBuyUrl;
-      buyLink.target = "_blank";
-      buyLink.rel = "noopener noreferrer";
-      head.append(buyLink);
-    }
-
-    // Show invite code for X-AIO
+    
+    // For X-AIO, use special layout with invite code
     if (provider.provider === "x-aio") {
+      const titleRow = createElement("div", "provider-title-row");
+      const title = createElement("h2", "provider-title", providerName);
+      titleRow.append(title);
+      
+      const providerBuyUrl = getProviderPurchaseUrl(provider);
+      if (providerBuyUrl) {
+        const buyLink = createElement("a", "buy-link", "前往了解");
+        buyLink.href = providerBuyUrl;
+        buyLink.target = "_blank";
+        buyLink.rel = "noopener noreferrer";
+        titleRow.append(buyLink);
+      }
+      head.append(titleRow);
+      
+      const inviteRow = createElement("div", "provider-invite-row");
       const inviteCodeEl = createElement("div", "invite-code");
       inviteCodeEl.innerHTML = `
         <span class="invite-code-label">邀请码：</span>
         <code class="invite-code-value" onclick="navigator.clipboard.writeText('b3d7ebff9c11472eb4f4').then(() => alert('邀请码已复制！'))">b3d7ebff9c11472eb4f4</code>
         <span class="invite-code-hint">（点击复制）</span>
       `;
-      head.append(inviteCodeEl);
+      inviteRow.append(inviteCodeEl);
+      head.append(inviteRow);
+    } else {
+      // Normal layout for other providers
+      const title = createElement("h2", "provider-title", providerName);
+      head.append(title);
+      
+      const providerBuyUrl = getProviderPurchaseUrl(provider);
+      if (providerBuyUrl) {
+        const buyLink = createElement("a", "buy-link", "前往了解");
+        buyLink.href = providerBuyUrl;
+        buyLink.target = "_blank";
+        buyLink.rel = "noopener noreferrer";
+        head.append(buyLink);
+      }
     }
 
     const planList = createElement("ul", "plan-list");
