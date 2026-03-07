@@ -45,7 +45,7 @@ const NAME_TO_ID_MAPPING = {
   "优云智算": "compshare-ai",
   "摩尔线程": "mthreads-ai",
   "X-AIO": "x-aio",
-  "Zenmux": "zenmux-ai",
+  "ZenMux": "zenmux-ai",
 };
 
 /**
@@ -64,7 +64,7 @@ const NAME_TO_CONSTANT_MAPPING = {
   "优云智算": "COMPSHARE",
   "摩尔线程": "MTHREADS",
   "X-AIO": "XAIO",
-  "Zenmux": "ZENMUX",
+  "ZenMux": "ZENMUX",
 };
 
 /**

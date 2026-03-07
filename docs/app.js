@@ -14,7 +14,7 @@ const PROVIDER_LABELS = {
   "compshare-ai": "优云智算",
   "mthreads-ai": "摩尔线程",
   "x-aio": "X-AIO",
-  "zenmux-ai": "Zenmux",
+  "zenmux-ai": "ZenMux",
   "chutes-ai": "Chutes",
 };
 
