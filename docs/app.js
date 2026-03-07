@@ -852,6 +852,7 @@ function renderProviders(data) {
       const isKwaiKAT = provider.provider === "kwaikat-ai";
       const isTencentCloud = provider.provider === "tencent-cloud-ai";
       const isMthreads = provider.provider === "mthreads-ai";
+      const isZenmux = provider.provider === "zenmux-ai";
       if ((isMinimax || isInfini || isCompshare) && plan.notes && plan.notes.includes("用量:")) {
         const usageMatch = plan.notes.match(/用量:\s*(.+)/);
         if (usageMatch) {
@@ -941,6 +942,27 @@ function renderProviders(data) {
           for (const usageText of usageDetails) {
             usageList.append(createElement("li", "usage-limit-item", usageText));
           }
+          usageCard.append(
+            createElement("span", "usage-limit-title", "📊"),
+            usageList,
+          );
+          item.append(usageCard);
+        }
+      } else if (isZenmux && plan.usageLimit) {
+        // ZenMux usage info is in usageLimit object
+        const usageCard = createElement("div", "usage-limit-card");
+        const usageList = createElement("ul", "usage-limit-list");
+        const ul = plan.usageLimit;
+        if (ul["5hQuota"]) {
+          usageList.append(createElement("li", "usage-limit-item", `${ul["5hQuota"]} Flows/5h`));
+        }
+        if (ul.weekly) {
+          usageList.append(createElement("li", "usage-limit-item", `Weekly: ${ul.weekly.toLocaleString()} Flows`));
+        }
+        if (ul.monthly) {
+          usageList.append(createElement("li", "usage-limit-item", `Monthly: ${ul.monthly.toLocaleString()} Flows`));
+        }
+        if (usageList.children.length > 0) {
           usageCard.append(
             createElement("span", "usage-limit-title", "📊"),
             usageList,
