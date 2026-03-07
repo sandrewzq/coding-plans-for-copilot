@@ -53,6 +53,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Fetch provider pricing data
+        run: npm run pricing:fetch
+
       - name: Compress data files
         run: npm run compress
 
