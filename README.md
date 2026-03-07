@@ -86,7 +86,7 @@ npm run pricing:serve
 | 快手 KwaiKAT | https://www.streamlake.com/marketing/coding-plan |
 | 百度智能云千帆 | https://cloud.baidu.com/product/codingplan.html |
 | 无问芯穹 | https://cloud.infini-ai.com/platform/ai |
-| 优云智算 | https://www.compshare.cn/docs/modelverse/package_plan/package |
+| 优云智算 | https://www.compshare.cn/coding-plan |
 | 摩尔线程 | https://code.mthreads.com/ |
 | X-AIO | https://code.x-aio.com/ |
 | Zenmux | https://zenmux.ai/pricing/subscription |

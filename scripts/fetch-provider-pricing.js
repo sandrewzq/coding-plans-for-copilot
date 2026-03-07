@@ -93,7 +93,10 @@ async function main() {
       const data = result.value;
       const monthlyPlans = keepStandardMonthlyPlans(data.plans || [])
         .map((plan) => {
-          const serviceDetails = plan.serviceDetails || normalizeServiceDetails(plan.notes);
+          // Only use notes as serviceDetails if serviceDetails is undefined (not null)
+          const serviceDetails = plan.serviceDetails !== undefined
+            ? plan.serviceDetails
+            : normalizeServiceDetails(plan.notes);
           return {
             ...plan,
             serviceDetails,

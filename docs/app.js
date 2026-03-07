@@ -838,11 +838,16 @@ function renderProviders(data) {
         item.append(offerCard);
       }
 
-      // Add usage limit card for MiniMax, Zhipu, Aliyun, and Volcengine plans
+      // Add usage limit card for MiniMax, Zhipu, Aliyun, Volcengine, Baidu, Infini, Compshare, XAIO, and KwaiKAT plans
       const isZhipu = provider.provider === "zhipu-ai";
       const isAliyun = provider.provider === "aliyun-ai";
       const isVolcengine = provider.provider === "volcengine-ai";
-      if (isMinimax && plan.notes && plan.notes.includes("用量:")) {
+      const isBaidu = provider.provider === "baidu-qianfan-ai";
+      const isInfini = provider.provider === "infini-ai";
+      const isCompshare = provider.provider === "compshare-ai";
+      const isXAIO = provider.provider === "x-aio";
+      const isKwaiKAT = provider.provider === "kwaikat-ai";
+      if ((isMinimax || isInfini || isCompshare) && plan.notes && plan.notes.includes("用量:")) {
         const usageMatch = plan.notes.match(/用量:\s*(.+)/);
         if (usageMatch) {
           const usageCard = createElement("div", "usage-limit-card");
@@ -852,8 +857,8 @@ function renderProviders(data) {
           );
           item.append(usageCard);
         }
-      } else if ((isZhipu || isAliyun || isVolcengine) && plan.serviceDetails && plan.serviceDetails.length > 0) {
-        // Extract usage info from service details for Zhipu, Aliyun, and Volcengine and show as separate card
+      } else if ((isZhipu || isAliyun || isVolcengine || isBaidu) && plan.serviceDetails && plan.serviceDetails.length > 0) {
+        // Extract usage info from service details for Zhipu, Aliyun, Volcengine, and Baidu and show as separate card
         const usageDetails = plan.serviceDetails.filter(d =>
           d.includes("每 5 小时限额") || d.includes("每周限额") || d.includes("每月限额")
         );
@@ -869,13 +874,55 @@ function renderProviders(data) {
           );
           item.append(usageCard);
         }
+      } else if (isKwaiKAT && plan.serviceDetails && plan.serviceDetails.length > 0) {
+        // Extract usage info from service details for KwaiKAT (format: "40 Prompts / 5小时")
+        const usageDetails = plan.serviceDetails.filter(d =>
+          d.includes("Prompts / 5小时")
+        );
+        if (usageDetails.length > 0) {
+          const usageCard = createElement("div", "usage-limit-card");
+          const usageList = createElement("ul", "usage-limit-list");
+          for (const usageText of usageDetails) {
+            usageList.append(createElement("li", "usage-limit-item", usageText));
+          }
+          usageCard.append(
+            createElement("span", "usage-limit-title", "📊"),
+            usageList,
+          );
+          item.append(usageCard);
+        }
+      } else if (isXAIO && plan.serviceDetails && plan.serviceDetails.length > 0) {
+        // Extract usage info from service details for X-AIO (format: "每 4 小时 100 Prompts 配额")
+        const usageDetails = plan.serviceDetails.filter(d =>
+          d.includes("每 4 小时") && d.includes("Prompts 配额")
+        );
+        if (usageDetails.length > 0) {
+          const usageCard = createElement("div", "usage-limit-card");
+          const usageList = createElement("ul", "usage-limit-list");
+          for (const usageText of usageDetails) {
+            usageList.append(createElement("li", "usage-limit-item", usageText));
+          }
+          usageCard.append(
+            createElement("span", "usage-limit-title", "📊"),
+            usageList,
+          );
+          item.append(usageCard);
+        }
       }
 
-      // Get service items, excluding usage-related items for Zhipu, Aliyun, and Volcengine
+      // Get service items, excluding usage-related items for Zhipu, Aliyun, Volcengine, KwaiKAT, and XAIO
       let serviceItems = getPlanServices(plan);
-      if (isZhipu || isAliyun || isVolcengine) {
+      if (isZhipu || isAliyun || isVolcengine || isBaidu) {
         serviceItems = serviceItems.filter(d =>
           !d.includes("每 5 小时限额") && !d.includes("每周限额") && !d.includes("每月限额")
+        );
+      } else if (isKwaiKAT) {
+        serviceItems = serviceItems.filter(d =>
+          !d.includes("Prompts / 5小时")
+        );
+      } else if (isXAIO) {
+        serviceItems = serviceItems.filter(d =>
+          !(d.includes("每 4 小时") && d.includes("Prompts 配额"))
         );
       }
       if (serviceItems.length > 0) {
@@ -1794,11 +1841,34 @@ function renderCompareTable() {
   }
   tbody.append(notesRow);
 
-  // Service details row
+  // Usage limits row - show usage limits from serviceDetails and notes
+  const usageRow = document.createElement("tr");
+  usageRow.append(createElement("td", "", "用量限制"));
+  for (const plan of selectedPlans) {
+    // Get usage from serviceDetails
+    const usageFromDetails = (plan.serviceDetails || []).filter(d =>
+      d.includes("每 5 小时限额") || d.includes("每周限额") || d.includes("每月限额") ||
+      d.includes("requests/day") || d.includes("Flows/5h") || d.includes("Prompts / 5小时")
+    );
+    // Get usage from notes (for MiniMax: "用量: xxx")
+    const usageFromNotes = plan.notes?.match(/用量[:：]\s*([^；]+)/)?.[1];
+    // Combine both sources
+    const usageText = usageFromDetails.length > 0
+      ? usageFromDetails.join("；")
+      : (usageFromNotes || "-");
+    usageRow.append(createElement("td", "", usageText));
+  }
+  tbody.append(usageRow);
+
+  // Service details row - exclude usage-related items
   const serviceRow = document.createElement("tr");
   serviceRow.append(createElement("td", "", "服务内容"));
   for (const plan of selectedPlans) {
-    const serviceText = (plan.serviceDetails || []).join("；") || "-";
+    const serviceItems = (plan.serviceDetails || []).filter(d =>
+      !d.includes("每 5 小时限额") && !d.includes("每周限额") && !d.includes("每月限额") &&
+      !d.includes("requests/day") && !d.includes("Flows/5h") && !d.includes("Prompts / 5小时")
+    );
+    const serviceText = serviceItems.join("；") || "-";
     serviceRow.append(createElement("td", "", serviceText));
   }
   tbody.append(serviceRow);

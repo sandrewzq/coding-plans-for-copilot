@@ -75,8 +75,9 @@ async function parseInfiniCodingPlans() {
     const serviceDetailsByTier = parseInfiniServiceDetailsByTier(chunkText);
     const liteBase = parseInfiniPlanFromBundle(chunkText, "Lite");
     const proBase = parseInfiniPlanFromBundle(chunkText, "Pro");
-    const litePlan = liteBase ? { ...liteBase, serviceDetails: serviceDetailsByTier.get("Lite") || null } : null;
-    const proPlan = proBase ? { ...proBase, serviceDetails: serviceDetailsByTier.get("Pro") || null } : null;
+    // Separate usage info from service details
+    const litePlan = liteBase ? buildInfiniPlan(liteBase, serviceDetailsByTier.get("Lite")) : null;
+    const proPlan = proBase ? buildInfiniPlan(proBase, serviceDetailsByTier.get("Pro")) : null;
     const plans = [litePlan, proPlan].filter(Boolean);
     if (plans.length === 0) {
       continue;
@@ -87,6 +88,10 @@ async function parseInfiniCodingPlans() {
       break;
     }
   }
+  // Default service details for fallback
+  const defaultLiteServices = ["支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新", "适配Claude Code、Cline等主流编程工具，持续更新"];
+  const defaultProServices = ["5倍Lite套餐用量", "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新", "适配Claude Code、Cline等主流编程工具，持续更新"];
+
   if (selectedPlans.length === 0) {
     // Fallback: use known published prices from the official page.
     // Last verified: 2025-03 - Infini Coding Lite ¥40/月, Pro ¥200/月.
@@ -96,16 +101,31 @@ async function parseInfiniCodingPlans() {
         currentPriceText: "¥40/月",
         currentPrice: 40,
         unit: "月",
-        serviceDetails: ["1,000次/5小时、6,000次/7天、12,000次/1个月", "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新", "适配Claude Code、Cline等主流编程工具，持续更新"],
+        serviceDetails: defaultLiteServices,
+        notes: "用量: 1,000次/5小时、6,000次/7天、12,000次/1个月",
       }),
       asPlan({
         name: "Infini Coding Pro",
         currentPriceText: "¥200/月",
         currentPrice: 200,
         unit: "月",
-        serviceDetails: ["5,000次/5小时、30,000次/7天、60,000次/1个月", "5倍Lite套餐用量", "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新", "适配Claude Code、Cline等主流编程工具，持续更新"],
+        serviceDetails: defaultProServices,
+        notes: "用量: 5,000次/5小时、30,000次/7天、60,000次/1个月",
       }),
     ];
+  } else {
+    // If plans were parsed from JS bundle but services are empty, use default services
+    selectedPlans = selectedPlans.map(plan => {
+      const isLite = /lite/i.test(plan.name);
+      const hasServices = plan.serviceDetails && plan.serviceDetails.length > 0;
+      if (!hasServices) {
+        return {
+          ...plan,
+          serviceDetails: isLite ? defaultLiteServices : defaultProServices,
+        };
+      }
+      return plan;
+    });
   }
 
   const canPurchaseUrl = "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase";
@@ -143,14 +163,21 @@ async function parseInfiniCodingPlans() {
   const plans = selectedPlans.map((plan) => {
     const tier = /lite/i.test(plan.name) ? "Lite" : /pro/i.test(plan.name) ? "Pro" : null;
     const canBuy = tier ? canBuyByTier.get(tier) : null;
-    const notes = canBuy === false ? "暂不可购买" : null;
+    const canBuyNote = canBuy === false ? "暂不可购买" : null;
+    // Filter out usage-related items from serviceDetails
+    const filteredServiceDetails = (plan.serviceDetails || []).filter(d => {
+      if (!d) {return false;}
+      // Exclude items that look like usage info (contain "次/" and numbers)
+      return !/^\d{1,3}(,\d{3})*次\/\d+(小时|天|个月|月)/.test(d.trim()) &&
+             !d.includes("用量:");
+    });
     const serviceDetails = normalizeServiceDetails([
-      ...(plan.serviceDetails || []),
+      ...filteredServiceDetails,
       canBuy === false ? "当前状态: 暂不可购买" : null,
     ]);
     return {
       ...plan,
-      notes: notes || plan.notes || null,
+      notes: canBuyNote || plan.notes || null,
       serviceDetails: serviceDetails || null,
     };
   });
@@ -201,6 +228,7 @@ function parseInfiniServiceDetailsByTier(bundleText) {
   const regionEnd = Math.min(bundleText.length, Math.max(liteMarker, proMarker) + 12000);
   const section = decodeUnicodeLiteral(bundleText.slice(regionStart, regionEnd));
 
+  // Match feature-title which contains usage info
   const titleMatches = [...section.matchAll(/class:"feature-title"}\s*,\s*"([^"]+)"/g)];
   const blocks = [];
   for (let index = 0; index < titleMatches.length; index += 1) {
@@ -209,23 +237,26 @@ function parseInfiniServiceDetailsByTier(bundleText) {
     const blockEnd = titleMatches[index + 1]?.index ?? section.length;
     const blockText = section.slice(blockStart, blockEnd);
     const title = normalizeText(match[1]);
+    // Match feature-item which contains service details
     const items = [...blockText.matchAll(/class:"feature-item[^"]*"}[\s\S]{0,260}?U\("span",null,"([^"]+)"\)/g)]
       .map((item) => normalizeText(item[1]))
       .filter(Boolean);
-    const details = normalizeServiceDetails([title, ...items]);
-    if (details && details.length > 0) {
-      blocks.push(details);
+    // title contains usage info like "1,000次/5小时..."
+    // items contain service details
+    const services = normalizeServiceDetails(items);
+    if (title || (services && services.length > 0)) {
+      blocks.push({ usage: title, services });
     }
   }
 
-  for (const details of blocks) {
-    const text = details.join(" ");
+  for (const block of blocks) {
+    const text = [block.usage || "", ...(block.services || [])].join(" ");
     if (/5,000次\/5小时|30,000次\/7天|60,000次\/1个月|5倍Lite套餐用量/.test(text)) {
-      detailsByTier.set("Pro", details);
+      detailsByTier.set("Pro", block);
       continue;
     }
     if (/1,000次\/5小时|6,000次\/7天|12,000次\/1个月/.test(text)) {
-      detailsByTier.set("Lite", details);
+      detailsByTier.set("Lite", block);
     }
   }
   if (!detailsByTier.get("Lite") && blocks[0]) {
@@ -235,6 +266,51 @@ function parseInfiniServiceDetailsByTier(bundleText) {
     detailsByTier.set("Pro", blocks[1]);
   }
   return detailsByTier;
+}
+
+function buildInfiniPlan(basePlan, serviceBlock) {
+  if (!serviceBlock) {
+    return basePlan;
+  }
+  // Handle new format: { usage: string, services: string[] }
+  if (serviceBlock.usage !== undefined || serviceBlock.services !== undefined) {
+    return {
+      ...basePlan,
+      serviceDetails: serviceBlock.services && serviceBlock.services.length > 0 ? serviceBlock.services : null,
+      notes: serviceBlock.usage ? `用量: ${serviceBlock.usage}` : basePlan.notes || null,
+    };
+  }
+  // Handle old format: string[]
+  if (Array.isArray(serviceBlock)) {
+    // Check if serviceDetails only contains usage info (format: "X次/时间")
+    const usagePattern = /^(\d{1,3}(,\d{3})*次\/\d+(小时|天|个月|月))(、\d{1,3}(,\d{3})*次\/\d+(小时|天|个月|月))*$/;
+    const usageMatch = serviceBlock.find(d => usagePattern.test(d.trim()));
+    if (usageMatch) {
+      // This is usage-only data, create notes and empty serviceDetails
+      return {
+        ...basePlan,
+        serviceDetails: null,
+        notes: `用量: ${usageMatch}`,
+      };
+    }
+    // Extract usage info from items that contain "用量:" prefix
+    const usageItem = serviceBlock.find(d => d.includes("用量:"));
+    let usageText = null;
+    let serviceItems = serviceBlock;
+    if (usageItem) {
+      // Extract usage content after "用量:"
+      const usageContent = usageItem.replace(/^用量:\s*/, "");
+      usageText = `用量: ${usageContent}`;
+      // Remove the usage item from service details
+      serviceItems = serviceBlock.filter(d => !d.includes("用量:"));
+    }
+    return {
+      ...basePlan,
+      serviceDetails: serviceItems.length > 0 ? serviceItems : null,
+      notes: usageText || basePlan.notes || null,
+    };
+  }
+  return basePlan;
 }
 
 module.exports = parseInfiniCodingPlans;

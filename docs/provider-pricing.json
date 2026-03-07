@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-03-07T08:32:03.385Z",
+  "generatedAt": "2026-03-07T09:47:56.971Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -10,7 +10,7 @@
         "https://www.bigmodel.cn/js/chunk-0d4f69d1.465ec58a.js",
         "https://docs.bigmodel.cn/cn/coding-plan/overview"
       ],
-      "fetchedAt": "2026-03-07T08:32:02.810Z",
+      "fetchedAt": "2026-03-07T09:47:56.156Z",
       "plans": [
         {
           "name": "GLM Coding Lite (月)",
@@ -78,7 +78,7 @@
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
         "https://statics.moonshot.cn/kimi-web-seo/assets/common-B6OQMJm1.js"
       ],
-      "fetchedAt": "2026-03-07T08:32:02.177Z",
+      "fetchedAt": "2026-03-07T09:47:55.581Z",
       "plans": [
         {
           "name": "Adagio (月)",
@@ -184,7 +184,7 @@
       "sourceUrls": [
         "https://platform.minimaxi.com/subscribe/coding-plan"
       ],
-      "fetchedAt": "2026-03-07T08:32:01.782Z",
+      "fetchedAt": "2026-03-07T09:47:55.203Z",
       "plans": [
         {
           "name": "Plus-极速版",
@@ -296,7 +296,7 @@
         "https://www.aliyun.com/benefit/scene/codingplan",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
-      "fetchedAt": "2026-03-07T08:32:02.487Z",
+      "fetchedAt": "2026-03-07T09:47:55.955Z",
       "plans": [
         {
           "name": "Coding Plan Lite",
@@ -343,7 +343,7 @@
         "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.177/index.js",
         "https://www.volcengine.com/docs/82379/2165245"
       ],
-      "fetchedAt": "2026-03-07T08:32:03.384Z",
+      "fetchedAt": "2026-03-07T09:47:56.970Z",
       "plans": [
         {
           "name": "Coding Plan Lite 月套餐",
@@ -390,7 +390,7 @@
         "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
         "https://console.streamlake.com/api/common/describe-product-detail"
       ],
-      "fetchedAt": "2026-03-07T08:32:01.978Z",
+      "fetchedAt": "2026-03-07T09:47:55.420Z",
       "plans": [
         {
           "name": "KAT Coding Mini",
@@ -463,7 +463,7 @@
       "sourceUrls": [
         "https://cloud.baidu.com/product/codingplan.html"
       ],
-      "fetchedAt": "2026-03-07T08:32:01.967Z",
+      "fetchedAt": "2026-03-07T09:47:55.405Z",
       "plans": [
         {
           "name": "Coding Plan Lite",
@@ -507,7 +507,7 @@
         "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.8ada9e79.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
-      "fetchedAt": "2026-03-07T08:32:02.619Z",
+      "fetchedAt": "2026-03-07T09:47:56.192Z",
       "plans": [
         {
           "name": "Infini Coding Lite",
@@ -516,9 +516,10 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "用量: 1,000次/5小时、6,000次/7天、12,000次/1个月",
           "serviceDetails": [
-            "1,000次/5小时、6,000次/7天、12,000次/1个月"
+            "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新"
           ],
           "offerEndDate": null
         },
@@ -529,9 +530,11 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "用量: 5,000次/5小时、30,000次/7天、60,000次/1个月",
           "serviceDetails": [
-            "5,000次/5小时、30,000次/7天、60,000次/1个月"
+            "5倍Lite套餐用量",
+            "支持MiniMax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新"
           ],
           "offerEndDate": null
         }
@@ -540,52 +543,55 @@
     {
       "provider": "compshare-ai",
       "sourceUrls": [
-        "https://www.compshare.cn/docs/modelverse/package_plan/package"
+        "https://www.compshare.cn/coding-plan"
       ],
-      "fetchedAt": "2026-03-07T08:32:02.022Z",
+      "fetchedAt": "2026-03-07T09:47:55.279Z",
       "plans": [
         {
-          "name": "包月畅享包 Lite",
+          "name": "49.9 包月畅享包 Lite",
           "currentPrice": 49.9,
           "currentPriceText": "¥49.9/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "用量: 7,000,000 积分/日",
           "serviceDetails": [
-            "计费模式/有效期: 包月计费 (30天)",
-            "积分额度: 7,000,000 积分/日",
-            "核心权益: 每日刷新，适合日常低频使用"
+            "每日 0 点刷新积分额度",
+            "支持全球主流SOTA语言模型！持续补充ing",
+            "支持Claude Code，OpenClaw等主流AI编程助手/Agent",
+            "允许API调用，不限制使用场景"
           ],
           "offerEndDate": null
         },
         {
-          "name": "包月畅享包 Plus",
+          "name": "199 包月畅享包 Plus",
           "currentPrice": 199,
           "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "用量: 28,000,000 积分/日",
           "serviceDetails": [
-            "计费模式/有效期: 包月计费 (30天)",
-            "积分额度: 28,000,000 积分/日",
-            "核心权益: 每日刷新，适合高频开发者"
+            "每日 0 点刷新积分额度",
+            "支持全球主流SOTA语言模型！持续补充ing",
+            "支持Claude Code，OpenClaw等主流AI编程助手/Agent",
+            "允许API调用，不限制使用场景"
           ],
           "offerEndDate": null
         },
         {
-          "name": "包月畅享包 Pro",
+          "name": "499 包月畅享包 Pro",
           "currentPrice": 499,
           "currentPriceText": "¥499/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "用量: 70,000,000 积分/日",
           "serviceDetails": [
-            "计费模式/有效期: 包月计费 (30天)",
-            "积分额度: 70,000,000 积分/日",
-            "核心权益: 每日刷新，适合高频开发者"
+            "每日 0 点刷新积分额度",
+            "支持全球主流SOTA语言模型！持续补充ing",
+            "支持Claude Code，OpenClaw等主流AI编程助手/Agent",
+            "允许API调用，不限制使用场景"
           ],
           "offerEndDate": null
         }
@@ -596,7 +602,7 @@
       "sourceUrls": [
         "https://code.mthreads.com/"
       ],
-      "fetchedAt": "2026-03-07T08:32:01.794Z",
+      "fetchedAt": "2026-03-07T09:47:55.214Z",
       "plans": [
         {
           "name": "Lite Plan",
@@ -654,7 +660,7 @@
         "https://code.x-aio.com/",
         "https://code.x-aio.com/assets/index-JODhdn8F.js"
       ],
-      "fetchedAt": "2026-03-07T08:32:02.170Z",
+      "fetchedAt": "2026-03-07T09:47:55.534Z",
       "plans": [
         {
           "name": "Lite（入门版）",
@@ -722,7 +728,7 @@
       "sourceUrls": [
         "https://zenmux.ai/pricing/subscription"
       ],
-      "fetchedAt": "2026-03-07T08:32:01.796Z",
+      "fetchedAt": "2026-03-07T09:47:55.216Z",
       "plans": [
         {
           "name": "Pro",
@@ -777,7 +783,7 @@
       "sourceUrls": [
         "https://chutes.ai/pricing"
       ],
-      "fetchedAt": "2026-03-07T08:32:01.796Z",
+      "fetchedAt": "2026-03-07T09:47:55.217Z",
       "plans": [
         {
           "name": "Base",
