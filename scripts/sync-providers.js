@@ -38,6 +38,7 @@ const NAME_TO_ID_MAPPING = {
   "MiniMax": "minimax-ai",
   "阿里云百炼": "aliyun-ai",
   "火山引擎": "volcengine-ai",
+  "腾讯云": "tencent-cloud-ai",
   "快手 KwaiKAT": "kwaikat-ai",
   "百度智能云千帆": "baidu-qianfan-ai",
   "无问芯穹": "infini-ai",
@@ -56,6 +57,7 @@ const NAME_TO_CONSTANT_MAPPING = {
   "MiniMax": "MINIMAX",
   "阿里云百炼": "ALIYUN",
   "火山引擎": "VOLCENGINE",
+  "腾讯云": "TENCENT_CLOUD",
   "快手 KwaiKAT": "KWAIKAT",
   "百度智能云千帆": "BAIDU",
   "无问芯穹": "INFINI",
@@ -163,8 +165,15 @@ function generateProviderFileName(constant) {
  */
 function generateFunctionName(constant) {
   // 将常量名转换为驼峰式函数名
-  const lower = constant.toLowerCase();
-  return `parse${lower.charAt(0).toUpperCase() + lower.slice(1)}CodingPlans`;
+  // 例如: TENCENT_CLOUD -> parseTencentCloudCodingPlans
+  return constant
+    .toLowerCase()
+    .split('_')
+    .map((word, index) => index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1))
+    .join('')
+    .replace(/^(.)/, (match) => match.toUpperCase())
+    .replace(/^/, 'parse')
+    .replace(/$/, 'CodingPlans');
 }
 
 /**

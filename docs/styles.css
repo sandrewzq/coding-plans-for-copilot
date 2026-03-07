@@ -711,6 +711,9 @@ html {
   padding: 2.5rem;
   text-align: center;
   animation: fadeInUp 0.6s ease-out;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1.5rem;
 }
 
 .eyebrow {
@@ -844,8 +847,8 @@ h1 {
 
 
 .toolbar {
-  margin: 2rem 0;
-  padding: 1rem 1.5rem;
+  margin: 0 0 1.5rem 0;
+  padding: 1.5rem;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   background: var(--card-bg);
@@ -853,6 +856,8 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .toolbar-filters {
@@ -1018,6 +1023,8 @@ select.price-filter {
   animation: rise 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
   transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s, border-color 0.3s;
   scroll-margin-top: 6rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .provider-card:hover {
@@ -1037,14 +1044,16 @@ select.price-filter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 /* Actions container: invite code + buy link */
 .provider-actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .provider-title {
@@ -1170,6 +1179,8 @@ select.price-filter {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-primary);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 [data-theme="dark"] .usage-limit-card {
@@ -1199,10 +1210,14 @@ select.price-filter {
   color: var(--text-primary);
   font-size: 0.85rem;
   line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .usage-limit-item {
   margin-bottom: 0.3rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .usage-limit-item:last-child {
@@ -1216,6 +1231,8 @@ select.price-filter {
   padding: 0.8rem;
   border: 1px solid var(--glass-border);
   transition: background-color 0.3s, border-color 0.3s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .plan-services-title {
@@ -1233,6 +1250,13 @@ select.price-filter {
   color: var(--bg-ink);
   font-size: 0.9rem;
   line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.plan-service-item {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .plan-service-item+.plan-service-item {
@@ -1715,7 +1739,7 @@ kbd {
   }
 
   .hero {
-    padding: 1.25rem;
+    padding: 1rem;
   }
 
   .hero h1 {
@@ -1731,6 +1755,8 @@ kbd {
   .toolbar {
     padding: 1rem;
     gap: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .toolbar-filters {
@@ -1759,18 +1785,77 @@ kbd {
 
   .provider-card {
     padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .provider-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .provider-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .provider-title {
+    font-size: 1.1rem;
+    word-break: break-word;
   }
 
   .provider-header h2 {
     font-size: 1.1rem;
   }
 
+  .plan-list {
+    grid-template-columns: 1fr !important;
+  }
+
   .plan-item {
     padding: 0.75rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .plan-name {
     font-size: 0.95rem;
+    word-break: break-word;
+  }
+
+  .price-row {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .usage-limit-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .plan-services {
+    padding: 0.6rem;
+  }
+
+  .invite-code {
+    flex-wrap: wrap;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.8rem;
+    max-width: 100%;
+  }
+
+  .invite-code-value {
+    word-break: break-all;
+  }
+
+  .buy-link {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
   }
 
   .plan-price {
@@ -1782,6 +1867,17 @@ kbd {
     height: 44px;
     bottom: 1rem;
     right: 1rem;
+  }
+
+  /* Fix compare table width on mobile */
+  .compare-table {
+    min-width: auto;
+    font-size: 0.85rem;
+  }
+
+  .compare-table th,
+  .compare-table td {
+    padding: 0.5rem 0.75rem;
   }
 }
 
@@ -1932,6 +2028,8 @@ kbd {
 
 .compare-content {
   overflow-x: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .compare-table {

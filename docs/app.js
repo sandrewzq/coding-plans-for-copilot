@@ -7,6 +7,7 @@ const PROVIDER_LABELS = {
   "minimax-ai": "MiniMax",
   "aliyun-ai": "阿里云百炼",
   "volcengine-ai": "火山引擎",
+  "tencent-cloud-ai": "腾讯云",
   "kwaikat-ai": "快手 KwaiKAT",
   "baidu-qianfan-ai": "百度智能云千帆",
   "infini-ai": "无问芯穹",
@@ -25,10 +26,11 @@ const PROVIDER_BUY_URLS = {
   "minimax-ai": "https://platform.minimaxi.com/subscribe/coding-plan",
   "aliyun-ai": "https://www.aliyun.com/benefit/scene/codingplan",
   "volcengine-ai": "https://volcengine.com/L/AJgcLIP_-o4/",
+  "tencent-cloud-ai": "https://cloud.tencent.com/act/pro/codingplan",
   "kwaikat-ai": "https://www.streamlake.com/marketing/coding-plan",
   "baidu-qianfan-ai": "https://cloud.baidu.com/product/codingplan.html",
   "infini-ai": "https://cloud.infini-ai.com/platform/ai",
-  "compshare-ai": "https://www.compshare.cn/docs/modelverse/package_plan/package",
+  "compshare-ai": "https://www.compshare.cn/coding-plan",
   "mthreads-ai": "https://code.mthreads.com/",
   "x-aio": "https://code.x-aio.com/",
   "zenmux-ai": "https://zenmux.ai/pricing/subscription",
@@ -41,6 +43,7 @@ const PROVIDER_ORDER = [
   "minimax-ai",
   "aliyun-ai",
   "volcengine-ai",
+  "tencent-cloud-ai",
   "kwaikat-ai",
   "baidu-qianfan-ai",
   "infini-ai",
@@ -847,6 +850,8 @@ function renderProviders(data) {
       const isCompshare = provider.provider === "compshare-ai";
       const isXAIO = provider.provider === "x-aio";
       const isKwaiKAT = provider.provider === "kwaikat-ai";
+      const isTencentCloud = provider.provider === "tencent-cloud-ai";
+      const isMthreads = provider.provider === "mthreads-ai";
       if ((isMinimax || isInfini || isCompshare) && plan.notes && plan.notes.includes("用量:")) {
         const usageMatch = plan.notes.match(/用量:\s*(.+)/);
         if (usageMatch) {
@@ -861,6 +866,23 @@ function renderProviders(data) {
         // Extract usage info from service details for Zhipu, Aliyun, Volcengine, and Baidu and show as separate card
         const usageDetails = plan.serviceDetails.filter(d =>
           d.includes("每 5 小时限额") || d.includes("每周限额") || d.includes("每月限额")
+        );
+        if (usageDetails.length > 0) {
+          const usageCard = createElement("div", "usage-limit-card");
+          const usageList = createElement("ul", "usage-limit-list");
+          for (const usageText of usageDetails) {
+            usageList.append(createElement("li", "usage-limit-item", usageText));
+          }
+          usageCard.append(
+            createElement("span", "usage-limit-title", "📊"),
+            usageList,
+          );
+          item.append(usageCard);
+        }
+      } else if (isTencentCloud && plan.serviceDetails && plan.serviceDetails.length > 0) {
+        // Extract usage info from service details for Tencent Cloud
+        const usageDetails = plan.serviceDetails.filter(d =>
+          d.includes("每 5 小时") || d.includes("每周") || d.includes("每订阅月")
         );
         if (usageDetails.length > 0) {
           const usageCard = createElement("div", "usage-limit-card");
@@ -908,6 +930,23 @@ function renderProviders(data) {
           );
           item.append(usageCard);
         }
+      } else if (isMthreads && plan.serviceDetails && plan.serviceDetails.length > 0) {
+        // Extract usage info from service details for Mthreads (format: "每 5 小时最多约 X 次 prompts")
+        const usageDetails = plan.serviceDetails.filter(d =>
+          d.includes("每 5 小时") && d.includes("prompts")
+        );
+        if (usageDetails.length > 0) {
+          const usageCard = createElement("div", "usage-limit-card");
+          const usageList = createElement("ul", "usage-limit-list");
+          for (const usageText of usageDetails) {
+            usageList.append(createElement("li", "usage-limit-item", usageText));
+          }
+          usageCard.append(
+            createElement("span", "usage-limit-title", "📊"),
+            usageList,
+          );
+          item.append(usageCard);
+        }
       }
 
       // Get service items, excluding usage-related items for Zhipu, Aliyun, Volcengine, KwaiKAT, and XAIO
@@ -916,6 +955,10 @@ function renderProviders(data) {
         serviceItems = serviceItems.filter(d =>
           !d.includes("每 5 小时限额") && !d.includes("每周限额") && !d.includes("每月限额")
         );
+      } else if (isTencentCloud) {
+        serviceItems = serviceItems.filter(d =>
+          !d.includes("每 5 小时") && !d.includes("每周") && !d.includes("每订阅月")
+        );
       } else if (isKwaiKAT) {
         serviceItems = serviceItems.filter(d =>
           !d.includes("Prompts / 5小时")
@@ -923,6 +966,10 @@ function renderProviders(data) {
       } else if (isXAIO) {
         serviceItems = serviceItems.filter(d =>
           !(d.includes("每 4 小时") && d.includes("Prompts 配额"))
+        );
+      } else if (isMthreads) {
+        serviceItems = serviceItems.filter(d =>
+          !(d.includes("每 5 小时") && d.includes("prompts"))
         );
       }
       if (serviceItems.length > 0) {

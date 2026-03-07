@@ -83,6 +83,7 @@ npm run pricing:serve
 | MiniMax | https://platform.minimaxi.com/subscribe/coding-plan |
 | 阿里云百炼 | https://www.aliyun.com/benefit/scene/codingplan |
 | 火山引擎 | https://volcengine.com/L/AJgcLIP_-o4/ |
+| 腾讯云 | https://cloud.tencent.com/act/pro/codingplan |
 | 快手 KwaiKAT | https://www.streamlake.com/marketing/coding-plan |
 | 百度智能云千帆 | https://cloud.baidu.com/product/codingplan.html |
 | 无问芯穹 | https://cloud.infini-ai.com/platform/ai |

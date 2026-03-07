@@ -13,6 +13,7 @@ const PROVIDER_IDS = [
   "volcengine-ai",
   "minimax-ai",
   "aliyun-ai",
+  "tencent-cloud-ai",
   "baidu-qianfan-ai",
   "kwaikat-ai",
   "x-aio",

@@ -9,3 +9,7 @@ dist/
 minimax-sitemap.xml
 moonshot-sitemap.xml
 .playwright-cli/
+
+# Generated data files
+docs/provider-pricing.json
+docs/price-history.json

@@ -27,6 +27,7 @@ const parseKimiCodingPlans = require("./providers/kimi");
 const parseKwaikatCodingPlans = require("./providers/kwaikat");
 const parseMinimaxCodingPlans = require("./providers/minimax");
 const parseMthreadsCodingPlans = require("./providers/mthreads");
+const parseTencentCloudCodingPlans = require("./providers/tencent-cloud");
 const parseVolcengineCodingPlans = require("./providers/volcengine");
 const parseXaioCodingPlans = require("./providers/xaio");
 const parseZenmuxCodingPlans = require("./providers/zenmux");
@@ -67,6 +68,7 @@ async function main() {
     { provider: PROVIDER_IDS.MINIMAX, fn: parseMinimaxCodingPlans },
     { provider: PROVIDER_IDS.ALIYUN, fn: parseAliyunCodingPlans },
     { provider: PROVIDER_IDS.VOLCENGINE, fn: parseVolcengineCodingPlans },
+    { provider: PROVIDER_IDS.TENCENT_CLOUD, fn: parseTencentCloudCodingPlans },
     { provider: PROVIDER_IDS.KWAIKAT, fn: parseKwaikatCodingPlans },
     { provider: PROVIDER_IDS.BAIDU, fn: parseBaiduCodingPlans },
     { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
