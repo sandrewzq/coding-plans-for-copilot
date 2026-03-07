@@ -954,21 +954,6 @@
       ]
     }
   ],
-  "updatedAt": "2026-03-07T16:55:26.461Z",
-  "lastChanges": [
-    {
-      "timestamp": "2026-03-07T16:55:26.460Z",
-      "provider": "zenmux-ai",
-      "planName": "Free",
-      "currentPrice": {
-        "currentPrice": 0,
-        "currentPriceText": "$0",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "Free for everyone"
-      },
-      "changeType": "new"
-    }
-  ]
+  "updatedAt": "2026-03-07T17:10:53.250Z",
+  "lastChanges": []
 }

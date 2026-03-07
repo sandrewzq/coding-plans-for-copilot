@@ -593,10 +593,11 @@ function asPlan({
   notes = null,
   serviceDetails = null,
   offerEndDate = null,
+  usageLimit = null,
 }) {
   const current = parsePriceText(currentPriceText);
   const original = parsePriceText(originalPriceText);
-  return {
+  const result = {
     name: normalizeText(name),
     currentPrice: Number.isFinite(currentPrice) ? currentPrice : current.amount,
     currentPriceText: current.text,
@@ -607,6 +608,13 @@ function asPlan({
     serviceDetails: normalizeServiceDetails(serviceDetails),
     offerEndDate: offerEndDate || null,
   };
+  
+  // Preserve usageLimit if provided
+  if (usageLimit) {
+    result.usageLimit = usageLimit;
+  }
+  
+  return result;
 }
 
 /**
