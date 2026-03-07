@@ -2825,22 +2825,6 @@
       ]
     }
   ],
-  "updatedAt": "2026-03-06T17:39:02.845Z",
-  "lastChanges": [
-    {
-      "timestamp": "2026-03-06T17:39:02.844Z",
-      "provider": "kimi-ai",
-      "planName": "Adagio (月)",
-      "previousPrice": {
-        "currentPrice": 0,
-        "currentPriceText": "¥0/月",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "试用计划"
-      },
-      "currentPrice": null,
-      "changeType": "removed"
-    }
-  ]
+  "updatedAt": "2026-03-07T02:10:07.620Z",
+  "lastChanges": []
 }
