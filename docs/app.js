@@ -39,8 +39,8 @@ const PROVIDER_BUY_URLS = {
 
 const PROVIDER_ORDER = [
   "zhipu-ai",
-  "kimi-ai",
   "minimax-ai",
+  "kimi-ai",
   "aliyun-ai",
   "volcengine-ai",
   "tencent-cloud-ai",

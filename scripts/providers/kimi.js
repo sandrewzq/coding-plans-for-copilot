@@ -107,11 +107,10 @@ async function parseKimiCodingPlans() {
       plans: [
         asPlan({
           name: "Andante (月)",
-          currentPriceText: "¥39/月",
-          currentPrice: 39,
-          originalPrice: 49,
+          currentPriceText: "¥49/月",
+          currentPrice: 49,
           unit: "月",
-          notes: "按年计费 ¥468/年",
+          notes: "连续包月 ¥39/月，按年计费 ¥468/年",
           serviceDetails: [
             "更多 Agent 额度",
             "Agent 4倍速优先用",
@@ -121,11 +120,10 @@ async function parseKimiCodingPlans() {
         }),
         asPlan({
           name: "Moderato (月)",
-          currentPriceText: "¥79/月",
-          currentPrice: 79,
-          originalPrice: 99,
+          currentPriceText: "¥99/月",
+          currentPrice: 99,
           unit: "月",
-          notes: "按年计费 ¥948/年",
+          notes: "连续包月 ¥79/月，按年计费 ¥948/年",
           serviceDetails: [
             "Andante 权益基础上",
             "2倍 Agent 额度",
@@ -136,11 +134,10 @@ async function parseKimiCodingPlans() {
         }),
         asPlan({
           name: "Allegretto (月)",
-          currentPriceText: "¥159/月",
-          currentPrice: 159,
-          originalPrice: 199,
+          currentPriceText: "¥199/月",
+          currentPrice: 199,
           unit: "月",
-          notes: "按年计费 ¥1,908/年",
+          notes: "连续包月 ¥159/月，按年计费 ¥1,908/年",
           serviceDetails: [
             "Andante 权益基础上",
             "4倍 Agent 额度",
@@ -153,11 +150,10 @@ async function parseKimiCodingPlans() {
         }),
         asPlan({
           name: "Allegro (月)",
-          currentPriceText: "¥559/月",
-          currentPrice: 559,
-          originalPrice: 699,
+          currentPriceText: "¥699/月",
+          currentPrice: 699,
           unit: "月",
-          notes: "按年计费 ¥6,708/年",
+          notes: "连续包月 ¥559/月，按年计费 ¥6,708/年",
           serviceDetails: [
             "Andante 权益基础上",
             "10倍 Agent 额度",
