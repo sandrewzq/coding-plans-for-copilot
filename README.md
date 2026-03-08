@@ -79,8 +79,8 @@ npm run pricing:serve
 | 厂商 | 链接 |
 |------|------|
 | 智谱 | https://www.bigmodel.cn/glm-coding?ic=BZRLCDAC1G |
-| Kimi | https://www.kimi.com/code/zh |
 | MiniMax | https://platform.minimaxi.com/subscribe/coding-plan |
+| Kimi | https://www.kimi.com/code/zh |
 | 阿里云百炼 | https://www.aliyun.com/benefit/scene/codingplan |
 | 火山引擎 | https://volcengine.com/L/AJgcLIP_-o4/ |
 | 腾讯云 | https://cloud.tencent.com/act/pro/codingplan |
