@@ -25,8 +25,8 @@ async function parseChutesCodingPlans() {
         unit: "月",
         serviceDetails: [
           "Up to 300 requests/day",
-          "标准模型访问",
-          "基础技术支持",
+          "5X the value of pay-as-you-go",
+          "PAYG requests beyond limit",
         ],
       }),
       asPlan({
@@ -36,8 +36,9 @@ async function parseChutesCodingPlans() {
         unit: "月",
         serviceDetails: [
           "Up to 2,000 requests/day",
-          "更多模型选择",
-          "优先响应速度",
+          "5X the value of pay-as-you-go",
+          "Access to frontier models",
+          "PAYG requests beyond limit",
         ],
       }),
       asPlan({
@@ -48,9 +49,21 @@ async function parseChutesCodingPlans() {
         notes: "Best Value",
         serviceDetails: [
           "Up to 5,000 requests/day",
-          "全部模型访问",
-          "最高优先级",
-          "高级技术支持",
+          "5X the value of pay-as-you-go",
+          "Access to frontier models",
+          "PAYG requests beyond limit",
+        ],
+      }),
+      asPlan({
+        name: "Enterprise",
+        currentPriceText: "Contact us",
+        currentPrice: null,
+        unit: "月",
+        serviceDetails: [
+          "Custom billing only",
+          "Custom request limits",
+          "Dedicated support",
+          "SLA guarantees",
         ],
       }),
     ],

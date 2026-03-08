@@ -11,27 +11,18 @@
 
 ## 快速开始
 
-> 自动部署测试标记（可删除）
-
-### 安装依赖
-
 ```bash
+# 1. 安装依赖
 npm install
-```
 
-### 拉取最新定价
-
-```bash
+# 2. 抓取最新定价数据
 npm run pricing:fetch
-```
 
-### 本地预览
-
-```bash
+# 3. 本地预览
 npm run pricing:serve
 ```
 
-浏览器访问 `http://127.0.0.1:4173`
+浏览器访问 http://127.0.0.1:4173
 
 ### 在线页面
 
@@ -60,22 +51,6 @@ npm run pricing:serve
 
 ## 厂商列表
 
-> **维护说明**
->
-> 1. **AI Agent 规则**：后续所有 AI Agent 在处理本项目时，必须遵循以下规则：
->    - 以此列表为唯一厂商顺序来源，保持所有代码、配置、展示顺序与此列表一致
->    - 可在表中任意位置添加新厂商，AI 会按照表格顺序更新所有相关文件
->    - 修改厂商信息时，同步更新名称、链接等所有关联内容
->
-> 2. **列表更新**：只需维护以下表格，AI 会自动同步更新到 `app.js` 的 `PROVIDER_ORDER`、`PROVIDER_LABELS`、`PROVIDER_BUY_URLS` 以及数据抓取脚本等所有相关代码
->
-> 3. **自动同步**：运行 `npm run pricing:sync` 命令，脚本会自动：
->    - 更新 `docs/app.js` 中的厂商配置
->    - 更新 `scripts/utils/index.js` 中的 `PROVIDER_IDS`
->    - 更新 `scripts/fetch-provider-pricing.js` 中的任务列表和导入语句
->    - 为新厂商自动创建解析器文件模板（位于 `scripts/providers/`）
->    - 开发者只需完善新解析器中的 TODO 部分即可
-
 | 厂商 | 链接 |
 |------|------|
 | 智谱 | https://www.bigmodel.cn/glm-coding?ic=BZRLCDAC1G |
@@ -93,18 +68,112 @@ npm run pricing:serve
 | ZenMux | https://zenmux.ai/pricing/subscription |
 | Chutes | https://chutes.ai/pricing |
 
+## 维护指南
+
+### 工作流程说明
+
+本项目采用「用户维护列表 + Agent 自动同步」的工作模式：
+
+**你的职责（只需做这一件事）：**
+- 维护上方 **【厂商列表】** 表格中的厂商名称和链接
+
+**Agent 的职责（自动完成）：**
+- 对比当前代码与【厂商列表】的差异
+- 新增厂商：创建解析器模板、更新所有配置文件
+- 更新厂商：同步修改名称、链接等所有关联内容
+- 调整顺序：确保所有代码中的厂商顺序与【厂商列表】完全一致
+- 验证并报告完成状态
+
+---
+
+### 同步厂商列表
+
+当你修改【厂商列表】后，只需告知 Agent：
+
+> **"请同步更新厂商列表"**
+
+Agent 会自动检测差异并完成所有更新：
+
+1. **对比分析**：对比【厂商列表】与代码中的当前配置
+2. **新增厂商**：创建解析器文件并完善抓取逻辑
+3. **信息更新**：同步修改厂商名称、链接等
+4. **顺序调整**：确保所有代码中的顺序与【厂商列表】一致
+5. **验证报告**：报告完成状态并提示验证步骤
+
+**Agent 将更新的文件：**
+- `docs/app.js` - `PROVIDER_ORDER`, `PROVIDER_LABELS`, `PROVIDER_BUY_URLS`
+- `scripts/utils/index.js` - `PROVIDER_IDS`, `PROVIDER_NAMES`
+- `scripts/fetch-provider-pricing.js` - 任务列表、导入语句
+- `scripts/providers/<新厂商>.js` - 新厂商解析器（新增时）
+
+**完成后进行手动验证**（见下方验证步骤）
+
+---
+
+### 如何验证同步结果
+
+Agent 完成同步后，按以下步骤验证：
+
+#### 1. 检查配置文件
+```bash
+# 检查 app.js 中的配置
+grep -n "PROVIDER_ORDER\|PROVIDER_LABELS\|PROVIDER_BUY_URLS" docs/app.js
+
+# 检查工具类中的配置
+grep -n "PROVIDER_IDS\|PROVIDER_NAMES" scripts/utils/index.js
+```
+
+#### 2. 检查解析器文件
+```bash
+# 确认新厂商的解析器文件已创建
+ls -la scripts/providers/
+
+# 确认解析器已在主脚本中导入
+grep -n "require.*providers" scripts/fetch-provider-pricing.js
+```
+
+#### 3. 测试数据抓取
+```bash
+# 运行抓取脚本，检查新厂商是否能正常获取数据
+npm run pricing:fetch
+
+# 检查生成的数据文件
+cat docs/provider-pricing.json | grep -A 5 "新厂商ID"
+```
+
+#### 4. 本地预览验证
+```bash
+# 启动本地服务
+npm run pricing:serve
+
+# 浏览器访问 http://127.0.0.1:4173
+# 验证：
+# - 导航栏是否显示新厂商
+# - 厂商顺序是否正确
+# - 点击购买链接是否跳转正确
+```
+
+#### 5. 检查失败项
+```bash
+# 查看抓取失败的厂商
+cat docs/provider-pricing.json | grep -A 20 "failures"
+```
+
+---
+
+### 需要修改的文件清单
+
+当你修改【厂商列表】后，Agent 会同步更新以下文件：
+
+| 文件路径 | 更新内容 |
+|---------|---------|
+| `docs/app.js` | `PROVIDER_ORDER`, `PROVIDER_LABELS`, `PROVIDER_BUY_URLS` |
+| `scripts/utils/index.js` | `PROVIDER_IDS`, `PROVIDER_NAMES` |
+| `scripts/fetch-provider-pricing.js` | 任务列表、import 语句 |
+| `scripts/providers/<新厂商>.js` | 新厂商解析器模板（新增时） |
+
+---
+
 ## 致谢
 
 本项目基于 [jqknono/coding-plans-for-copilot](https://github.com/jqknono/coding-plans-for-copilot) 开发，感谢原作者的开源贡献。
-
-## 贡献指引
-
-**添加新厂商步骤：**
-
-1. 在上方「厂商列表」表格中添加新厂商信息（名称和链接）
-2. 运行 `npm run pricing:sync` 自动同步配置
-3. 脚本会自动创建解析器文件模板在 `scripts/providers/` 目录
-4. 打开新创建的解析器文件，根据页面结构完善 TODO 部分的解析逻辑
-5. **⚠️ 重要**：同时手动更新 `docs/app.js` 中的 `PROVIDER_ORDER` 数组，确保导航栏顺序与 README 中的厂商列表顺序一致
-5. 运行 `npm run pricing:fetch` 测试新厂商的数据抓取
-6. 提交代码并推送

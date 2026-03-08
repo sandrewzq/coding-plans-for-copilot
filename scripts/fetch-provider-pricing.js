@@ -63,21 +63,23 @@ async function main() {
   const providers = [];
   const failures = [];
   const tasks = [
-    { provider: PROVIDER_IDS.ZHIPU, fn: parseZhipuCodingPlans },
-    { provider: PROVIDER_IDS.KIMI, fn: parseKimiCodingPlans },
-    { provider: PROVIDER_IDS.MINIMAX, fn: parseMinimaxCodingPlans },
-    { provider: PROVIDER_IDS.ALIYUN, fn: parseAliyunCodingPlans },
-    { provider: PROVIDER_IDS.VOLCENGINE, fn: parseVolcengineCodingPlans },
-    { provider: PROVIDER_IDS.TENCENT_CLOUD, fn: parseTencentCloudCodingPlans },
-    { provider: PROVIDER_IDS.KWAIKAT, fn: parseKwaikatCodingPlans },
-    { provider: PROVIDER_IDS.BAIDU, fn: parseBaiduCodingPlans },
-    { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
-    { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans },
-    { provider: PROVIDER_IDS.MTHREADS, fn: parseMthreadsCodingPlans },
-    { provider: PROVIDER_IDS.XAIO, fn: parseXaioCodingPlans },
-    { provider: PROVIDER_IDS.ZENMUX, fn: parseZenmuxCodingPlans },
-    { provider: PROVIDER_IDS.CHUTES, fn: parseChutesCodingPlans },
+    { provider: PROVIDER_IDS.ZHIPU, fn: parseZhipuCodingPlans, name: "智谱" },
+    { provider: PROVIDER_IDS.KIMI, fn: parseKimiCodingPlans, name: "Kimi" },
+    { provider: PROVIDER_IDS.MINIMAX, fn: parseMinimaxCodingPlans, name: "MiniMax" },
+    { provider: PROVIDER_IDS.ALIYUN, fn: parseAliyunCodingPlans, name: "阿里云百炼" },
+    { provider: PROVIDER_IDS.VOLCENGINE, fn: parseVolcengineCodingPlans, name: "火山引擎" },
+    { provider: PROVIDER_IDS.TENCENT_CLOUD, fn: parseTencentCloudCodingPlans, name: "腾讯云" },
+    { provider: PROVIDER_IDS.KWAIKAT, fn: parseKwaikatCodingPlans, name: "快手 KwaiKAT" },
+    { provider: PROVIDER_IDS.BAIDU, fn: parseBaiduCodingPlans, name: "百度智能云千帆" },
+    { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans, name: "无问芯穹" },
+    { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans, name: "优云智算" },
+    { provider: PROVIDER_IDS.MTHREADS, fn: parseMthreadsCodingPlans, name: "摩尔线程" },
+    { provider: PROVIDER_IDS.XAIO, fn: parseXaioCodingPlans, name: "X-AIO" },
+    { provider: PROVIDER_IDS.ZENMUX, fn: parseZenmuxCodingPlans, name: "ZenMux" },
+    { provider: PROVIDER_IDS.CHUTES, fn: parseChutesCodingPlans, name: "Chutes" },
   ];
+
+  console.log(`\n开始抓取 ${tasks.length} 个厂商的定价数据...\n`);
 
   const results = await Promise.allSettled(tasks.map((task) => runTaskWithTimeout(task.fn)));
   for (let index = 0; index < tasks.length; index += 1) {
@@ -87,7 +89,7 @@ async function main() {
       const message = result.reason?.message || String(result.reason || "unknown error");
       const failureMessage = `${task.provider}: ${message}`;
       failures.push(failureMessage);
-      console.warn(`[pricing] ${task.fn.name} failed: ${message}`);
+      console.warn(`  ✗ ${task.name} - 失败: ${message}`);
       continue;
     }
 
@@ -95,7 +97,6 @@ async function main() {
       const data = result.value;
       const monthlyPlans = keepStandardMonthlyPlans(data.plans || [])
         .map((plan) => {
-          // Only use notes as serviceDetails if serviceDetails is undefined (not null)
           const serviceDetails = plan.serviceDetails !== undefined
             ? plan.serviceDetails
             : normalizeServiceDetails(plan.notes);
@@ -112,13 +113,17 @@ async function main() {
         ...data,
         plans: monthlyPlans,
       });
+      console.log(`  ✓ ${task.name} - 成功 (${monthlyPlans.length} 个套餐)`);
     } catch (error) {
       const message = error?.message || String(error || "unknown error");
       const failureMessage = `${task.provider}: ${message}`;
       failures.push(failureMessage);
-      console.warn(`[pricing] ${task.fn.name} failed: ${message}`);
+      console.warn(`  ✗ ${task.name} - 失败: ${message}`);
     }
   }
+
+  console.log(`\n----------------------------------------`);
+  console.log(`抓取完成: ${providers.length}/${tasks.length} 个厂商成功`);
 
   const output = {
     schemaVersion: 1,
@@ -127,36 +132,37 @@ async function main() {
     failures,
   };
 
-  // Validate output data before writing
   const validation = validatePricingData(output);
   if (!validation.isValid) {
-    console.error("[pricing] Validation failed:");
+    console.error("\n✗ 数据验证失败:");
     validation.errors.forEach((error) => console.error(`  - ${error}`));
     throw new Error("Output data validation failed");
   }
-  console.log("[pricing] ✓ Data validation passed");
+  console.log("✓ 数据验证通过");
 
   const outputText = `${JSON.stringify(output, null, 2)}\n`;
 
   await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
   await fs.writeFile(OUTPUT_FILE, outputText, "utf8");
+  console.log(`✓ 数据已保存: ${OUTPUT_FILE}`);
 
-  const summary = providers.map((provider) => `${provider.provider}: ${provider.plans.length}`).join(", ");
-  console.log(`[pricing] wrote ${OUTPUT_FILE}`);
-  console.log(`[pricing] plans -> ${summary}`);
   if (failures.length > 0) {
-    console.log(`[pricing] failures -> ${failures.length}`);
+    console.log(`\n⚠ 失败详情 (${failures.length} 个):`);
+    failures.forEach((failure) => console.log(`  - ${failure}`));
   }
 
-  // Update price history
   try {
     const changes = updateHistory(output);
     if (changes.length > 0) {
-      console.log(`[pricing] price changes detected: ${changes.length}`);
+      console.log(`\n✓ 检测到 ${changes.length} 个价格变动`);
+    } else {
+      console.log("\n✓ 无价格变动");
     }
   } catch (error) {
-    console.warn(`[pricing] Failed to update price history: ${error.message}`);
+    console.warn(`\n⚠ 价格历史更新失败: ${error.message}`);
   }
+
+  console.log("----------------------------------------\n");
 }
 
 if (require.main === module) {

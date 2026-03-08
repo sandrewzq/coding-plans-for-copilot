@@ -205,8 +205,6 @@ async function parseTencentCloudCodingPlans() {
 
     if (plans.length === 0) {
       console.warn(`[腾讯云] 未能解析到套餐信息，请检查页面结构是否已变更\n  页面地址: ${pageUrl}`);
-    } else {
-      console.log(`[腾讯云] 成功解析 ${plans.length} 个套餐`);
     }
 
     return {
