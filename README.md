@@ -105,5 +105,6 @@ npm run pricing:serve
 2. 运行 `npm run pricing:sync` 自动同步配置
 3. 脚本会自动创建解析器文件模板在 `scripts/providers/` 目录
 4. 打开新创建的解析器文件，根据页面结构完善 TODO 部分的解析逻辑
+5. **⚠️ 重要**：同时手动更新 `docs/app.js` 中的 `PROVIDER_ORDER` 数组，确保导航栏顺序与 README 中的厂商列表顺序一致
 5. 运行 `npm run pricing:fetch` 测试新厂商的数据抓取
 6. 提交代码并推送
