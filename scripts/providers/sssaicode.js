@@ -21,7 +21,7 @@ async function parseSssaicodeCodingPlans() {
       // 包月套餐
       asPlan({
         name: "试用套餐",
-        currentPriceText: null,
+        currentPriceText: "登录查看",
         currentPrice: null,
         unit: "月",
         notes: "有效期 30 天，仅限一次",
@@ -33,7 +33,7 @@ async function parseSssaicodeCodingPlans() {
       }),
       asPlan({
         name: "小月卡",
-        currentPriceText: null,
+        currentPriceText: "登录查看",
         currentPrice: null,
         unit: "月",
         notes: "每日 0 点重置到 $40，周限额度 $75",
@@ -47,7 +47,7 @@ async function parseSssaicodeCodingPlans() {
       }),
       asPlan({
         name: "月卡",
-        currentPriceText: null,
+        currentPriceText: "登录查看",
         currentPrice: null,
         unit: "月",
         notes: "每日 0 点重置到 $75，周限额度 $150",
@@ -61,7 +61,7 @@ async function parseSssaicodeCodingPlans() {
       }),
       asPlan({
         name: "大月卡",
-        currentPriceText: null,
+        currentPriceText: "登录查看",
         currentPrice: null,
         unit: "月",
         notes: "每日 0 点重置到 $150，周限额度 $300",
@@ -75,7 +75,7 @@ async function parseSssaicodeCodingPlans() {
       }),
       asPlan({
         name: "超大月卡",
-        currentPriceText: null,
+        currentPriceText: "登录查看",
         currentPrice: null,
         unit: "月",
         notes: "每日 0 点重置到 $500，周限额度 $1000",
@@ -89,7 +89,7 @@ async function parseSssaicodeCodingPlans() {
       }),
       asPlan({
         name: "团队套餐",
-        currentPriceText: null,
+        currentPriceText: "登录查看",
         currentPrice: null,
         unit: "月",
         notes: "每日 0 点重置到 $950，周限额度 $1875",
