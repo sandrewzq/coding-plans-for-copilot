@@ -8111,421 +8111,992 @@
           ]
         }
       ]
+    },
+    {
+      "timestamp": "2026-03-13T14:52:11.326Z",
+      "providers": [
+        {
+          "provider": "zhipu-ai",
+          "plans": [
+            {
+              "name": "GLM Coding Lite (月)",
+              "currentPrice": 49,
+              "currentPriceText": "¥49/月",
+              "originalPrice": 49,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "下个月度续费金额：¥49"
+            },
+            {
+              "name": "GLM Coding Pro (月)",
+              "currentPrice": 149,
+              "currentPriceText": "¥149/月",
+              "originalPrice": 149,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "下个月度续费金额：¥149"
+            },
+            {
+              "name": "GLM Coding Max (月)",
+              "currentPrice": 469,
+              "currentPriceText": "¥469/月",
+              "originalPrice": 469,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "下个月度续费金额：¥469"
+            }
+          ]
+        },
+        {
+          "provider": "kimi-ai",
+          "plans": [
+            {
+              "name": "Adagio (月)",
+              "currentPrice": 0,
+              "currentPriceText": "¥0/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "试用计划"
+            },
+            {
+              "name": "Andante (月)",
+              "currentPrice": 49,
+              "currentPriceText": "¥49/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Moderato (月)",
+              "currentPrice": 99,
+              "currentPriceText": "¥99/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Allegretto (月)",
+              "currentPrice": 199,
+              "currentPriceText": "¥199/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Allegro (月)",
+              "currentPrice": 699,
+              "currentPriceText": "¥699/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            }
+          ]
+        },
+        {
+          "provider": "minimax-ai",
+          "plans": [
+            {
+              "name": "Plus-极速版",
+              "currentPrice": 98,
+              "currentPriceText": "¥98/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "用量: 100 prompts/每 5 小时"
+            },
+            {
+              "name": "Max-极速版",
+              "currentPrice": 199,
+              "currentPriceText": "¥199/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "用量: 300 prompts/每 5 小时"
+            },
+            {
+              "name": "Ultra-极速版",
+              "currentPrice": 899,
+              "currentPriceText": "¥899/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "用量: 2000 prompts/每 5 小时"
+            },
+            {
+              "name": "Starter",
+              "currentPrice": 29,
+              "currentPriceText": "¥29/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "用量: 40 prompts/每 5 小时"
+            },
+            {
+              "name": "Plus",
+              "currentPrice": 49,
+              "currentPriceText": "¥49/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "用量: 100 prompts/每 5 小时"
+            },
+            {
+              "name": "Max",
+              "currentPrice": 119,
+              "currentPriceText": "¥119/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "用量: 300 prompts/每 5 小时"
+            }
+          ]
+        },
+        {
+          "provider": "aliyun-ai",
+          "plans": [
+            {
+              "name": "Coding Plan Lite",
+              "currentPrice": 40,
+              "currentPriceText": "¥40/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Coding Plan Pro",
+              "currentPrice": 200,
+              "currentPriceText": "¥200/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            }
+          ]
+        },
+        {
+          "provider": "volcengine-ai",
+          "plans": [
+            {
+              "name": "Coding Plan Lite 月套餐",
+              "currentPrice": 40,
+              "currentPriceText": "¥40/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Coding Plan Pro 月套餐",
+              "currentPrice": 200,
+              "currentPriceText": "¥200/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            }
+          ]
+        },
+        {
+          "provider": "tencent-cloud-ai",
+          "plans": [
+            {
+              "name": "Lite 套餐",
+              "currentPrice": 40,
+              "currentPriceText": "¥40/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Pro 套餐",
+              "currentPrice": 200,
+              "currentPriceText": "¥200/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            }
+          ]
+        },
+        {
+          "provider": "kwaikat-ai",
+          "plans": [
+            {
+              "name": "KAT Coding Mini",
+              "currentPrice": 8.8,
+              "currentPriceText": "¥8.8/月",
+              "originalPrice": 29,
+              "originalPriceText": "¥29/月",
+              "unit": "月",
+              "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V1；覆盖日常编码场景；¥40 Prompts/5小时"
+            },
+            {
+              "name": "KAT Coding Starter",
+              "currentPrice": 48,
+              "currentPriceText": "¥48/月",
+              "originalPrice": 70,
+              "originalPriceText": "¥70/月",
+              "unit": "月",
+              "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V1 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时"
+            },
+            {
+              "name": "KAT Coding Pro",
+              "currentPrice": 96,
+              "currentPriceText": "¥96/月",
+              "originalPrice": 140,
+              "originalPriceText": "¥140/月",
+              "unit": "月",
+              "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；¥300 Prompts/5小时"
+            },
+            {
+              "name": "KAT Coding Max",
+              "currentPrice": 240,
+              "currentPriceText": "¥240/月",
+              "originalPrice": 350,
+              "originalPriceText": "¥350/月",
+              "unit": "月",
+              "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；¥1000 Prompts/5小时"
+            }
+          ]
+        },
+        {
+          "provider": "baidu-qianfan-ai",
+          "plans": [
+            {
+              "name": "Coding Plan Lite",
+              "currentPrice": 7.9,
+              "currentPriceText": "¥7.9/月",
+              "originalPrice": 40,
+              "originalPriceText": "¥40/月",
+              "unit": "月",
+              "notes": "新客首月 7.9"
+            },
+            {
+              "name": "Coding Plan Pro",
+              "currentPrice": 39.9,
+              "currentPriceText": "¥39.9/月",
+              "originalPrice": 200,
+              "originalPriceText": "¥200/月",
+              "unit": "月",
+              "notes": "新客首月 39.9"
+            }
+          ]
+        },
+        {
+          "provider": "infini-ai",
+          "plans": [
+            {
+              "name": "Infini Coding Lite",
+              "currentPrice": 19.9,
+              "currentPriceText": "¥19.9/月",
+              "originalPrice": 40,
+              "originalPriceText": "¥40/月",
+              "unit": "月",
+              "notes": "用量: 1000次请求每5小时"
+            },
+            {
+              "name": "Infini Coding Pro",
+              "currentPrice": 99.9,
+              "currentPriceText": "¥99.9/月",
+              "originalPrice": 200,
+              "originalPriceText": "¥200/月",
+              "unit": "月",
+              "notes": "用量: 5000次请求每5小时"
+            }
+          ]
+        },
+        {
+          "provider": "compshare-ai",
+          "plans": [
+            {
+              "name": "49.9 包月畅享包 Lite",
+              "currentPrice": 49.9,
+              "currentPriceText": "¥49.9/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "用量: 7,000,000 积分/日"
+            },
+            {
+              "name": "199 包月畅享包 Plus",
+              "currentPrice": 199,
+              "currentPriceText": "¥199/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "用量: 28,000,000 积分/日"
+            },
+            {
+              "name": "499 包月畅享包 Pro",
+              "currentPrice": 499,
+              "currentPriceText": "¥499/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "用量: 70,000,000 积分/日"
+            }
+          ]
+        },
+        {
+          "provider": "mthreads-ai",
+          "plans": [
+            {
+              "name": "Free Trial",
+              "currentPrice": 0,
+              "currentPriceText": "¥0",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "30天免费试用，每日限量100名"
+            },
+            {
+              "name": "Lite Plan",
+              "currentPrice": 120,
+              "currentPriceText": "¥120/季度",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "季度",
+              "notes": "约¥40/月"
+            },
+            {
+              "name": "Pro Plan",
+              "currentPrice": 600,
+              "currentPriceText": "¥600/季度",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "季度",
+              "notes": "约¥200/月，Lite Plan 的5倍用量"
+            },
+            {
+              "name": "Max Plan",
+              "currentPrice": 1200,
+              "currentPriceText": "¥1200/季度",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "季度",
+              "notes": "约¥400/月，Pro Plan 的4倍用量"
+            }
+          ]
+        },
+        {
+          "provider": "x-aio",
+          "plans": [
+            {
+              "name": "Lite（入门版）",
+              "currentPrice": 18,
+              "currentPriceText": "¥18/月",
+              "originalPrice": 36,
+              "originalPriceText": "¥36/月",
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Pro（专业版）",
+              "currentPrice": 90,
+              "currentPriceText": "¥90/月",
+              "originalPrice": 180,
+              "originalPriceText": "¥180/月",
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Max（旗舰版）",
+              "currentPrice": 180,
+              "currentPriceText": "¥180/月",
+              "originalPrice": 360,
+              "originalPriceText": "¥360/月",
+              "unit": "月",
+              "notes": null
+            }
+          ]
+        },
+        {
+          "provider": "zenmux-ai",
+          "plans": [
+            {
+              "name": "Free",
+              "currentPrice": 0,
+              "currentPriceText": "$0",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "Free for everyone"
+            },
+            {
+              "name": "Pro",
+              "currentPrice": 20,
+              "currentPriceText": "$20/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "Leverage 2.73x"
+            },
+            {
+              "name": "Max",
+              "currentPrice": 100,
+              "currentPriceText": "$100/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "Leverage 3.27x, 6x 5h usage than Pro"
+            },
+            {
+              "name": "Ultra",
+              "currentPrice": 200,
+              "currentPriceText": "$200/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "Leverage 4.36x, 16x 5h usage than Pro"
+            }
+          ]
+        },
+        {
+          "provider": "chutes-ai",
+          "plans": [
+            {
+              "name": "Base",
+              "currentPrice": 3,
+              "currentPriceText": "$3/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Plus",
+              "currentPrice": 10,
+              "currentPriceText": "$10/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            },
+            {
+              "name": "Pro",
+              "currentPrice": 20,
+              "currentPriceText": "$20/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "Best Value"
+            },
+            {
+              "name": "Enterprise",
+              "currentPrice": null,
+              "currentPriceText": "Contact us",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": null
+            }
+          ]
+        },
+        {
+          "provider": "88code",
+          "plans": [
+            {
+              "name": "PAYGO套餐",
+              "currentPrice": null,
+              "currentPriceText": "按量付费",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "一次性获取额度，额度不过期，随用随停"
+            },
+            {
+              "name": "包月付费套餐",
+              "currentPrice": 198,
+              "currentPriceText": "¥198/月",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "额度不结转，可与PAYGO套餐同时使用"
+            },
+            {
+              "name": "MAX 20x 拼车套餐",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "$1-5人拼车，适合团队使用"
+            },
+            {
+              "name": "定制套餐",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "联系客服获取定制报价"
+            }
+          ]
+        },
+        {
+          "provider": "sssaicode",
+          "plans": [
+            {
+              "name": "试用套餐",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "有效期 30 天，仅限一次"
+            },
+            {
+              "name": "小月卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "每日 0 点重置到 $40，周限额度 $75"
+            },
+            {
+              "name": "月卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "每日 0 点重置到 $75，周限额度 $150"
+            },
+            {
+              "name": "大月卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "每日 0 点重置到 $150，周限额度 $300"
+            },
+            {
+              "name": "超大月卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "每日 0 点重置到 $500，周限额度 $1000"
+            },
+            {
+              "name": "团队套餐",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "每日 0 点重置到 $950，周限额度 $1875"
+            },
+            {
+              "name": "PAYGO 100",
+              "currentPrice": null,
+              "currentPriceText": "按量付费",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "美元额度，实时扣费，余额永不过期"
+            },
+            {
+              "name": "PAYGO 200",
+              "currentPrice": null,
+              "currentPriceText": "按量付费",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "美元额度，实时扣费，余额永不过期"
+            },
+            {
+              "name": "PAYGO 500",
+              "currentPrice": null,
+              "currentPriceText": "按量付费",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "美元额度，实时扣费，余额永不过期"
+            },
+            {
+              "name": "PAYGO 2000",
+              "currentPrice": null,
+              "currentPriceText": "按量付费",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "美元额度，实时扣费，余额永不过期"
+            }
+          ]
+        },
+        {
+          "provider": "yescode",
+          "plans": [
+            {
+              "name": "Pay as you go",
+              "currentPrice": null,
+              "currentPriceText": "按量付费",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "$50 初始余额，余额永不过期"
+            },
+            {
+              "name": "Lightweight",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "$20 每日余额，$210 月消费限额"
+            },
+            {
+              "name": "Works Good",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "$50 每日余额，$430 月消费限额"
+            },
+            {
+              "name": "Most Popular",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "$80 每日余额，$640 月消费限额"
+            },
+            {
+              "name": "Full Power",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "$100 每日余额，$860 月消费限额"
+            },
+            {
+              "name": "Lightning the Core",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "$150 每日余额，$1080 月消费限额"
+            },
+            {
+              "name": "Top Gear",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "$200 每日余额，$1450 月消费限额"
+            },
+            {
+              "name": "Cosmos in your hand",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "$300 每日余额，$4285 月消费限额"
+            },
+            {
+              "name": "To the Stars",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "$300 每日余额，$1800 月消费限额"
+            }
+          ]
+        },
+        {
+          "provider": "toprouter",
+          "plans": [
+            {
+              "name": "入门特惠卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "低成本体验，适合初学者"
+            },
+            {
+              "name": "进阶版月卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "轻量级使用，初级开发人员"
+            },
+            {
+              "name": "专业版月卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "个人开发者的日常使用"
+            },
+            {
+              "name": "尊享版月卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "全天候 Vibe Coding"
+            },
+            {
+              "name": "铂金独享专线",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "资深用户，专业陪伴"
+            },
+            {
+              "name": "钻石独享专线",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "沉浸式 Coding"
+            }
+          ]
+        },
+        {
+          "provider": "uucode",
+          "plans": [
+            {
+              "name": "Starter",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "入门级订阅方案"
+            },
+            {
+              "name": "Pro",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "专业级订阅方案"
+            },
+            {
+              "name": "Max",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "企业级订阅方案"
+            },
+            {
+              "name": "按量付费",
+              "currentPrice": null,
+              "currentPriceText": "按量付费",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "按需使用，灵活计费"
+            }
+          ]
+        },
+        {
+          "provider": "hongmacc",
+          "plans": [
+            {
+              "name": "超值体验卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "限购一次，新用户体验"
+            },
+            {
+              "name": "轻享月卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "包月套餐，每日额度重置"
+            },
+            {
+              "name": "标准月卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "包月套餐，每日额度重置"
+            },
+            {
+              "name": "旗舰月卡",
+              "currentPrice": null,
+              "currentPriceText": null,
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "包月套餐，每日额度重置"
+            },
+            {
+              "name": "轻量包",
+              "currentPrice": null,
+              "currentPriceText": "按量计费",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "按量计费，无使用压力，额度永久有效"
+            },
+            {
+              "name": "标准包",
+              "currentPrice": null,
+              "currentPriceText": "按量计费",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "按量计费，无使用压力，额度永久有效"
+            },
+            {
+              "name": "海量包",
+              "currentPrice": null,
+              "currentPriceText": "按量计费",
+              "originalPrice": null,
+              "originalPriceText": null,
+              "unit": "月",
+              "notes": "按量计费，无使用压力，额度永久有效"
+            }
+          ]
+        }
+      ]
     }
   ],
-  "updatedAt": "2026-03-13T14:48:21.010Z",
+  "updatedAt": "2026-03-13T14:52:11.327Z",
   "lastChanges": [
     {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "试用套餐",
+      "timestamp": "2026-03-13T14:52:11.325Z",
+      "provider": "hongmacc",
+      "planName": "超值体验卡",
       "currentPrice": {
         "currentPrice": null,
         "currentPriceText": null,
         "originalPrice": null,
         "originalPriceText": null,
         "unit": "月",
-        "notes": "有效期 30 天，仅限一次"
+        "notes": "限购一次，新用户体验"
       },
       "changeType": "new"
     },
     {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "小月卡",
+      "timestamp": "2026-03-13T14:52:11.325Z",
+      "provider": "hongmacc",
+      "planName": "轻享月卡",
       "currentPrice": {
         "currentPrice": null,
         "currentPriceText": null,
         "originalPrice": null,
         "originalPriceText": null,
         "unit": "月",
-        "notes": "每日 0 点重置到 $40，周限额度 $75"
+        "notes": "包月套餐，每日额度重置"
       },
       "changeType": "new"
     },
     {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "月卡",
+      "timestamp": "2026-03-13T14:52:11.325Z",
+      "provider": "hongmacc",
+      "planName": "标准月卡",
       "currentPrice": {
         "currentPrice": null,
         "currentPriceText": null,
         "originalPrice": null,
         "originalPriceText": null,
         "unit": "月",
-        "notes": "每日 0 点重置到 $75，周限额度 $150"
+        "notes": "包月套餐，每日额度重置"
       },
       "changeType": "new"
     },
     {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "大月卡",
+      "timestamp": "2026-03-13T14:52:11.325Z",
+      "provider": "hongmacc",
+      "planName": "旗舰月卡",
       "currentPrice": {
         "currentPrice": null,
         "currentPriceText": null,
         "originalPrice": null,
         "originalPriceText": null,
         "unit": "月",
-        "notes": "每日 0 点重置到 $150，周限额度 $300"
+        "notes": "包月套餐，每日额度重置"
       },
       "changeType": "new"
     },
     {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "超大月卡",
+      "timestamp": "2026-03-13T14:52:11.325Z",
+      "provider": "hongmacc",
+      "planName": "轻量包",
       "currentPrice": {
         "currentPrice": null,
-        "currentPriceText": null,
+        "currentPriceText": "按量计费",
         "originalPrice": null,
         "originalPriceText": null,
         "unit": "月",
-        "notes": "每日 0 点重置到 $500，周限额度 $1000"
+        "notes": "按量计费，无使用压力，额度永久有效"
       },
       "changeType": "new"
     },
     {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "团队套餐",
+      "timestamp": "2026-03-13T14:52:11.325Z",
+      "provider": "hongmacc",
+      "planName": "标准包",
       "currentPrice": {
         "currentPrice": null,
-        "currentPriceText": null,
+        "currentPriceText": "按量计费",
         "originalPrice": null,
         "originalPriceText": null,
         "unit": "月",
-        "notes": "每日 0 点重置到 $950，周限额度 $1875"
+        "notes": "按量计费，无使用压力，额度永久有效"
       },
       "changeType": "new"
     },
     {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "PAYGO 100",
+      "timestamp": "2026-03-13T14:52:11.325Z",
+      "provider": "hongmacc",
+      "planName": "海量包",
       "currentPrice": {
         "currentPrice": null,
-        "currentPriceText": "按量付费",
+        "currentPriceText": "按量计费",
         "originalPrice": null,
         "originalPriceText": null,
         "unit": "月",
-        "notes": "美元额度，实时扣费，余额永不过期"
+        "notes": "按量计费，无使用压力，额度永久有效"
       },
       "changeType": "new"
     },
     {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "PAYGO 200",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": "按量付费",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "美元额度，实时扣费，余额永不过期"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "PAYGO 500",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": "按量付费",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "美元额度，实时扣费，余额永不过期"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "PAYGO 2000",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": "按量付费",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "美元额度，实时扣费，余额永不过期"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "yescode",
-      "planName": "Pay as you go",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": "按量付费",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "$50 初始余额，余额永不过期"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "yescode",
-      "planName": "Lightweight",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "$20 每日余额，$210 月消费限额"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "yescode",
-      "planName": "Works Good",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "$50 每日余额，$430 月消费限额"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "yescode",
-      "planName": "Most Popular",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "$80 每日余额，$640 月消费限额"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "yescode",
-      "planName": "Full Power",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "$100 每日余额，$860 月消费限额"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "yescode",
-      "planName": "Lightning the Core",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "$150 每日余额，$1080 月消费限额"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "yescode",
-      "planName": "Top Gear",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "$200 每日余额，$1450 月消费限额"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "yescode",
-      "planName": "Cosmos in your hand",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "$300 每日余额，$4285 月消费限额"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "yescode",
-      "planName": "To the Stars",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "$300 每日余额，$1800 月消费限额"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "toprouter",
-      "planName": "入门特惠卡",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "低成本体验，适合初学者"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "toprouter",
-      "planName": "进阶版月卡",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "轻量级使用，初级开发人员"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "toprouter",
-      "planName": "专业版月卡",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "个人开发者的日常使用"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "toprouter",
-      "planName": "尊享版月卡",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "全天候 Vibe Coding"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "toprouter",
-      "planName": "铂金独享专线",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "资深用户，专业陪伴"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "toprouter",
-      "planName": "钻石独享专线",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "沉浸式 Coding"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "uucode",
-      "planName": "Starter",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "入门级订阅方案"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "uucode",
-      "planName": "Pro",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "专业级订阅方案"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "uucode",
-      "planName": "Max",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": null,
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "企业级订阅方案"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "uucode",
-      "planName": "按量付费",
-      "currentPrice": {
-        "currentPrice": null,
-        "currentPriceText": "按量付费",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "按需使用，灵活计费"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
+      "timestamp": "2026-03-13T14:52:11.325Z",
       "provider": "hongmacc",
       "planName": "按量付费",
-      "currentPrice": {
+      "previousPrice": {
         "currentPrice": null,
         "currentPriceText": "按量付费",
         "originalPrice": null,
@@ -8533,93 +9104,20 @@
         "unit": "月",
         "notes": "价格亲民无门槛，按量付费"
       },
-      "changeType": "new"
+      "currentPrice": null,
+      "changeType": "removed"
     },
     {
-      "timestamp": "2026-03-13T14:48:21.009Z",
+      "timestamp": "2026-03-13T14:52:11.325Z",
       "provider": "hongmacc",
       "planName": "定制套餐",
-      "currentPrice": {
+      "previousPrice": {
         "currentPrice": null,
         "currentPriceText": null,
         "originalPrice": null,
         "originalPriceText": null,
         "unit": "月",
         "notes": "联系客服获取定制报价"
-      },
-      "changeType": "new"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "sssaicode",
-      "planName": "标准套餐",
-      "previousPrice": {
-        "currentPrice": null,
-        "currentPriceText": "价格待确认",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "请访问官网查看最新定价"
-      },
-      "currentPrice": null,
-      "changeType": "removed"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "yescode",
-      "planName": "标准套餐",
-      "previousPrice": {
-        "currentPrice": null,
-        "currentPriceText": "价格待确认",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "请访问官网查看最新定价"
-      },
-      "currentPrice": null,
-      "changeType": "removed"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "toprouter",
-      "planName": "标准套餐",
-      "previousPrice": {
-        "currentPrice": null,
-        "currentPriceText": "价格待确认",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "请访问官网查看最新定价"
-      },
-      "currentPrice": null,
-      "changeType": "removed"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "uucode",
-      "planName": "标准套餐",
-      "previousPrice": {
-        "currentPrice": null,
-        "currentPriceText": "价格待确认",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "请访问官网查看最新定价"
-      },
-      "currentPrice": null,
-      "changeType": "removed"
-    },
-    {
-      "timestamp": "2026-03-13T14:48:21.009Z",
-      "provider": "hongmacc",
-      "planName": "标准套餐",
-      "previousPrice": {
-        "currentPrice": null,
-        "currentPriceText": "价格待确认",
-        "originalPrice": null,
-        "originalPriceText": null,
-        "unit": "月",
-        "notes": "请访问官网查看最新定价"
       },
       "currentPrice": null,
       "changeType": "removed"
