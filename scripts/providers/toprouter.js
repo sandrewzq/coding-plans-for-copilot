@@ -11,7 +11,6 @@ async function parseToprouterCodingPlans() {
   const readmePath = path.resolve(__dirname, "../../README.md");
   const pageUrl = getProviderUrl(PROVIDER_IDS.TOPROUTER, readmePath);
   // Prices in CNY, last verified 2026-03:
-  // Top Router pricing info needs login to view exact prices
   // Based on website: https://www.toprouter.cn/
   return {
     provider: PROVIDER_IDS.TOPROUTER,
@@ -21,8 +20,8 @@ async function parseToprouterCodingPlans() {
       // 月付方案
       asPlan({
         name: "入门特惠卡",
-        currentPriceText: null,
-        currentPrice: null,
+        currentPriceText: "¥288/月",
+        currentPrice: 288,
         unit: "月",
         notes: "低成本体验，适合初学者",
         serviceDetails: [
@@ -37,8 +36,8 @@ async function parseToprouterCodingPlans() {
       }),
       asPlan({
         name: "进阶版月卡",
-        currentPriceText: null,
-        currentPrice: null,
+        currentPriceText: "¥588/月",
+        currentPrice: 588,
         unit: "月",
         notes: "轻量级使用，初级开发人员",
         serviceDetails: [
@@ -52,9 +51,25 @@ async function parseToprouterCodingPlans() {
         ],
       }),
       asPlan({
+        name: "铂金独享专线",
+        currentPriceText: "¥888/月",
+        currentPrice: 888,
+        unit: "月",
+        notes: "资深用户，专业陪伴",
+        serviceDetails: [
+          "不限月请求",
+          "1 API Key",
+          "不限 tokens/月",
+          "不限费用限额/月",
+          "专属Max100账户",
+          "专属内不计流量，专属外$10",
+          "5小时按官方限额",
+        ],
+      }),
+      asPlan({
         name: "专业版月卡",
-        currentPriceText: null,
-        currentPrice: null,
+        currentPriceText: "¥1024/月",
+        currentPrice: 1024,
         unit: "月",
         notes: "个人开发者的日常使用",
         serviceDetails: [
@@ -69,8 +84,8 @@ async function parseToprouterCodingPlans() {
       }),
       asPlan({
         name: "尊享版月卡",
-        currentPriceText: null,
-        currentPrice: null,
+        currentPriceText: "¥1388/月",
+        currentPrice: 1388,
         unit: "月",
         notes: "全天候 Vibe Coding",
         serviceDetails: [
@@ -84,25 +99,9 @@ async function parseToprouterCodingPlans() {
         ],
       }),
       asPlan({
-        name: "铂金独享专线",
-        currentPriceText: null,
-        currentPrice: null,
-        unit: "月",
-        notes: "资深用户，专业陪伴",
-        serviceDetails: [
-          "不限月请求",
-          "1 API Key",
-          "不限 tokens/月",
-          "不限费用限额/月",
-          "专属Max100账户",
-          "专属内不计流量，专属外$10",
-          "5小时按官方限额",
-        ],
-      }),
-      asPlan({
         name: "钻石独享专线",
-        currentPriceText: null,
-        currentPrice: null,
+        currentPriceText: "¥1888/月",
+        currentPrice: 1888,
         unit: "月",
         notes: "沉浸式 Coding",
         serviceDetails: [
