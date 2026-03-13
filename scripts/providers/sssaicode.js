@@ -11,7 +11,6 @@ async function parseSssaicodeCodingPlans() {
   const readmePath = path.resolve(__dirname, "../../README.md");
   const pageUrl = getProviderUrl(PROVIDER_IDS.SSSAICODE, readmePath);
   // Prices in CNY, last verified 2026-03:
-  // SSSAiCode pricing info needs login to view exact prices
   // Based on website: https://www.sssaicode.com/
   return {
     provider: PROVIDER_IDS.SSSAICODE,
@@ -21,10 +20,10 @@ async function parseSssaicodeCodingPlans() {
       // 包月套餐
       asPlan({
         name: "试用套餐",
-        currentPriceText: "登录查看",
-        currentPrice: null,
+        currentPriceText: "¥9.9/月",
+        currentPrice: 9.9,
         unit: "月",
-        notes: "有效期 30 天，仅限一次",
+        notes: "月总额度 $20，有效期 30 天，仅限一次",
         serviceDetails: [
           "Claude倍率 0.75x~1.3x",
           "CodeX倍率 0.5x",
@@ -33,10 +32,10 @@ async function parseSssaicodeCodingPlans() {
       }),
       asPlan({
         name: "小月卡",
-        currentPriceText: "登录查看",
-        currentPrice: null,
+        currentPriceText: "¥149/月",
+        currentPrice: 149,
         unit: "月",
-        notes: "每日 0 点重置到 $40，周限额度 $75",
+        notes: "月总额度 $300，每日 0 点重置到 $40，周限额度 $75",
         serviceDetails: [
           "约 4500 条 Sonnet 请求",
           "约 1000M Token",
@@ -47,10 +46,10 @@ async function parseSssaicodeCodingPlans() {
       }),
       asPlan({
         name: "月卡",
-        currentPriceText: "登录查看",
-        currentPrice: null,
+        currentPriceText: "¥249/月",
+        currentPrice: 249,
         unit: "月",
-        notes: "每日 0 点重置到 $75，周限额度 $150",
+        notes: "月总额度 $600，每日 0 点重置到 $75，周限额度 $150",
         serviceDetails: [
           "约 9000 条 Sonnet 请求",
           "约 2000M Token",
@@ -61,10 +60,10 @@ async function parseSssaicodeCodingPlans() {
       }),
       asPlan({
         name: "大月卡",
-        currentPriceText: "登录查看",
-        currentPrice: null,
+        currentPriceText: "¥498/月",
+        currentPrice: 498,
         unit: "月",
-        notes: "每日 0 点重置到 $150，周限额度 $300",
+        notes: "月总额度 $1250，每日 0 点重置到 $150，周限额度 $300",
         serviceDetails: [
           "约 18750 条 Sonnet 请求",
           "约 4000M Token",
@@ -75,10 +74,10 @@ async function parseSssaicodeCodingPlans() {
       }),
       asPlan({
         name: "超大月卡",
-        currentPriceText: "登录查看",
-        currentPrice: null,
+        currentPriceText: "¥1559/月",
+        currentPrice: 1559,
         unit: "月",
-        notes: "每日 0 点重置到 $500，周限额度 $1000",
+        notes: "月总额度 $4000，每日 0 点重置到 $500，周限额度 $1000",
         serviceDetails: [
           "约 60000 条 Sonnet 请求",
           "约 14000M Token",
@@ -89,10 +88,10 @@ async function parseSssaicodeCodingPlans() {
       }),
       asPlan({
         name: "团队套餐",
-        currentPriceText: "登录查看",
-        currentPrice: null,
+        currentPriceText: "¥5000/月",
+        currentPrice: 5000,
         unit: "月",
-        notes: "每日 0 点重置到 $950，周限额度 $1875",
+        notes: "月总额度 $7500，每日 0 点重置到 $950，周限额度 $1875",
         serviceDetails: [
           "50 倍并发",
           "50 个席位",
