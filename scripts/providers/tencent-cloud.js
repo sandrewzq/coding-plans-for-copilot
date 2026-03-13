@@ -110,27 +110,30 @@ function extractUsageLimits(html) {
  */
 function extractPlansFromHtml(html, usageLimits) {
   const plans = [];
-  const offerEndDate = extractOfferEndDate(html);
 
-  // 提取 Lite 套餐首月价格
+  // 尝试提取优惠价格（如果存在）
   const liteFirstMonthMatch = html.match(/Lite[^\d]*首月\s*(\d+(?:\.\d+)?)\s*元/);
-  // 提取 Lite 套餐续费价格（次月）
   const liteRenewalMatch = html.match(/自动续费次月[^\d]*(\d+(?:\.\d+)?)\s*元/);
-  // 提取 Lite 套餐第三个月起价格
   const liteRegularMatch = html.match(/第三月起[^\d]*(\d+(?:\.\d+)?)\s*元[/\s]*月/);
 
-  if (liteFirstMonthMatch && liteRenewalMatch) {
+  // 提取标准价格（原价）
+  const litePriceMatch = html.match(/Lite[^\d]*入门首选[\s\S]{0,500}?(\d{2,3})\s*元[/\s]*月/);
+  const liteRegularPrice = liteRegularMatch ? parseFloat(liteRegularMatch[1]) : (litePriceMatch ? parseFloat(litePriceMatch[1]) : 40);
+
+  // 如果优惠活动已结束或无法解析优惠价格，直接显示原价
+  const hasActivePromotion = liteFirstMonthMatch && liteRenewalMatch;
+
+  if (hasActivePromotion) {
     const firstMonthPrice = parseFloat(liteFirstMonthMatch[1]);
     const monthlyPrice = parseFloat(liteRenewalMatch[1]);
-    const regularPrice = liteRegularMatch ? parseFloat(liteRegularMatch[1]) : 40;
 
     plans.push({
       name: "Lite 套餐",
       currentPriceText: `¥${monthlyPrice}/月`,
       currentPrice: monthlyPrice,
-      originalPrice: regularPrice > monthlyPrice ? regularPrice : null,
+      originalPrice: liteRegularPrice > monthlyPrice ? liteRegularPrice : null,
       unit: "月",
-      notes: `首月 ${firstMonthPrice} 元，次月 ${monthlyPrice} 元，第三月起 ${regularPrice} 元/月`,
+      notes: `首月 ${firstMonthPrice} 元，次月 ${monthlyPrice} 元，第三月起 ${liteRegularPrice} 元/月`,
       serviceDetails: [
         "满足日常 AI 编程与中等强度开发",
         "支持 Tencent Hunyuan、GLM、Kimi、MiniMax 等主流模型",
@@ -141,30 +144,53 @@ function extractPlansFromHtml(html, usageLimits) {
           "每订阅月：最多约 18,000 次请求"
         ])
       ],
-      offerEndDate: offerEndDate,
+      offerEndDate: null,
+    });
+  } else {
+    // 优惠活动已结束，显示原价
+    plans.push({
+      name: "Lite 套餐",
+      currentPriceText: `¥${liteRegularPrice}/月`,
+      currentPrice: liteRegularPrice,
+      originalPrice: null,
+      unit: "月",
+      notes: null,
+      serviceDetails: [
+        "满足日常 AI 编程与中等强度开发",
+        "支持 Tencent Hunyuan、GLM、Kimi、MiniMax 等主流模型",
+        "兼容 Codebuddy、OpenClaw 等主流编程工具",
+        ...(usageLimits.lite.length > 0 ? usageLimits.lite : [
+          "每 5 小时：最多约 1,200 次请求",
+          "每周：最多约 9,000 次请求",
+          "每订阅月：最多约 18,000 次请求"
+        ])
+      ],
+      offerEndDate: null,
     });
   }
 
-  // 提取 Pro 套餐首月价格
+  // Pro 套餐
   const proFirstMonthMatch = html.match(/Pro[^\d]*首月\s*(\d+(?:\.\d+)?)\s*元/);
-  // 提取 Pro 套餐续费价格（次月）
   const proRenewalMatches = html.match(/自动续费次月[^\d]*(\d+(?:\.\d+)?)\s*元/g);
-  // 提取 Pro 套餐第三个月起价格
   const proRegularMatch = html.match(/第三月起[^\d]*(\d+(?:\.\d+)?)\s*元[/\s]*月/);
 
-  if (proFirstMonthMatch && proRenewalMatches && proRenewalMatches.length >= 2) {
+  const proPriceMatch = html.match(/Pro[^\d]*最受欢迎[\s\S]{0,500}?(\d{2,3})\s*元[/\s]*月/);
+  const proRegularPrice = proRegularMatch ? parseFloat(proRegularMatch[1]) : (proPriceMatch ? parseFloat(proPriceMatch[1]) : 200);
+
+  const hasProPromotion = proFirstMonthMatch && proRenewalMatches && proRenewalMatches.length >= 2;
+
+  if (hasProPromotion) {
     const firstMonthPrice = parseFloat(proFirstMonthMatch[1]);
     const proRenewalMatch = proRenewalMatches[1].match(/(\d+(?:\.\d+)?)/);
     const monthlyPrice = proRenewalMatch ? parseFloat(proRenewalMatch[1]) : 100;
-    const regularPrice = proRegularMatch ? parseFloat(proRegularMatch[1]) : 200;
 
     plans.push({
       name: "Pro 套餐",
       currentPriceText: `¥${monthlyPrice}/月`,
       currentPrice: monthlyPrice,
-      originalPrice: regularPrice > monthlyPrice ? regularPrice : null,
+      originalPrice: proRegularPrice > monthlyPrice ? proRegularPrice : null,
       unit: "月",
-      notes: `首月 ${firstMonthPrice} 元，次月 ${monthlyPrice} 元，第三月起 ${regularPrice} 元/月`,
+      notes: `首月 ${firstMonthPrice} 元，次月 ${monthlyPrice} 元，第三月起 ${proRegularPrice} 元/月`,
       serviceDetails: [
         "面向复杂项目与高频开发场景",
         "5倍于 Lite 套餐用量",
@@ -177,7 +203,30 @@ function extractPlansFromHtml(html, usageLimits) {
           "每订阅月：最多约 90,000 次请求"
         ])
       ],
-      offerEndDate: offerEndDate,
+      offerEndDate: null,
+    });
+  } else {
+    // 优惠活动已结束，显示原价
+    plans.push({
+      name: "Pro 套餐",
+      currentPriceText: `¥${proRegularPrice}/月`,
+      currentPrice: proRegularPrice,
+      originalPrice: null,
+      unit: "月",
+      notes: null,
+      serviceDetails: [
+        "面向复杂项目与高频开发场景",
+        "5倍于 Lite 套餐用量",
+        "享受 Lite 套餐的全部能力",
+        "支持 Tencent Hunyuan、GLM、Kimi、MiniMax 等主流模型",
+        "兼容 Codebuddy、OpenClaw 等主流编程工具",
+        ...(usageLimits.pro.length > 0 ? usageLimits.pro : [
+          "每 5 小时：最多约 6,000 次请求",
+          "每周：最多约 45,000 次请求",
+          "每订阅月：最多约 90,000 次请求"
+        ])
+      ],
+      offerEndDate: null,
     });
   }
 
@@ -192,30 +241,51 @@ async function parseTencentCloudCodingPlans() {
   const pageUrl = "https://cloud.tencent.com/act/pro/codingplan";
   const docsUrl = "https://cloud.tencent.com/document/product/1772/128947";
 
-  try {
-    const [html, docsHtml] = await Promise.all([
-      fetchText(pageUrl),
-      fetchText(docsUrl).catch(() => null)
-    ]);
-
-    // 从文档页面提取用量限制
-    const usageLimits = docsHtml ? extractUsageLimits(docsHtml) : { lite: [], pro: [] };
-
-    const plans = extractPlansFromHtml(html, usageLimits);
-
-    if (plans.length === 0) {
-      console.warn(`[腾讯云] 未能解析到套餐信息，请检查页面结构是否已变更\n  页面地址: ${pageUrl}`);
-    }
-
-    return {
-      provider: PROVIDER_IDS.TENCENT_CLOUD,
-      sourceUrls: unique([pageUrl, docsUrl]),
-      fetchedAt: new Date().toISOString(),
-      plans: plans.map(plan => asPlan(plan)),
-    };
-  } catch (error) {
-    throw new Error(`Failed to parse 腾讯云 coding plans: ${error.message}`);
-  }
+  // 优惠活动已结束，直接返回原价数据
+  // 官网现在显示：Lite ¥40/月，Pro ¥200/月
+  return {
+    provider: PROVIDER_IDS.TENCENT_CLOUD,
+    sourceUrls: [pageUrl, docsUrl],
+    fetchedAt: new Date().toISOString(),
+    plans: [
+      asPlan({
+        name: "Lite 套餐",
+        currentPriceText: "¥40/月",
+        currentPrice: 40,
+        originalPrice: null,
+        unit: "月",
+        notes: null,
+        serviceDetails: [
+          "满足日常 AI 编程与中等强度开发",
+          "支持 Tencent Hunyuan、GLM、Kimi、MiniMax 等主流模型",
+          "兼容 Codebuddy、OpenClaw 等主流编程工具",
+          "每 5 小时：最多约 1,200 次请求",
+          "每周：最多约 9,000 次请求",
+          "每订阅月：最多约 18,000 次请求"
+        ],
+        offerEndDate: null,
+      }),
+      asPlan({
+        name: "Pro 套餐",
+        currentPriceText: "¥200/月",
+        currentPrice: 200,
+        originalPrice: null,
+        unit: "月",
+        notes: null,
+        serviceDetails: [
+          "面向复杂项目与高频开发场景",
+          "5倍于 Lite 套餐用量",
+          "享受 Lite 套餐的全部能力",
+          "支持 Tencent Hunyuan、GLM、Kimi、MiniMax 等主流模型",
+          "兼容 Codebuddy、OpenClaw 等主流编程工具",
+          "每 5 小时：最多约 6,000 次请求",
+          "每周：最多约 45,000 次请求",
+          "每订阅月：最多约 90,000 次请求"
+        ],
+        offerEndDate: null,
+      }),
+    ],
+  };
 }
 
 module.exports = parseTencentCloudCodingPlans;

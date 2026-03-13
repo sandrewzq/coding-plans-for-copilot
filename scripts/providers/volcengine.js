@@ -107,10 +107,10 @@ function getFallbackData() {
     plans: [
       asPlan({
         name: "Coding Plan Lite 月套餐",
-        currentPriceText: "¥9.9/月",
-        originalPriceText: "¥40/月",
-        currentPrice: 9.9,
-        originalPrice: 40,
+        currentPriceText: "¥40/月",
+        originalPriceText: null,
+        currentPrice: 40,
+        originalPrice: null,
         unit: "月",
         notes: null,
         serviceDetails: [
@@ -121,14 +121,14 @@ function getFallbackData() {
           "每周限额: 9000 次请求",
           "每月限额: 18000 次请求",
         ],
-        offerEndDate: "2026-07-09T23:59:59+08:00",
+        offerEndDate: null,
       }),
       asPlan({
         name: "Coding Plan Pro 月套餐",
-        currentPriceText: "¥49.9/月",
-        originalPriceText: "¥200/月",
-        currentPrice: 49.9,
-        originalPrice: 200,
+        currentPriceText: "¥200/月",
+        originalPriceText: null,
+        currentPrice: 200,
+        originalPrice: null,
         unit: "月",
         notes: null,
         serviceDetails: [
@@ -139,73 +139,16 @@ function getFallbackData() {
           "每周限额: 45000 次请求",
           "每月限额: 90000 次请求",
         ],
-        offerEndDate: "2026-07-09T23:59:59+08:00",
+        offerEndDate: null,
       }),
     ],
   };
 }
 
 async function parseVolcengineCodingPlans() {
-  const readmePath = path.resolve(__dirname, "../../README.md");
-  const pageUrl = getProviderUrl(PROVIDER_IDS.VOLCENGINE, readmePath);
-  try {
-    const html = await fetchText(pageUrl);
-    const candidates = extractVolcBundleCandidatesFromHtml(html, pageUrl);
-    if (candidates.length === 0) {
-      throw new Error("Unable to locate Volcengine coding plan bundle");
-    }
-
-    const fallbackIndexUrl =
-      "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.156/index.js";
-
-    let selectedSourceUrl = null;
-    let selectedPlans = [];
-    for (const candidate of unique([...candidates.slice(0, 2), fallbackIndexUrl])) {
-      let bundleText;
-      try {
-        bundleText = await fetchText(candidate);
-      } catch {
-        continue;
-      }
-      const lite = parseVolcPlanFromBundle(bundleText, "Coding_Plan_Lite_monthly");
-      const pro = parseVolcPlanFromBundle(bundleText, "Coding_Plan_Pro_monthly");
-      const plans = [lite, pro].filter(Boolean);
-      if (plans.length < 2) {
-        continue;
-      }
-      selectedSourceUrl = candidate;
-      selectedPlans = plans;
-      if (plans.every((plan) => plan.currentPriceText && plan.originalPriceText && (plan.serviceDetails || []).length >= 3)) {
-        break;
-      }
-    }
-
-    if (selectedPlans.length === 0) {
-      throw new Error("Unable to parse Volcengine coding plan bundle");
-    }
-
-    // Fetch usage limits from help documentation
-    const usageLimitsByTier = await fetchVolcUsageLimitsFromHelpDoc();
-
-    // Merge usage limits into plans
-    for (const plan of selectedPlans) {
-      const tier = plan.name.includes("Lite") ? "Lite" : "Pro";
-      const usageLimits = usageLimitsByTier.get(tier);
-      if (usageLimits && usageLimits.length > 0) {
-        plan.serviceDetails = [...(plan.serviceDetails || []), ...usageLimits];
-      }
-    }
-
-    return {
-      provider: PROVIDER_IDS.VOLCENGINE,
-      sourceUrls: unique([pageUrl, selectedSourceUrl, "https://www.volcengine.com/docs/82379/2165245"]),
-      fetchedAt: new Date().toISOString(),
-      plans: dedupePlans(selectedPlans),
-    };
-  } catch (error) {
-    console.warn(`[pricing] Volcengine fetch failed: ${error.message}. Returning fallback.`);
-    return getFallbackData();
-  }
+  // 优惠活动已结束，直接返回原价数据
+  // 官网现在显示：Lite ¥40/月，Pro ¥200/月
+  return getFallbackData();
 }
 
 function normalizeVolcCurrentPriceText(rawText) {
