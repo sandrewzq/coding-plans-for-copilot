@@ -18,18 +18,24 @@ const { updateHistory } = require("./price-history");
 const OUTPUT_FILE = path.resolve(__dirname, "..", "docs", "provider-pricing.json");
 const TASK_TIMEOUT_MS = 30_000;
 
+const parse88codeCodingPlans = require("./providers/88code");
 const parseAliyunCodingPlans = require("./providers/aliyun");
 const parseBaiduCodingPlans = require("./providers/baidu");
 const parseChutesCodingPlans = require("./providers/chutes");
 const parseCompshareCodingPlans = require("./providers/compshare");
+const parseHongmaccCodingPlans = require("./providers/hongmacc");
 const parseInfiniCodingPlans = require("./providers/infini");
 const parseKimiCodingPlans = require("./providers/kimi");
 const parseKwaikatCodingPlans = require("./providers/kwaikat");
 const parseMinimaxCodingPlans = require("./providers/minimax");
 const parseMthreadsCodingPlans = require("./providers/mthreads");
+const parseSssaicodeCodingPlans = require("./providers/sssaicode");
 const parseTencentCloudCodingPlans = require("./providers/tencent-cloud");
+const parseToprouterCodingPlans = require("./providers/toprouter");
+const parseUucodeCodingPlans = require("./providers/uucode");
 const parseVolcengineCodingPlans = require("./providers/volcengine");
 const parseXaioCodingPlans = require("./providers/xaio");
+const parseYescodeCodingPlans = require("./providers/yescode");
 const parseZenmuxCodingPlans = require("./providers/zenmux");
 const parseZhipuCodingPlans = require("./providers/zhipu");
 
@@ -77,6 +83,12 @@ async function main() {
     { provider: PROVIDER_IDS.XAIO, fn: parseXaioCodingPlans, name: "X-AIO" },
     { provider: PROVIDER_IDS.ZENMUX, fn: parseZenmuxCodingPlans, name: "ZenMux" },
     { provider: PROVIDER_IDS.CHUTES, fn: parseChutesCodingPlans, name: "Chutes" },
+    { provider: PROVIDER_IDS.CODE88, fn: parse88codeCodingPlans, name: "88code" },
+    { provider: PROVIDER_IDS.SSSAICODE, fn: parseSssaicodeCodingPlans, name: "SSSAiCode" },
+    { provider: PROVIDER_IDS.YESCODE, fn: parseYescodeCodingPlans, name: "YesCode" },
+    { provider: PROVIDER_IDS.TOPROUTER, fn: parseToprouterCodingPlans, name: "Top Router" },
+    { provider: PROVIDER_IDS.UUCODE, fn: parseUucodeCodingPlans, name: "UUcode" },
+    { provider: PROVIDER_IDS.HONGMACC, fn: parseHongmaccCodingPlans, name: "HongMaCC" },
   ];
 
   console.log(`\n开始抓取 ${tasks.length} 个厂商的定价数据...\n`);

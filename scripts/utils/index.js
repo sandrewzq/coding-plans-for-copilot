@@ -78,6 +78,12 @@ const PROVIDER_IDS = {
   XAIO: "x-aio",
   ZENMUX: "zenmux-ai",
   CHUTES: "chutes-ai",
+  CODE88: "88code",
+  SSSAICODE: "sssaicode",
+  YESCODE: "yescode",
+  TOPROUTER: "toprouter",
+  UUCODE: "uucode",
+  HONGMACC: "hongmacc",
 };
 
 /**
@@ -99,6 +105,12 @@ const PROVIDER_NAMES = {
   [PROVIDER_IDS.XAIO]: "X-AIO",
   [PROVIDER_IDS.ZENMUX]: "ZenMux",
   [PROVIDER_IDS.CHUTES]: "Chutes",
+  [PROVIDER_IDS.CODE88]: "88code",
+  [PROVIDER_IDS.SSSAICODE]: "SSSAiCode",
+  [PROVIDER_IDS.YESCODE]: "YesCode",
+  [PROVIDER_IDS.TOPROUTER]: "Top Router",
+  [PROVIDER_IDS.UUCODE]: "UUcode",
+  [PROVIDER_IDS.HONGMACC]: "HongMaCC",
 };
 
 /**
@@ -121,6 +133,12 @@ const PROVIDER_URLS = {
   [PROVIDER_IDS.XAIO]: "https://code.x-aio.com/",
   [PROVIDER_IDS.ZENMUX]: "https://zenmux.ai/pricing/subscription",
   [PROVIDER_IDS.CHUTES]: "https://chutes.ai/pricing",
+  [PROVIDER_IDS.CODE88]: "https://www.88code.ai/",
+  [PROVIDER_IDS.SSSAICODE]: "https://www.sssaicode.com/",
+  [PROVIDER_IDS.YESCODE]: "https://co.yes.vg/pricing",
+  [PROVIDER_IDS.TOPROUTER]: "https://www.toprouter.cn/",
+  [PROVIDER_IDS.UUCODE]: "https://www.uucode.org/#pricing",
+  [PROVIDER_IDS.HONGMACC]: "https://hongmacc.com/#pricing",
 };
 
 /**

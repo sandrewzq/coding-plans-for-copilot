@@ -22,6 +22,12 @@ const PROVIDER_IDS = [
   "mthreads-ai",
   "zenmux-ai",
   "chutes-ai",
+  "88code",
+  "sssaicode",
+  "yescode",
+  "toprouter",
+  "uucode",
+  "hongmacc",
 ];
 
 /**

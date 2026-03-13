@@ -16,6 +16,12 @@ const PROVIDER_LABELS = {
   "x-aio": "X-AIO",
   "zenmux-ai": "ZenMux",
   "chutes-ai": "Chutes",
+  "88code": "88code",
+  "sssaicode": "SSSAiCode",
+  "yescode": "YesCode",
+  "toprouter": "Top Router",
+  "uucode": "UUcode",
+  "hongmacc": "HongMaCC",
 };
 
 // Provider URLs - synced from README.md
@@ -35,6 +41,12 @@ const PROVIDER_BUY_URLS = {
   "x-aio": "https://code.x-aio.com/",
   "zenmux-ai": "https://zenmux.ai/pricing/subscription",
   "chutes-ai": "https://chutes.ai/pricing",
+  "88code": "https://www.88code.ai/",
+  "sssaicode": "https://www.sssaicode.com/",
+  "yescode": "https://co.yes.vg/pricing",
+  "toprouter": "https://www.toprouter.cn/",
+  "uucode": "https://www.uucode.org/#pricing",
+  "hongmacc": "https://hongmacc.com/#pricing",
 };
 
 const PROVIDER_ORDER = [
@@ -52,6 +64,12 @@ const PROVIDER_ORDER = [
   "x-aio",
   "zenmux-ai",
   "chutes-ai",
+  "88code",
+  "sssaicode",
+  "yescode",
+  "toprouter",
+  "uucode",
+  "hongmacc",
 ];
 
 // Capability keywords mapping
@@ -1167,25 +1185,31 @@ async function loadPriceHistory() {
 }
 
 /**
- * Gets price trend for a specific plan
+ * Gets price trend for a specific plan, only including points where price changed
  * @param {string} providerId - Provider ID
  * @param {string} planName - Plan name
- * @returns {Array} Price trend data
+ * @returns {Array} Price trend data with only price change points
  */
 function getPlanPriceTrend(providerId, planName) {
   if (!priceHistoryData || !priceHistoryData.history) {return [];}
 
   const trend = [];
+  let lastPrice = null;
+
   for (const snapshot of priceHistoryData.history) {
     for (const provider of snapshot.providers || []) {
       if (provider.provider !== providerId) {continue;}
       for (const plan of provider.plans || []) {
         if (plan.name === planName) {
-          trend.push({
-            timestamp: snapshot.timestamp,
-            currentPrice: plan.currentPrice,
-            currentPriceText: plan.currentPriceText,
-          });
+          // Only add point if price changed or it's the first point
+          if (lastPrice === null || plan.currentPrice !== lastPrice) {
+            trend.push({
+              timestamp: snapshot.timestamp,
+              currentPrice: plan.currentPrice,
+              currentPriceText: plan.currentPriceText,
+            });
+            lastPrice = plan.currentPrice;
+          }
         }
       }
     }
