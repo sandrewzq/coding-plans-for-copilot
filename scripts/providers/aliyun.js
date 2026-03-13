@@ -205,41 +205,11 @@ async function parseAliyunCodingPlans() {
       return amount / 100;
     };
 
-    // Extract new-customer first-month flash prices once, before the per-plan loop.
-    // The DOM structure might break up the price with spans (e.g. <span>￥</span><span>39.90</span>),
-    // and uses fullwidth ￥ (U+FFE5) for the flash price but narrow ¥ (U+00A5) for the regular price.
-    // Stripping all tags and spaces makes the regex extremely robust.
-    const cleanHtml = decodeHtml(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, "");
-    const liteFlashMatch =
-      cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,1500}?官网折扣价[^¥￥0-9]*[¥￥]40(?:[^0-9]|$)/i) ||
-      cleanHtml.match(/首月(?:新购)?低至[^0-9]*([0-9]+(?:\.[0-9]+)?)/i);
-    const proFlashMatch =
-      cleanHtml.match(/[¥￥]([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月.{0,1500}?官网折扣价[^¥￥0-9]*[¥￥]200(?:[^0-9]|$)/i) ||
-      cleanHtml.match(/Pro(?:高级)?套餐[^0-9]{0,500}?([0-9]+(?:\.[0-9]+)?)\/1?(?:个)?月/i);
-
-    const entryScriptMatch = html.match(/cloud-assets\.alicdn\.com\/lowcode\/entry\/prod\/[^"'\s]+\.js/i);
-    const entryScriptUrl = entryScriptMatch
-      ? `https://${entryScriptMatch[0]}`
-      : null;
-    let entryFirstMonthPrices = [];
-    if (entryScriptUrl) {
-      try {
-        const entryText = await fetchText(entryScriptUrl);
-        const entryPlain = decodeHtml(entryText).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
-        entryFirstMonthPrices = [...entryPlain.matchAll(/首月\s*([0-9]+(?:\.[0-9]+)?)\s*元/g)]
-          .map((match) => Number(match[1]))
-          .filter((value) => Number.isFinite(value));
-      } catch {
-        entryFirstMonthPrices = [];
-      }
-    }
-
-    const fallbackLite = entryFirstMonthPrices.find((value) => value > 0 && value <= 20) || null;
-    const fallbackPro = entryFirstMonthPrices.find((value) => value > 20 && value <= 80) || null;
-
+    // Note: Flash sale price extraction removed as the promotion has ended.
+    // The API now returns the regular discounted prices directly.
     const flashPriceByTier = new Map([
-      ["Lite", liteFlashMatch ? Number(liteFlashMatch[1]) : fallbackLite],
-      ["Pro", proFlashMatch ? Number(proFlashMatch[1]) : fallbackPro],
+      ["Lite", null],
+      ["Pro", null],
     ]);
 
     const plans = [];
@@ -327,16 +297,16 @@ async function parseAliyunCodingPlans() {
       plans: [
         asPlan({
           name: "Coding Plan Lite",
-          currentPrice: 7.9,
-          currentPriceText: "¥7.9/月",
-          originalPrice: 40,
-          originalPriceText: "¥40/月",
+          currentPrice: 40,
+          currentPriceText: "¥40/月",
+          originalPrice: null,
+          originalPriceText: null,
           unit: "月",
-          notes: "新客首月 7.9元",
+          notes: null,
           serviceDetails: [
-            "能力: 支持 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 等级",
+            "能力: 支持 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 等模型",
             "场景: 面向处理轻量级工作负载的个人开发者",
-            "工具: Qwen Code、OpenClaw、OpenCode、Claude Code插件、Codex、Cline、Cursor等",
+            "工具: Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor等",
             "每 5 小时限额: 1200 次请求",
             "每周限额: 9000 次请求",
             "每月限额: 18000 次请求",
@@ -344,14 +314,14 @@ async function parseAliyunCodingPlans() {
         }),
         asPlan({
           name: "Coding Plan Pro",
-          currentPrice: 39.9,
-          currentPriceText: "¥39.9/月",
-          originalPrice: 200,
-          originalPriceText: "¥200/月",
+          currentPrice: 200,
+          currentPriceText: "¥200/月",
+          originalPrice: null,
+          originalPriceText: null,
           unit: "月",
-          notes: "新客首月 39.9元",
+          notes: null,
           serviceDetails: [
-            "能力: 包含 Lite 套餐的全部能力与权益",
+            "权益: 享受 Lite 套餐的全部能力与权益",
             "额度: 用量是 Lite 版的 5 倍",
             "场景: 适合大型开发任务，专业级 AI 编程体验",
             "每 5 小时限额: 6000 次请求",

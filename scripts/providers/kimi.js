@@ -106,6 +106,21 @@ async function parseKimiCodingPlans() {
       fetchedAt: new Date().toISOString(),
       plans: [
         asPlan({
+          name: "Adagio (月)",
+          currentPriceText: "¥0/月",
+          currentPrice: 0,
+          unit: "月",
+          notes: "试用计划",
+          serviceDetails: [
+            "会员等级: 免费试用",
+            "体验 Agent 功能",
+            "跨设备同步使用",
+            "搜索实时资讯",
+            "理解图片与文档",
+            "生成代码与数据分析",
+          ],
+        }),
+        asPlan({
           name: "Andante (月)",
           currentPriceText: "¥49/月",
           currentPrice: 49,

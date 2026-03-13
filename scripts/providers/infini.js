@@ -94,23 +94,27 @@ async function parseInfiniCodingPlans() {
 
   if (selectedPlans.length === 0) {
     // Fallback: use known published prices from the official page.
-    // Last verified: 2025-03 - Infini Coding Lite ¥40/月, Pro ¥200/月.
+    // Last verified: 2026-03 - Infini Coding Lite ¥19.9/月, Pro ¥99.9/月.
     selectedPlans = [
       asPlan({
         name: "Infini Coding Lite",
-        currentPriceText: "¥40/月",
-        currentPrice: 40,
+        currentPriceText: "¥19.9/月",
+        originalPriceText: "¥40/月",
+        currentPrice: 19.9,
+        originalPrice: 40,
         unit: "月",
         serviceDetails: defaultLiteServices,
-        notes: "用量: 1,000次/5小时、6,000次/7天、12,000次/1个月",
+        notes: "用量: 1000次请求每5小时",
       }),
       asPlan({
         name: "Infini Coding Pro",
-        currentPriceText: "¥200/月",
-        currentPrice: 200,
+        currentPriceText: "¥99.9/月",
+        originalPriceText: "¥200/月",
+        currentPrice: 99.9,
+        originalPrice: 200,
         unit: "月",
         serviceDetails: defaultProServices,
-        notes: "用量: 5,000次/5小时、30,000次/7天、60,000次/1个月",
+        notes: "用量: 5000次请求每5小时",
       }),
     ];
   } else {
