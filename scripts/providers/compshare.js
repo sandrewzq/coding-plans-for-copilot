@@ -18,28 +18,57 @@ async function parseCompshareCodingPlans() {
   const html = await fetchText(pageUrl);
 
   // Extract plans from the HTML using regex patterns based on the structure
-  // Pattern: cp-pricing-card contains the plan info
   const plans = [];
-
-  // Try to extract from the HTML structure
-  // Lite plan: 49.9元, 7,000,000 积分/日
-  // Plus plan: 199元, 28,000,000 积分/日
-  // Pro plan: 499元, 70,000,000 积分/日
 
   // Check if we can find the pricing cards in HTML
   const liteMatch = html.match(/49\.9\s*包月畅享包\s*Lite/i);
   const plusMatch = html.match(/199\s*包月畅享包\s*Plus/i);
   const proMatch = html.match(/499\s*包月畅享包\s*Pro/i);
 
-  if (liteMatch || plusMatch || proMatch) {
-    // Extract plans from the new structure
-    const serviceDetails = [
-      "每日 0 点刷新积分额度",
-      "支持全球主流SOTA语言模型！持续补充ing",
-      "支持Claude Code，OpenClaw等主流AI编程助手/Agent",
-      "允许API调用，不限制使用场景",
-    ];
+  // Define service details for both monthly and paygo plans
+  const serviceDetailsMonthly = [
+    "每日 0 点刷新积分额度",
+    "支持全球主流SOTA语言模型！持续补充ing",
+    "支持Claude Code，OpenClaw等主流AI编程助手/Agent",
+    "允许API调用，不限制使用场景",
+  ];
 
+  const serviceDetailsPaygo = [
+    "支持全球主流SOTA语言模型！持续补充ing",
+    "支持Claude Code，OpenClaw等主流AI编程助手/Agent",
+    "允许API调用，不限制使用场景",
+  ];
+
+  // Add paygo plans (always included)
+  plans.push(
+    asPlan({
+      name: "超值体验包",
+      currentPriceText: "¥6.9/月",
+      currentPrice: 6.9,
+      unit: "月",
+      serviceDetails: serviceDetailsPaygo,
+      notes: "按量付费，2900w 积分，相当于原价API的平均0.5折起",
+    }),
+    asPlan({
+      name: "标准按量包 Lite",
+      currentPriceText: "¥19.9/月",
+      currentPrice: 19.9,
+      unit: "月",
+      serviceDetails: serviceDetailsPaygo,
+      notes: "按量付费，5900w 积分，相当于原价API的平均1折起",
+    }),
+    asPlan({
+      name: "标准按量包 Plus",
+      currentPriceText: "¥199/月",
+      currentPrice: 199,
+      unit: "月",
+      serviceDetails: serviceDetailsPaygo,
+      notes: "按量付费，5亿9000w 积分，相当于原价API的平均1折起",
+    }),
+  );
+
+  // Add monthly plans from HTML if found, otherwise use fallback
+  if (liteMatch || plusMatch || proMatch) {
     if (liteMatch) {
       plans.push(
         asPlan({
@@ -47,8 +76,8 @@ async function parseCompshareCodingPlans() {
           currentPriceText: "¥49.9/月",
           currentPrice: 49.9,
           unit: "月",
-          serviceDetails,
-          notes: "用量: 7,000,000 积分/日",
+          serviceDetails: serviceDetailsMonthly,
+          notes: "每日 0 点刷新 700w 积分额度",
         }),
       );
     }
@@ -60,8 +89,8 @@ async function parseCompshareCodingPlans() {
           currentPriceText: "¥199/月",
           currentPrice: 199,
           unit: "月",
-          serviceDetails,
-          notes: "用量: 28,000,000 积分/日",
+          serviceDetails: serviceDetailsMonthly,
+          notes: "每日 0 点刷新 700w 积分额度",
         }),
       );
     }
@@ -73,46 +102,37 @@ async function parseCompshareCodingPlans() {
           currentPriceText: "¥499/月",
           currentPrice: 499,
           unit: "月",
-          serviceDetails,
-          notes: "用量: 70,000,000 积分/日",
+          serviceDetails: serviceDetailsMonthly,
+          notes: "每日 0 点刷新 7000w 积分额度",
         }),
       );
     }
-  }
-
-  // Fallback: if no plans found, use hardcoded data based on official page
-  if (plans.length === 0) {
-    const serviceDetails = [
-      "每日 0 点刷新积分额度",
-      "支持全球主流SOTA语言模型！持续补充ing",
-      "支持Claude Code，OpenClaw等主流AI编程助手/Agent",
-      "允许API调用，不限制使用场景",
-    ];
-
+  } else {
+    // Fallback: if no plans found from HTML, use hardcoded monthly plans
     plans.push(
       asPlan({
         name: "49.9 包月畅享包 Lite",
         currentPriceText: "¥49.9/月",
         currentPrice: 49.9,
         unit: "月",
-        serviceDetails,
-        notes: "用量: 7,000,000 积分/日",
+        serviceDetails: serviceDetailsMonthly,
+        notes: "每日 0 点刷新 700w 积分额度",
       }),
       asPlan({
         name: "199 包月畅享包 Plus",
         currentPriceText: "¥199/月",
         currentPrice: 199,
         unit: "月",
-        serviceDetails,
-        notes: "用量: 28,000,000 积分/日",
+        serviceDetails: serviceDetailsMonthly,
+        notes: "每日 0 点刷新 700w 积分额度",
       }),
       asPlan({
         name: "499 包月畅享包 Pro",
         currentPriceText: "¥499/月",
         currentPrice: 499,
         unit: "月",
-        serviceDetails,
-        notes: "用量: 70,000,000 积分/日",
+        serviceDetails: serviceDetailsMonthly,
+        notes: "每日 0 点刷新 7000w 积分额度",
       }),
     );
   }
