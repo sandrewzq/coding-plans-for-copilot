@@ -21,10 +21,10 @@ async function parseUucodeCodingPlans() {
       // 订阅计划
       asPlan({
         name: "Starter",
-        currentPriceText: null,
-        currentPrice: null,
+        currentPriceText: "¥198/月",
+        currentPrice: 198,
         unit: "月",
-        notes: "入门级订阅方案",
+        notes: "每日额度 $30，每周限额 $100",
         serviceDetails: [
           "访问所有标准模型",
           "标准技术支持",
@@ -34,10 +34,10 @@ async function parseUucodeCodingPlans() {
       }),
       asPlan({
         name: "Pro",
-        currentPriceText: null,
-        currentPrice: null,
+        currentPriceText: "¥368/月",
+        currentPrice: 368,
         unit: "月",
-        notes: "专业级订阅方案",
+        notes: "每日额度 $60，每周限额 $200",
         serviceDetails: [
           "包含 Starter 所有功能",
           "优先响应支持",
@@ -47,10 +47,10 @@ async function parseUucodeCodingPlans() {
       }),
       asPlan({
         name: "Max",
-        currentPriceText: null,
-        currentPrice: null,
+        currentPriceText: "¥598/月",
+        currentPrice: 598,
         unit: "月",
-        notes: "企业级订阅方案",
+        notes: "每日额度 $120，每周限额 $325",
         serviceDetails: [
           "包含 Pro 所有功能",
           "极致并发性能",

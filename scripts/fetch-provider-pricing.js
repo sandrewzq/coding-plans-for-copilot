@@ -107,7 +107,11 @@ async function main() {
 
     try {
       const data = result.value;
-      const monthlyPlans = keepStandardMonthlyPlans(data.plans || [])
+      // HongMaCC has both monthly plans and pay-as-you-go plans, keep all
+      const plansToKeep = data.provider === PROVIDER_IDS.HONGMACC
+        ? (data.plans || [])
+        : keepStandardMonthlyPlans(data.plans || []);
+      const monthlyPlans = plansToKeep
         .map((plan) => {
           const serviceDetails = plan.serviceDetails !== undefined
             ? plan.serviceDetails
