@@ -17,50 +17,48 @@ const {
 const FALLBACK_PLANS = [
   {
     name: "GLM Coding Lite",
-    currentPriceText: "¥132/季",
-    currentPrice: 132,
-    originalPriceText: "¥147/季",
-    originalPrice: 147,
-    unit: "季",
-    notes: "连续包季 9 折；下个季度续费金额：¥132.3",
+    currentPriceText: "¥49/月",
+    currentPrice: 49,
+    originalPriceText: null,
+    originalPrice: null,
+    unit: "月",
+    notes: "下个月度续费金额：￥49",
     serviceDetails: [
-      "Claude Pro 套餐的 3倍 用量",
-      "面向处理轻量级工作负载的个人开发者",
-      "新模型/功能持续更新",
-      "适用于 Claude Code 等 20+编程工具",
+      "3x Claude Pro 用量额度",
+      "适合小型 Repo 轻量级迭代",
+      "逐步开放最新旗舰模型及功能",
+      "支持 Claude Code 等 20+ 编程工具",
     ],
   },
   {
     name: "GLM Coding Pro",
-    currentPriceText: "¥402/季",
-    currentPrice: 402,
-    originalPriceText: "¥447/季",
-    originalPrice: 447,
-    unit: "季",
-    notes: "连续包季 9 折；下个季度续费金额：¥402.3",
+    currentPriceText: "¥149/月",
+    currentPrice: 149,
+    originalPriceText: null,
+    originalPrice: null,
+    unit: "月",
+    notes: "下个月度续费金额：￥149",
     serviceDetails: [
-      "Lite 套餐的 5倍 用量",
-      "面向处理复杂工作负载的个人开发者",
-      "享受 Lite 套餐所有权益",
-      "新模型/功能优先升级",
-      "生成速度高于 Lite",
-      "视觉理解、联网搜索/读取、开源仓库 MCP",
+      "5x Lite 用量额度 + Lite 全量权益",
+      "适合中型 Repo 日常开发",
+      "优先体验最新旗舰模型及功能",
+      "覆盖多款精选 MCP 工具",
+      "更快生成速度",
     ],
   },
   {
     name: "GLM Coding Max",
-    currentPriceText: "¥1266/季",
-    currentPrice: 1266,
-    originalPriceText: "¥1407/季",
-    originalPrice: 1407,
-    unit: "季",
-    notes: "连续包季 9 折；下个季度续费金额：¥1266.3",
+    currentPriceText: "¥469/月",
+    currentPrice: 469,
+    originalPriceText: null,
+    originalPrice: null,
+    unit: "月",
+    notes: "下个月度续费金额：￥469",
     serviceDetails: [
-      "Pro 套餐的 4倍 用量",
-      "面向处理海量工作负载的个人开发者",
-      "享受 Pro 套餐所有权益",
-      "新模型/功能首发升级",
-      "用量高峰优先保障",
+      "20x Lite 用量额度 + Pro 全量权益",
+      "适合高阶用户中大型 Repo 深度开发",
+      "首发接入最新旗舰模型及功能",
+      "高峰期专属资源优先保障",
     ],
   },
 ];
@@ -145,7 +143,7 @@ function extractPlansFromChunk(chunkText) {
 
     // Extract tag text if available
     const tagMatch = chunkText.slice(match.index, match.index + 500).match(/tagText\s*:\s*"([^"]+)"/);
-    const tagText = tagMatch ? tagMatch[1] : "连续包季 9 折";
+    const tagText = tagMatch ? tagMatch[1] : null;
 
     // Extract renew amount if available
     const renewMatch = chunkText.slice(match.index, match.index + 500).match(/renewAmount\s*:\s*([\d.]+)/);
@@ -179,25 +177,23 @@ function extractPlansFromChunk(chunkText) {
 function getServiceDetailsForTier(tier) {
   const serviceMap = {
     Lite: [
-      "Claude Pro 套餐的 3倍 用量",
-      "面向处理轻量级工作负载的个人开发者",
-      "新模型/功能持续更新",
-      "适用于 Claude Code 等 20+编程工具",
+      "3x Claude Pro 用量额度",
+      "适合小型 Repo 轻量级迭代",
+      "逐步开放最新旗舰模型及功能",
+      "支持 Claude Code 等 20+ 编程工具",
     ],
     Pro: [
-      "Lite 套餐的 5倍 用量",
-      "面向处理复杂工作负载的个人开发者",
-      "享受 Lite 套餐所有权益",
-      "新模型/功能优先升级",
-      "生成速度高于 Lite",
-      "视觉理解、联网搜索/读取、开源仓库 MCP",
+      "5x Lite 用量额度 + Lite 全量权益",
+      "适合中型 Repo 日常开发",
+      "优先体验最新旗舰模型及功能",
+      "覆盖多款精选 MCP 工具",
+      "更快生成速度",
     ],
     Max: [
-      "Pro 套餐的 4倍 用量",
-      "面向处理海量工作负载的个人开发者",
-      "享受 Pro 套餐所有权益",
-      "新模型/功能首发升级",
-      "用量高峰优先保障",
+      "20x Lite 用量额度 + Pro 全量权益",
+      "适合高阶用户中大型 Repo 深度开发",
+      "首发接入最新旗舰模型及功能",
+      "高峰期专属资源优先保障",
     ],
   };
 
