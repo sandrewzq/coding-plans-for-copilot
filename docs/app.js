@@ -16,12 +16,6 @@ const PROVIDER_LABELS = {
   "x-aio": "X-AIO",
   "zenmux-ai": "ZenMux",
   "chutes-ai": "Chutes",
-  "88code": "88code",
-  "sssaicode": "SSSAiCode",
-  "yescode": "YesCode",
-  "toprouter": "Top Router",
-  "uucode": "UUcode",
-  "hongmacc": "HongMaCC",
 };
 
 // Provider URLs - synced from README.md
@@ -41,12 +35,6 @@ const PROVIDER_BUY_URLS = {
   "x-aio": "https://code.x-aio.com/",
   "zenmux-ai": "https://zenmux.ai/pricing/subscription",
   "chutes-ai": "https://chutes.ai/pricing",
-  "88code": "https://www.88code.ai/",
-  "sssaicode": "https://www.sssaicode.com/",
-  "yescode": "https://co.yes.vg/pricing",
-  "toprouter": "https://www.toprouter.cn/",
-  "uucode": "https://www.uucode.org/#pricing",
-  "hongmacc": "https://hongmacc.com/#pricing",
 };
 
 const PROVIDER_ORDER = [
@@ -64,12 +52,6 @@ const PROVIDER_ORDER = [
   "x-aio",
   "zenmux-ai",
   "chutes-ai",
-  "88code",
-  "sssaicode",
-  "yescode",
-  "toprouter",
-  "uucode",
-  "hongmacc",
 ];
 
 // Capability keywords mapping
@@ -871,11 +853,6 @@ function renderProviders(data) {
       const isTencentCloud = provider.provider === "tencent-cloud-ai";
       const isMthreads = provider.provider === "mthreads-ai";
       const isZenmux = provider.provider === "zenmux-ai";
-      const isSssaicode = provider.provider === "sssaicode";
-      const isYescode = provider.provider === "yescode";
-      const isToprouter = provider.provider === "toprouter";
-      const isUucode = provider.provider === "uucode";
-      const isHongmacc = provider.provider === "hongmacc";
       if ((isMinimax || isInfini || isCompshare) && plan.notes && plan.notes.includes("用量:")) {
         const usageMatch = plan.notes.match(/用量:\s*(.+)/);
         if (usageMatch) {
@@ -992,114 +969,6 @@ function renderProviders(data) {
           );
           item.append(usageCard);
         }
-      } else if (isSssaicode && plan.notes) {
-        // SSSAiCode usage info is in notes (format: "月总额度 $300，每日 0 点重置到 $40，周限额度 $75")
-        const usageMatch = plan.notes.match(/月总额度\s*\$?([\d,]+)(?:，每日.*?重置到\s*\$?([\d,]+))?(?:，周限额度\s*\$?([\d,]+))?/);
-        if (usageMatch) {
-          const usageCard = createElement("div", "usage-limit-card");
-          const usageList = createElement("ul", "usage-limit-list");
-          const monthlyAmount = usageMatch[1];
-          const dailyAmount = usageMatch[2];
-          const weeklyAmount = usageMatch[3];
-          if (monthlyAmount) {
-            usageList.append(createElement("li", "usage-limit-item", `月总额度: $${monthlyAmount}`));
-          }
-          if (dailyAmount) {
-            usageList.append(createElement("li", "usage-limit-item", `每日额度: $${dailyAmount}`));
-          }
-          if (weeklyAmount) {
-            usageList.append(createElement("li", "usage-limit-item", `每周额度: $${weeklyAmount}`));
-          }
-          if (usageList.children.length > 0) {
-            usageCard.append(
-              createElement("span", "usage-limit-title", "📊"),
-              usageList,
-            );
-            item.append(usageCard);
-          }
-        }
-      } else if (isYescode && plan.notes) {
-        // YesCode usage info is in notes (format: "$20 每日余额，$210 月消费限额" or "$50 初始余额，余额永不过期")
-        const dailyMatch = plan.notes.match(/\$([\d,]+)\s*每日余额/);
-        const monthlyMatch = plan.notes.match(/\$([\d,]+)\s*月消费限额/);
-        const initialMatch = plan.notes.match(/\$([\d,]+)\s*初始余额/);
-        if (dailyMatch || monthlyMatch || initialMatch) {
-          const usageCard = createElement("div", "usage-limit-card");
-          const usageList = createElement("ul", "usage-limit-list");
-          if (dailyMatch) {
-            usageList.append(createElement("li", "usage-limit-item", `每日余额: $${dailyMatch[1]}`));
-          }
-          if (monthlyMatch) {
-            usageList.append(createElement("li", "usage-limit-item", `月消费限额: $${monthlyMatch[1]}`));
-          }
-          if (initialMatch) {
-            usageList.append(createElement("li", "usage-limit-item", `初始余额: $${initialMatch[1]}`));
-          }
-          if (usageList.children.length > 0) {
-            usageCard.append(
-              createElement("span", "usage-limit-title", "📊"),
-              usageList,
-            );
-            item.append(usageCard);
-          }
-        }
-      } else if (isToprouter && plan.serviceDetails && plan.serviceDetails.length > 0) {
-        // TopRouter usage info is in serviceDetails (format: "$200 费用限额/周", "$50 费用限额/天", "不限费用限额/月")
-        const usageDetails = plan.serviceDetails.filter(d =>
-          d.includes("费用限额/周") || d.includes("费用限额/天") || d.includes("费用限额/月")
-        );
-        if (usageDetails.length > 0) {
-          const usageCard = createElement("div", "usage-limit-card");
-          const usageList = createElement("ul", "usage-limit-list");
-          for (const usageText of usageDetails) {
-            usageList.append(createElement("li", "usage-limit-item", usageText));
-          }
-          usageCard.append(
-            createElement("span", "usage-limit-title", "📊"),
-            usageList,
-          );
-          item.append(usageCard);
-        }
-      } else if (isUucode && plan.notes) {
-        // UUcode usage info is in notes (format: "每日额度 $30，每周限额 $100")
-        const dailyMatch = plan.notes.match(/每日额度\s*\$?([\d,]+)/);
-        const weeklyMatch = plan.notes.match(/每周限额\s*\$?([\d,]+)/);
-        if (dailyMatch || weeklyMatch) {
-          const usageCard = createElement("div", "usage-limit-card");
-          const usageList = createElement("ul", "usage-limit-list");
-          if (dailyMatch) {
-            usageList.append(createElement("li", "usage-limit-item", `每日额度: $${dailyMatch[1]}`));
-          }
-          if (weeklyMatch) {
-            usageList.append(createElement("li", "usage-limit-item", `每周限额: $${weeklyMatch[1]}`));
-          }
-          if (usageList.children.length > 0) {
-            usageCard.append(
-              createElement("span", "usage-limit-title", "📊"),
-              usageList,
-            );
-            item.append(usageCard);
-          }
-        }
-      } else if (isHongmacc && plan.serviceDetails && plan.serviceDetails.length > 0) {
-        // HongMaCC usage info is in serviceDetails (format: "共可用 $30 额度", "每日 $25 额度，无并发限制")
-        const usageDetails = plan.serviceDetails.filter(d =>
-          d.includes("额度")
-        );
-        if (usageDetails.length > 0) {
-          const usageCard = createElement("div", "usage-limit-card");
-          const usageList = createElement("ul", "usage-limit-list");
-          for (const usageText of usageDetails) {
-            // Clean up the text to remove "无并发限制" part
-            const cleanText = usageText.replace(/，无并发限制/g, "").replace(/, 无并发限制/g, "");
-            usageList.append(createElement("li", "usage-limit-item", cleanText));
-          }
-          usageCard.append(
-            createElement("span", "usage-limit-title", "📊"),
-            usageList,
-          );
-          item.append(usageCard);
-        }
       }
 
       // Get service items, excluding usage-related items for Zhipu, Aliyun, Volcengine, KwaiKAT, and XAIO
@@ -1123,18 +992,6 @@ function renderProviders(data) {
       } else if (isMthreads) {
         serviceItems = serviceItems.filter(d =>
           !(d.includes("每 5 小时") && d.includes("prompts"))
-        );
-      } else if (isToprouter) {
-        serviceItems = serviceItems.filter(d =>
-          !(d.includes("费用限额/周") || d.includes("费用限额/天") || d.includes("费用限额/月"))
-        );
-      } else if (isUucode) {
-        serviceItems = serviceItems.filter(d =>
-          !(d.includes("每日额度") || d.includes("每周限额"))
-        );
-      } else if (isHongmacc) {
-        serviceItems = serviceItems.filter(d =>
-          !d.includes("额度")
         );
       }
       if (serviceItems.length > 0) {

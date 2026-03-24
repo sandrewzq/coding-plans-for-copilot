@@ -67,12 +67,12 @@ npm run pricing:serve
 | X-AIO | https://code.x-aio.com/ |
 | ZenMux | https://zenmux.ai/pricing/subscription |
 | Chutes | https://chutes.ai/pricing |
-| 88code | https://www.88code.ai/ |
-| SSSAiCode | https://www.sssaicode.com/#pricing |
-| YesCode | https://co.yes.vg/pricing |
-| Top Router | https://www.toprouter.cn/ |
-| UUcode | https://www.uucode.org/#pricing |
-| HongMaCC | https://hongmacc.com/#pricing |
+<!-- | 88code | https://www.88code.ai/ | -->
+<!-- | SSSAiCode | https://www.sssaicode.com/#pricing | -->
+<!-- | YesCode | https://co.yes.vg/pricing | -->
+<!-- | Top Router | https://www.toprouter.cn/ | -->
+<!-- | UUcode | https://www.uucode.org/#pricing | -->
+<!-- | HongMaCC | https://hongmacc.com/#pricing | -->
 
 ## 维护指南
 
